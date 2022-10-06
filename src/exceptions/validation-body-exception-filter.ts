@@ -30,17 +30,12 @@ export const getErrorMessage = <T>(exception: T): any => {
 };
 @Catch(HttpException)
 export class ValidationBodyExceptionFilter implements ExceptionFilter {
-  // public message;
-  // constructor(message: any) {
-  //   this.message = message;
-  // }
   catch(exception: HttpException, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const statusCode = getStatusCode(exception);
     const request = context.getRequest<Request>();
     const message = getErrorMessage(exception);
-    console.log(statusCode, 'statusCode');
     if (statusCode === 400) {
       response.status(statusCode).json({
         errorsMessages: message,
@@ -54,13 +49,3 @@ export class ValidationBodyExceptionFilter implements ExceptionFilter {
     }
   }
 }
-//
-// export const factoryGetNamespaceByDomainUseCase = () => {
-//   return {
-//     provide: GetNamespaceByDomain,
-//     useFactory: (namespaceStateRepository: NamespaceStateRepository) => {
-//       return new GetNamespaceByDomainUseCase(namespaceStateRepository);
-//     },
-//     inject: [NamespaceRepository],
-//   };
-// };

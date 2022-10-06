@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ObjectId } from 'bson';
 import { useContainer } from 'class-validator';
 import { disconnect } from 'mongoose';
 import * as request from 'supertest';
@@ -53,26 +54,6 @@ describe('test user-router "/users"', () => {
           console.log(res.body);
         });
     });
-    it('should check unique user login', async () => {
-      const bodyParams = {
-        login: newUser1.login,
-        password: newUser1.password,
-        email: newUser1.email,
-      };
-      const agent = request(app.getHttpServer());
-      await agent
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams)
-        .expect(201);
-
-      const res = await agent
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams)
-        .expect(400);
-      console.log(res.body, 'resss');
-    });
 
     it('should return error 400 for wrong fields', () => {
       const bodyParams = {
@@ -104,5 +85,58 @@ describe('test user-router "/users"', () => {
           console.log(res.body);
         });
     });
+  });
+
+  describe('check unique login', () => {
+    it('should check unique user login', async () => {
+      await fakerConnectDb.clearDatabase();
+      const bodyParams = {
+        login: newUser1.login,
+        password: newUser1.password,
+        email: newUser1.email,
+      };
+      // const userParams = newUserModel;
+      // const findUser = new UsersRepository(User);
+
+      // const user = findUser.getUserByEmail(bodyParams.email);
+      // console.log(user, 'uuuuuuuuuuuuuuuuuuuuuuuuuuuu11111111111');
+      const agent = request(app.getHttpServer());
+      await agent
+        .post('/users')
+        .set('Authorization', `Basic ${adminToken.correct}`)
+        .send(bodyParams)
+        .expect(201)
+        .then((res) => {
+          console.log(res.body);
+        });
+      const res = await agent
+        .post('/users')
+        .set('Authorization', `Basic ${adminToken.correct}`)
+        .send(bodyParams)
+        .expect(400);
+      console.log(res.body, 'resss');
+    });
+  });
+
+  describe('test delete  "/" endpoint', () => {
+    it('should return error non-existent user', async () => {
+      const invalidUserId = new ObjectId();
+      const agent = request(app.getHttpServer());
+      const res = await agent
+        .delete(`/users/${invalidUserId}`)
+        .set('Authorization', `Basic ${adminToken.correct}`)
+        .expect(404);
+      console.log(res.body);
+    });
+
+    // it('should return if id format is not ObjectId', async () => {
+    //   const invalidUserId = 1;
+    //   const agent = request(app.getHttpServer());
+    //   const res = await agent
+    //     .delete(`/users/${invalidUserId}`)
+    //     .set('Authorization', `Basic ${adminToken.correct}`)
+    //     .expect(400);
+    //   console.log(res.body);
+    // });
   });
 });

@@ -12,13 +12,14 @@ import { User } from '../modules/users/users.schema';
 
 @Injectable()
 @ValidatorConstraint({ name: 'UniqueValidator', async: true })
-export class UniqueValidator implements ValidatorConstraintInterface {
+export class isExistValidator implements ValidatorConstraintInterface {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
     const filter = {};
     filter[args.property] = value;
     const count = await this.userModel.findOne(filter);
+    console.log(count, 'count', !count);
     return !count;
   }
 
@@ -34,7 +35,7 @@ export function UserExists(validationOptions?: ValidationOptions) {
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: UniqueValidator,
+      validator: isExistValidator,
     });
   };
 }
