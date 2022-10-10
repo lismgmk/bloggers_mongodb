@@ -2,9 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { useContainer } from 'class-validator';
 import { disconnect } from 'mongoose';
-import { fakerConnectDb } from '../../test-params/fake-connect-db';
-import { AppModule } from '../app.module';
-import { newUserModel } from './test-consts/test-user-values';
+import { fakerConnectDb } from '../test-params/fake-connect-db';
+import { AppModule } from '../modules/app.module';
+import { newUserModel } from '../modules/users/test-consts/test-user-values';
 import { User } from './users.schema';
 
 describe('test user-schema validation', () => {

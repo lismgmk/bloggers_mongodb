@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Model } from 'mongoose';
-import { User } from '../modules/users/users.schema';
+import { User } from '../schemas/users.schema';
 
 @Injectable()
 export class ParamIdValidationPipe implements PipeTransform<any> {

@@ -1,4 +1,3 @@
-import { UseFilters } from '@nestjs/common';
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import {
@@ -6,10 +5,9 @@ import {
   FIELD_LENGTH_VALIDATION_ERROR_SHORT,
   FIELD_LENGTH_VALIDATION_ERROR_LONG,
   FIELD_EMAIL_VALIDATION_ERROR,
-} from '../../consts/ad-validation-const';
-import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
+} from '../consts/ad-validation-const';
 
-@UseFilters(new ValidationBodyExceptionFilter())
+// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ _id: false })
 class EmailConfirmation extends Document {
   @Prop({
@@ -38,7 +36,7 @@ class EmailConfirmation extends Document {
   attemptCount: number;
 }
 
-@UseFilters(new ValidationBodyExceptionFilter())
+// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ _id: false })
 class AccountData extends Document {
   @Prop({
@@ -85,7 +83,7 @@ class AccountData extends Document {
   userIp: string;
 }
 
-@UseFilters(new ValidationBodyExceptionFilter())
+// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ expires: 'users' })
 export class User extends Document {
   @Prop({ type: AccountData, required: true })

@@ -8,7 +8,7 @@ import {
   registerDecorator,
 } from 'class-validator';
 import { Model } from 'mongoose';
-import { User } from '../modules/users/users.schema';
+import { User } from '../schemas/users.schema';
 
 @Injectable()
 @ValidatorConstraint({ async: true })

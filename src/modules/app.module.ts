@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CommentsModule } from './comments/comments.module';
@@ -17,6 +18,21 @@ import { UsersModule } from './users/users.module';
     PostsModule,
     TestingModule,
     UsersModule,
+    PassportModule,
+    // JwtModule.registerAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     secret: configService.get<string>('SECRET'),
+    //     signOptions: {
+    //       expiresIn: configService.get<string>('EXPIRED_ACCESS'),
+    //     },
+    //   }),
+    //   inject: [ConfigService],
+    // }),
+    // JwtModule.register({
+    //   secret: 'secret',
+    //   signOptions: { expiresIn: '60s' },
+    // }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

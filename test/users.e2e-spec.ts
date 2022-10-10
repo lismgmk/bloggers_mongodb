@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import { disconnect } from 'mongoose';
 import * as request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
+import { UsersRepository } from '../src/modules/users/users.repository';
 import { fakerConnectDb } from '../src/test-params/fake-connect-db';
 import {
   newUser1,
@@ -30,7 +31,8 @@ describe('test user-router "/users"', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
+    const userRepo = moduleFixture.get<UsersRepository>(UsersRepository);
+    console.log(userRepo, 'userRepo');
     app = moduleFixture.createNestApplication();
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
     await app.init();
@@ -45,14 +47,16 @@ describe('test user-router "/users"', () => {
         password: newUser1.password,
         email: newUser1.email,
       };
-      return request(app.getHttpServer())
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams)
-        .expect(201)
-        .then((res) => {
-          console.log(res.body);
-        });
+      return (
+        request(app.getHttpServer())
+          .post('/users')
+          .set('Authorization', `Basic ${adminToken.correct}`)
+          .send(bodyParams)
+          // .expect(201)
+          .then((res) => {
+            console.log(res.body);
+          })
+      );
     });
 
     it('should return error 400 for wrong fields', () => {
@@ -109,6 +113,7 @@ describe('test user-router "/users"', () => {
         .then((res) => {
           console.log(res.body);
         });
+
       const res = await agent
         .post('/users')
         .set('Authorization', `Basic ${adminToken.correct}`)

@@ -25,6 +25,8 @@ export class CustomValidationPipe implements PipeTransform<any> {
         if (errors.length > 0) {
           throw new BadRequestException(errorsArr);
         }
+      } else {
+        throw new BadRequestException('dddddddddddddd');
       }
     }
     return value;
