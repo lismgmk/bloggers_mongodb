@@ -28,6 +28,7 @@ export const getErrorMessage = <T>(exception: T): any => {
     return String(exception);
   }
 };
+
 @Catch(HttpException)
 export class ValidationBodyExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {

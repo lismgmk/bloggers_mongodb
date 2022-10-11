@@ -19,7 +19,6 @@ export class isExistValidator implements ValidatorConstraintInterface {
     const filter = {};
     filter[args.property] = value;
     const count = await this.userModel.findOne(filter);
-    console.log(count, 'count', !count);
     return !count;
   }
 

@@ -13,7 +13,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     let error;
-    console.log(exception.name, 'dddddddddddddddddddddd');
+    console.log(exception.name, 'mongo exception!!!');
     switch (exception.name) {
       case 'DocumentNotFoundError': {
         error = {

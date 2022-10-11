@@ -22,10 +22,10 @@ export class JwtPassService {
     return await bcrypt.compare(password, hash);
   }
 
+  // async createJwt(id: ObjectId, expiresIn: string) {
   async createJwt(id: ObjectId, expiresIn: string) {
     const secret = this.configService.get<string>('SECRET');
-
     const payload = { id };
-    return this.jwtService.sign(payload, { secret });
+    return this.jwtService.sign(payload, { secret, expiresIn });
   }
 }
