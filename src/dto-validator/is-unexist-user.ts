@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ValidationArguments,
@@ -8,18 +8,22 @@ import {
   registerDecorator,
 } from 'class-validator';
 import { Model } from 'mongoose';
-import { User } from '../modules/users/users.schema';
+import { User } from '../schemas/users.schema';
 
 @Injectable()
-@ValidatorConstraint({ name: 'UniqueValidator', async: true })
-export class UniqueValidator implements ValidatorConstraintInterface {
+@ValidatorConstraint({ async: true })
+export class UnExistValidator implements ValidatorConstraintInterface {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
     const filter = {};
     filter[args.property] = value;
     const count = await this.userModel.findOne(filter);
-    return !count;
+    if (!count) {
+      throw new NotFoundException();
+    } else {
+      return true;
+    }
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -27,14 +31,14 @@ export class UniqueValidator implements ValidatorConstraintInterface {
   }
 }
 
-export function UserExists(validationOptions?: ValidationOptions) {
+export function UserUnExists(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
       name: 'UserExists',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: UniqueValidator,
+      validator: UnExistValidator,
     });
   };
 }

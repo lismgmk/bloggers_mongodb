@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from '../../schemas/users.schema';
 
+// @UseFilters(new MongoExceptionFilter())
 @Injectable()
 export class UsersRepository {
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>, // private configService: ConfigService,
+  ) {}
   // async getAllUsers(
   //   pageSize: number,
   //   pageNumber: number,
@@ -75,13 +82,13 @@ export class UsersRepository {
   //   }
   // }
   //
-  // async getUserByEmail(email: string) {
-  //   try {
-  //     return await Users.findOne({ 'accountData.email': { $eq: email } });
-  //   } catch (err) {
-  //     return false;
-  //   }
-  // }
+
+  async getUserByEmail(email: string) {
+    return this.userModel.findOne({ 'accountData.email': { $eq: email } });
+  }
+  async getUserById(id: string) {
+    return this.userModel.findById(id);
+  }
   //
   // async updateCodeByEmail(email: string, code: string) {
   //   try {

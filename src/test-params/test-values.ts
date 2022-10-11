@@ -5,9 +5,10 @@ export const pageNumber = 1;
 export const adminToken = { correct: 'YWRtaW46cXdlcnR5', wrong: '00000000000' };
 
 export const newUser1 = {
+  id: '123456',
   login: 'User-1',
   password: '123456',
-  email: 'someemail-1@mail.mail',
+  email: 'somee@mail.ma',
   userIp: '1a',
   confirmationCode: '11',
 };
