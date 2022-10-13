@@ -44,6 +44,7 @@ describe('test user-router "/auth"', () => {
   afterAll(() => {
     disconnect();
   });
+
   describe('test post  "/registration" endpoint', () => {
     it('should go to guard', () => {
       const bodyParams = {
@@ -60,6 +61,24 @@ describe('test user-router "/auth"', () => {
             console.log(res.body);
           })
       );
+    });
+    it('should check ip middleware and return error 429 if increase attempt ip request limit ', async () => {
+      process.env.ATTEMPTS_LIMIT = '2';
+      const bodyParams = {
+        login: newUser1.login,
+        password: newUser1.password,
+        email: newUser1.email,
+      };
+      const agent = request(app.getHttpServer());
+      await agent.post('/auth/registration').send(bodyParams).expect(201);
+      await agent.post('/auth/registration').send(bodyParams).expect(201);
+      await agent
+        .post('/auth/registration')
+        .send(bodyParams)
+        .expect(429)
+        .then((res) => {
+          console.log(res.body);
+        });
     });
   });
 

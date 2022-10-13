@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { IpUser } from '../schemas/iPusers.schema';
 
 @Injectable()
-export class IpUsersRepositoryDB {
+export class IpUsersRepository {
   constructor(
     private configService: ConfigService,
     @InjectModel(IpUser.name) private ipUserModel: Model<IpUser>,
@@ -14,7 +14,30 @@ export class IpUsersRepositoryDB {
 
   async getAllUsersIp(params: { userIp: string; path: string }) {
     const secondsLimit = this.configService.get<string>('SECONDS_LIMIT');
-    return this.ipUserModel
+    // console.log(';;;;;;;');
+    // try {
+    //   console.log({
+    //     userIp: params.userIp,
+    //     path: params.path,
+    //     createdAt: {
+    //       $gte: subSeconds(new Date(), Number(secondsLimit)),
+    //     },
+    //   });
+    //   const getAllUsers = await this.ipUserModel.find({
+    //     userIp: params.userIp,
+    //     path: params.path,
+    //     createdAt: {
+    //       $gte: subSeconds(new Date(), Number(secondsLimit)),
+    //     },
+    //   });
+    //   // .exec();
+    //   console.log(getAllUsers, 'allusers');
+    //   return getAllUsers;
+    // } catch (e) {
+    //   throw new Error();
+    // }
+
+    return await this.ipUserModel
       .find({
         userIp: params.userIp,
         path: params.path,
@@ -30,9 +53,15 @@ export class IpUsersRepositoryDB {
       userIp: params.userIp,
       path: params.path,
     });
-    return this.ipUserModel.create(newIpUser);
+    console.log('llllllllllllllllllll');
+    return await this.ipUserModel.create(newIpUser);
   }
   async usersLoginDiffIp(params: { userIp: string; filter: { path: string } }) {
-    return this.ipUserModel.distinct(params.userIp, params.filter).exec();
+    const val = await this.ipUserModel
+      .distinct(params.userIp, params.filter)
+      .exec();
+    console.log(val, 'ddddddd');
+    return val;
+    // return await this.ipUserModel.distinct(params.userIp, params.filter).exec();
   }
 }

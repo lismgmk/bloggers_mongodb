@@ -1,13 +1,13 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IpUsersRepositoryDB } from '../repositotyes/ip-user.repository';
+import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 
 // @UseFilters(new MongoExceptionFilter())
 @Injectable()
 export class IpStatusGuard implements CanActivate {
   constructor(
     private configService: ConfigService,
-    private ipUsersRepositoryDB: IpUsersRepositoryDB,
+    private ipUsersRepositoryDB: IpUsersRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

@@ -27,7 +27,6 @@ describe('test user-router "/users"', () => {
     await fakerConnectDb.closeDatabase();
   });
   beforeEach(async () => {
-    console.log(process.env.DB_CONN_MONGOOSE_STRING, 'nomgoose string');
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -93,17 +92,12 @@ describe('test user-router "/users"', () => {
 
   describe('check unique login', () => {
     it('should check unique user login', async () => {
-      await fakerConnectDb.clearDatabase();
       const bodyParams = {
         login: newUser1.login,
         password: newUser1.password,
         email: newUser1.email,
       };
-      // const userParams = newUserModel;
-      // const findUser = new UsersRepository(User);
 
-      // const user = findUser.getUserByEmail(bodyParams.email);
-      // console.log(user, 'uuuuuuuuuuuuuuuuuuuuuuuuuuuu11111111111');
       const agent = request(app.getHttpServer());
       await agent
         .post('/users')

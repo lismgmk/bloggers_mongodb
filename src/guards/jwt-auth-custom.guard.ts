@@ -22,7 +22,6 @@ export class JWTAuthCustomGuard extends AuthGuard('jwt') {
 
   async canActivate(context: ExecutionContext): Promise<any> {
     const request = context.switchToHttp().getRequest();
-    // const token = this.reflector.get<string>('token', context.getHandler());
     const refreshToken = request.cookies.refreshToken;
     if (refreshToken) {
       const isChecked = await this.blackListRepository.checkToken(refreshToken);
@@ -31,8 +30,6 @@ export class JWTAuthCustomGuard extends AuthGuard('jwt') {
       }
       await this.blackListRepository.addToken(refreshToken);
     }
-    // request.token = token;
-    // console.log(token, 'token');
     return super.canActivate(context);
   }
 }
