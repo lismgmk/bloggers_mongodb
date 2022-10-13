@@ -19,6 +19,7 @@ import { CommentsModule } from './comments/comments.module';
 import { PostsModule } from './posts/posts.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UsersModule } from './users/users.module';
       { name: IpUser.name, schema: IpUserSchema },
       { name: BlackList.name, schema: BlackListSchema },
     ]),
+    MailModule,
   ],
   controllers: [],
   providers: [IpUsersRepository],

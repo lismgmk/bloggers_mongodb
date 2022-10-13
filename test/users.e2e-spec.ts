@@ -46,16 +46,14 @@ describe('test user-router "/users"', () => {
         password: newUser1.password,
         email: newUser1.email,
       };
-      return (
-        request(app.getHttpServer())
-          .post('/users')
-          .set('Authorization', `Basic ${adminToken.correct}`)
-          .send(bodyParams)
-          // .expect(201)
-          .then((res) => {
-            console.log(res.body);
-          })
-      );
+      return request(app.getHttpServer())
+        .post('/users')
+        .set('Authorization', `Basic ${adminToken.correct}`)
+        .send(bodyParams)
+        .expect(201)
+        .then((res) => {
+          console.log(res.body);
+        });
     });
 
     it('should return error 400 for wrong fields', () => {
