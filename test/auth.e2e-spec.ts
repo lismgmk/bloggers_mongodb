@@ -181,4 +181,48 @@ describe('test user-router "/auth"', () => {
         });
     });
   });
+
+  describe('test post  "/registration-email-resending" endpoint', () => {
+    const bodyParams = {
+      login: newUser1.login,
+      password: newUser1.password,
+      email: newUser1.email,
+    };
+    let token: string;
+    let newUser: User;
+    beforeEach(async () => {
+      const agent = request(app.getHttpServer());
+      await agent
+        .post('/users')
+        .set('Authorization', `Basic ${adminToken.correct}`)
+        .send(bodyParams);
+      newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
+      token = await jwtPassService.createJwt(
+        newUser._id,
+        process.env.EXPIRED_REFRESH,
+        // configService.get<string>('EXPIRED_REFRESH'),
+      );
+    });
+
+    it('should resend email and change confirmation code', async () => {
+      return request(app.getHttpServer())
+        .post('/auth/registration-email-resending')
+        .send({ email: newUser1.email })
+        .expect(204)
+        .then(async (res) => {
+          const changedUser = (await userRepo.getUserByEmail(
+            newUser1.email,
+          )) as User;
+          expect(changedUser.emailConfirmation.confirmationCode).not.toBe(
+            newUser.emailConfirmation.confirmationCode,
+          );
+        });
+    });
+    it('should return un authorization Error 401', async () => {
+      return request(app.getHttpServer())
+        .post('/auth/registration-email-resending')
+        .send({ email: 'incorrect@mail.con' })
+        .expect(401);
+    });
+  });
 });

@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ObjectId } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { ObjectId, Model } from 'mongoose';
+import { User } from '../../schemas/users.schema';
 import { JwtPassService } from '../../services/jwt-pass.service';
 import { MailService } from '../mail/mail.service';
+import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 import { IRegistrationDto } from './dto/auth-interfaces.dto';
 import { v4 } from 'uuid';
@@ -14,6 +17,8 @@ export class AuthService {
     private configService: ConfigService,
     private mailService: MailService,
     private usersService: UsersService,
+    private usersRepository: UsersRepository,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
   async getRefreshAccessToken(userId: ObjectId) {
     const expiredAccess = this.configService.get<string>('EXPIRED_ACCESS');
@@ -42,5 +47,20 @@ export class AuthService {
       userIp: dto.userIp,
     };
     await this.usersService.createUser(newUserDto);
+  }
+  async resendingEmail(email: string) {
+    const filter = { 'accountData.email': { $eq: email } };
+    const currentUser = await this.userModel.findOne(filter);
+    if (!currentUser) {
+      throw new UnauthorizedException();
+    }
+    const confirmationCode = v4();
+    await this.mailService.sendUserConfirmation(
+      { email, name: currentUser.accountData.userName },
+      confirmationCode,
+    );
+    currentUser.emailConfirmation.confirmationCode = confirmationCode;
+    currentUser.save();
+    return currentUser;
   }
 }
