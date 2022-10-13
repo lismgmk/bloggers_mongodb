@@ -83,6 +83,9 @@ export class UsersRepository {
   // }
   //
 
+  async getUserByLogin(login: string) {
+    return this.userModel.findOne({ 'accountData.userName': { $eq: login } });
+  }
   async getUserByEmail(email: string) {
     return this.userModel.findOne({ 'accountData.email': { $eq: email } });
   }

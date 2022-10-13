@@ -1,13 +1,25 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CheckIpStatusMiddleware } from '../midlvares/check-ip-status.middleware';
+import { IpUsersRepository } from '../repositotyes/ip-user.repository';
+import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
+import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
+import { User, UserSchema } from '../schemas/users.schema';
 import { AuthModule } from './auth/auth.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CommentsModule } from './comments/comments.module';
 import { PostsModule } from './posts/posts.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -19,20 +31,10 @@ import { UsersModule } from './users/users.module';
     TestingModule,
     UsersModule,
     PassportModule,
-    // JwtModule.registerAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     secret: configService.get<string>('SECRET'),
-    //     signOptions: {
-    //       expiresIn: configService.get<string>('EXPIRED_ACCESS'),
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
-    // JwtModule.register({
-    //   secret: 'secret',
-    //   signOptions: { expiresIn: '60s' },
-    // }),
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -40,8 +42,24 @@ import { UsersModule } from './users/users.module';
       }),
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: IpUser.name, schema: IpUserSchema },
+      { name: BlackList.name, schema: BlackListSchema },
+    ]),
+    MailModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [IpUsersRepository],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CheckIpStatusMiddleware)
+      .forRoutes(
+        { path: '/auth/registration', method: RequestMethod.POST },
+        { path: 'users/:id', method: RequestMethod.DELETE },
+        { path: 'refresh-token', method: RequestMethod.POST },
+      );
+  }
+}
