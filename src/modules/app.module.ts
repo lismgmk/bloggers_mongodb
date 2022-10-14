@@ -20,6 +20,7 @@ import { PostsModule } from './posts/posts.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { MailModule } from './mail/mail.module';
+import { JwtPassModule } from './jwt-pass/jwt-pass.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MailModule } from './mail/mail.module';
       { name: BlackList.name, schema: BlackListSchema },
     ]),
     MailModule,
+    JwtPassModule,
   ],
   controllers: [],
   providers: [IpUsersRepository],
