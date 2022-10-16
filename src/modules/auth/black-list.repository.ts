@@ -9,8 +9,7 @@ export class BlackListRepository {
     @InjectModel(BlackList.name) private blackListModel: Model<BlackList>,
   ) {}
   async addToken(token: string) {
-    const doc = await this.blackListModel.create({ tokenValue: token });
-    console.log(doc, 'ddddddddddddddddd');
+    return this.blackListModel.create({ tokenValue: token });
   }
 
   async checkToken(token: string) {

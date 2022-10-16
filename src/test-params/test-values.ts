@@ -16,7 +16,7 @@ export const newUser1 = {
 export const newUser2 = {
   login: 'User-2',
   password: '123456',
-  email: 'someemail-2@mail.mail',
+  email: 'someemail2@mail.mail',
   userIp: '2a',
   confirmationCode: '22',
 };

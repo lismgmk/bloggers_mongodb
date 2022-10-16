@@ -1,21 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { useContainer } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
-
 import { disconnect } from 'mongoose';
 import * as request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
+import { BlackListRepository } from '../src/modules/auth/black-list.repository';
 import { UsersRepository } from '../src/modules/users/users.repository';
 import { User } from '../src/schemas/users.schema';
-import { JwtPassService } from '../src/services/jwt-pass.service';
+import { JwtPassService } from '../src/modules/jwt-pass/jwt-pass.service';
 import { fakerConnectDb } from '../src/test-params/fake-connect-db';
-import { newUser1, adminToken } from '../src/test-params/test-values';
+import { newUser1, adminToken, newUser2 } from '../src/test-params/test-values';
 
 describe('test user-router "/auth"', () => {
   let userRepo: UsersRepository;
   let jwtPassService: JwtPassService;
   let app;
-  // let configService;
+  let blackListRepository: BlackListRepository;
+  const bodyParams = {
+    login: newUser1.login,
+    password: newUser1.password,
+    email: newUser1.email,
+  };
+  let token: string;
+  let newUser: User;
   beforeAll(async () => {
     await fakerConnectDb.connect();
   });
@@ -33,87 +40,53 @@ describe('test user-router "/auth"', () => {
     }).compile();
     userRepo = moduleFixture.get<UsersRepository>(UsersRepository);
     jwtPassService = moduleFixture.get<JwtPassService>(JwtPassService);
-
-    // configService = moduleFixture.get<ConfigService>(ConfigService);
+    blackListRepository =
+      moduleFixture.get<BlackListRepository>(BlackListRepository);
 
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
     await app.init();
+    const agent = request(app.getHttpServer());
+    await agent
+      .post('/users')
+      .set('Authorization', `Basic ${adminToken.correct}`)
+      .send(bodyParams);
+    newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
+    token = await jwtPassService.createJwt(
+      newUser._id,
+      process.env.EXPIRED_REFRESH,
+    );
   });
   afterAll(() => {
     disconnect();
   });
 
   describe('test post  "/registration" endpoint', () => {
-    it('should go to guard', () => {
-      const bodyParams = {
-        login: newUser1.login,
-        password: newUser1.password,
-        email: 'lismgmk2@gmail.com',
+    it('should add new user', () => {
+      const bodyParams2 = {
+        login: newUser2.login,
+        password: newUser2.password,
+        email: newUser2.email,
       };
-      return (
-        request(app.getHttpServer())
-          .post('/auth/registration')
-          .send(bodyParams)
-          // .expect(204)
-          .then((res) => {
-            console.log(res.body);
-          })
-      );
-    });
-    it('should check ip middleware and return error 429 if increase attempt ip request limit ', async () => {
-      process.env.ATTEMPTS_LIMIT = '2';
-      const bodyParams = {
-        login: newUser1.login,
-        password: newUser1.password,
-        email: newUser1.email,
-      };
-      const agent = request(app.getHttpServer());
-      await agent.post('/auth/registration').send(bodyParams).expect(201);
-      await agent.post('/auth/registration').send(bodyParams).expect(201);
-      await agent
+      return request(app.getHttpServer())
         .post('/auth/registration')
-        .send(bodyParams)
-        .expect(429)
-        .then((res) => {
-          console.log(res.body);
-        });
+        .send(bodyParams2);
+      // .expect(204);
     });
   });
 
   describe('test post  "/refresh-token" endpoint', () => {
-    const bodyParams = {
-      login: newUser1.login,
-      password: newUser1.password,
-      email: newUser1.email,
-    };
-    let token: string;
-    let newUser: User;
-    beforeEach(async () => {
-      const agent = request(app.getHttpServer());
-      await agent
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams);
-      newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
-      token = await jwtPassService.createJwt(
-        newUser._id,
-        process.env.EXPIRED_REFRESH,
-        // configService.get<string>('EXPIRED_REFRESH'),
-      );
-    });
-
     it('should return new refresh token in headers and access token in body', async () => {
       const cookie = `refreshToken=${token}; Path=/; Secure; HttpOnly;`;
       return request(app.getHttpServer())
         .post('/auth/refresh-token')
-        .set('Cookie', cookie);
-      // .expect(200);
-      // .then(async (res) => {
-      //   expect(typeof res.body.accessToken).toBe('string');
-      //   expect(typeof res.headers['set-cookie'][0]).toBe('string');
-      // });
+        .set('Cookie', cookie)
+        .expect(200)
+        .then(async (res) => {
+          expect(typeof res.body.accessToken).toBe('string');
+          expect(typeof res.headers['set-cookie'][0]).toBe('string');
+        });
     });
 
     it('should return error when send 2 times the same refresh token', async () => {
@@ -121,54 +94,14 @@ describe('test user-router "/auth"', () => {
       const agent = request(app.getHttpServer());
       await agent.post('/auth/refresh-token').set('Cookie', cookie);
 
-      return (
-        request(app.getHttpServer())
-          .post('/auth/refresh-token')
-          .set('Cookie', cookie)
-          // .expect(201)
-          .then((res) => {
-            console.log(res.body);
-          })
-      );
-    });
-
-    it('should check bearer access', async () => {
-      const bearer_1 = `Bearer ${token}`;
-      return (
-        request(app.getHttpServer())
-          .post('/auth/refresh-token')
-          .set('Authorization', bearer_1)
-          .send(bodyParams)
-          // .expect(201)
-          .then((res) => {
-            console.log(res.body);
-          })
-      );
+      return request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .set('Cookie', cookie)
+        .expect(401);
     });
   });
 
   describe('test post  "/login" endpoint', () => {
-    const bodyParams = {
-      login: newUser1.login,
-      password: newUser1.password,
-      email: newUser1.email,
-    };
-    let token: string;
-    let newUser: User;
-    beforeEach(async () => {
-      const agent = request(app.getHttpServer());
-      await agent
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams);
-      newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
-      token = await jwtPassService.createJwt(
-        newUser._id,
-        process.env.EXPIRED_REFRESH,
-        // configService.get<string>('EXPIRED_REFRESH'),
-      );
-    });
-
     it('should success login and return new refresh token in headers and access token in body', async () => {
       // console.log(newUser);
       return request(app.getHttpServer())
@@ -183,33 +116,12 @@ describe('test user-router "/auth"', () => {
   });
 
   describe('test post  "/registration-email-resending" endpoint', () => {
-    const bodyParams = {
-      login: newUser1.login,
-      password: newUser1.password,
-      email: newUser1.email,
-    };
-    let token: string;
-    let newUser: User;
-    beforeEach(async () => {
-      const agent = request(app.getHttpServer());
-      await agent
-        .post('/users')
-        .set('Authorization', `Basic ${adminToken.correct}`)
-        .send(bodyParams);
-      newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
-      token = await jwtPassService.createJwt(
-        newUser._id,
-        process.env.EXPIRED_REFRESH,
-        // configService.get<string>('EXPIRED_REFRESH'),
-      );
-    });
-
     it('should resend email and change confirmation code', async () => {
       return request(app.getHttpServer())
         .post('/auth/registration-email-resending')
         .send({ email: newUser1.email })
         .expect(204)
-        .then(async (res) => {
+        .then(async () => {
           const changedUser = (await userRepo.getUserByEmail(
             newUser1.email,
           )) as User;
@@ -223,6 +135,57 @@ describe('test user-router "/auth"', () => {
         .post('/auth/registration-email-resending')
         .send({ email: 'incorrect@mail.con' })
         .expect(401);
+    });
+  });
+
+  describe('test post  "/new-password" endpoint', () => {
+    it('should change hash password on new', async () => {
+      const bodyParams = {
+        newPassword: 'qwerty',
+        recoveryCode: newUser.emailConfirmation.confirmationCode,
+      };
+      return request(app.getHttpServer())
+        .post('/auth/new-password')
+        .send(bodyParams)
+        .expect(204)
+        .then(async () => {
+          const changedUser = (await userRepo.getUserByEmail(
+            newUser1.email,
+          )) as User;
+          expect(changedUser.accountData.passwordHash).not.toBe(
+            newUser.accountData.passwordHash,
+          );
+        });
+    });
+  });
+
+  describe('test post  "/logout" endpoint', () => {
+    it('should add toke in black list on second request throw error', async () => {
+      const cookie = `refreshToken=${token}; Path=/; Secure; HttpOnly;`;
+      const agent = request(app.getHttpServer());
+      await agent
+        .post('/auth/logout')
+        .set('Cookie', cookie)
+        .expect(204)
+        .then(async () => {
+          const newToken = await blackListRepository.checkToken(token);
+          expect(newToken).toBeTruthy();
+        });
+
+      await agent.post('/auth/logout').set('Cookie', cookie).expect(401);
+    });
+  });
+
+  describe('test post  "/me" endpoint', () => {
+    it('should return user data', async () => {
+      const bearer_1 = `Bearer ${token}`;
+      return request(app.getHttpServer())
+        .get('/auth/me')
+        .set('Authorization', bearer_1)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.login).toBe(newUser1.login);
+        });
     });
   });
 });

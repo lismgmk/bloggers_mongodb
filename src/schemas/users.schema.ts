@@ -18,25 +18,21 @@ class EmailConfirmation extends Document {
   confirmationCode: string;
   @Prop({
     type: String,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   expirationDate: string;
   @Prop({
     type: Boolean,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   isConfirmed: boolean;
   @Prop({
     type: Number,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   attemptCount: number;
 }
 
-// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ _id: false })
 class AccountData extends Document {
   @Prop({
@@ -71,19 +67,16 @@ class AccountData extends Document {
   passwordHash: string;
   @Prop({
     type: String,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   createdAt: string;
   @Prop({
     type: String,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   userIp: string;
 }
 
-// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ expires: 'users' })
 export class User extends Document {
   @Prop({ type: AccountData, required: true })

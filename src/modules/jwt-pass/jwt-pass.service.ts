@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { ObjectId } from 'mongoose';
-import { UsersService } from '../modules/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class JwtPassService {
   constructor(
-    private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -16,13 +14,18 @@ export class JwtPassService {
   verifyJwt(token: string) {
     return this.jwtService.verify(token);
   }
+  decodeJwt(token: string) {
+    return this.jwtService.decode(token);
+  }
 
+  async createPassBcrypt(password: string) {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  }
   async checkPassBcrypt(password: string, hash: string) {
-    const isMatch = await bcrypt.compare(password, hash);
     return await bcrypt.compare(password, hash);
   }
 
-  // async createJwt(id: ObjectId, expiresIn: string) {
   async createJwt(id: ObjectId, expiresIn: string) {
     const secret = this.configService.get<string>('SECRET');
     const payload = { id };
