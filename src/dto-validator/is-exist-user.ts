@@ -16,6 +16,7 @@ export class isExistValidator implements ValidatorConstraintInterface {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
+    console.log('fffffffffffffffffff');
     const filter = {};
     filter[args.property] = value;
     const count = await this.userModel.findOne(filter);
