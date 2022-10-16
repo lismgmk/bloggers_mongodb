@@ -16,9 +16,9 @@ export class CreateUserDto {
   @Length(6, 20, { message: FIELD_LENGTH_VALIDATION_ERROR })
   readonly password: string;
 
-  @UserExists({
-    message: FIELD_EXIST_VALIDATION_ERROR,
-  })
+  // @UserExists({
+  //   message: FIELD_EXIST_VALIDATION_ERROR,
+  // })
   @IsEmail({ message: FIELD_EMAIL_VALIDATION_ERROR })
   readonly email: string;
 }
