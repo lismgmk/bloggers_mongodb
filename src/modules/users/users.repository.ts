@@ -84,10 +84,14 @@ export class UsersRepository {
   //
 
   async getUserByLogin(login: string) {
-    return this.userModel.findOne({ 'accountData.userName': { $eq: login } });
+    return await this.userModel
+      .findOne({ 'accountData.userName': { $eq: login } })
+      .exec();
   }
   async getUserByEmail(email: string) {
-    return this.userModel.findOne({ 'accountData.email': { $eq: email } });
+    return await this.userModel
+      .findOne({ 'accountData.email': { $eq: email } })
+      .exec();
   }
   async getUserById(id: string | ObjectId) {
     return this.userModel.findById(id);

@@ -7,7 +7,6 @@ import {
   FIELD_EMAIL_VALIDATION_ERROR,
 } from '../consts/ad-validation-const';
 
-// @UseFilters(new ValidationBodyExceptionFilter())
 @Schema({ _id: false })
 class EmailConfirmation extends Document {
   @Prop({
