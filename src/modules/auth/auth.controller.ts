@@ -38,12 +38,11 @@ export class AuthController {
   @UseFilters(new CommonErrorFilter())
   async createUser(
     @Ip() userIp: string,
-    @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
+    @Body(new CustomValidationPipe()) createUser: CreateUserDto,
   ) {
-    console.log(createUserDto);
-    return this.authService.registration({ ...createUserDto, userIp });
+    // await this.authService.checkLoginEmail(createUser.login, createUser.email);
+    return this.authService.registration({ ...createUser, userIp });
   }
-
   @HttpCode(200)
   @Post('/refresh-token')
   @UseFilters(new ValidationBodyExceptionFilter())

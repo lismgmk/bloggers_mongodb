@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId, Model } from 'mongoose';
@@ -125,4 +129,14 @@ export class AuthService {
       createdAt: currentUser.accountData.createdAt,
     } as IRegistrationConfirmationResponse;
   }
+  // async checkLoginEmail(login: string, email: string) {
+  //   const checkLogin = (await this.usersRepository.getUserByLogin(
+  //     login,
+  //   )) as User;
+
+  //   const checkEmail = await this.usersRepository.getUserByEmail(email);
+  //   if (checkEmail || checkLogin) {
+  //     throw new BadRequestException();
+  //   }
+  // }
 }
