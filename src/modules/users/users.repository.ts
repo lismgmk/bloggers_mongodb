@@ -94,7 +94,7 @@ export class UsersRepository {
       .exec();
   }
   async getUserById(id: string | ObjectId) {
-    return this.userModel.findById(id);
+    return this.userModel.findById(id).exec();
   }
   //
   // async updateCodeByEmail(email: string, code: string) {

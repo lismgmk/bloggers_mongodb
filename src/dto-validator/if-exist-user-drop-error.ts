@@ -18,7 +18,7 @@ export class IfExistUserDropErrorValidator
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
-    let fieldName;
+    let fieldName: string;
     if (args.property === 'login') {
       fieldName = `accountData.userName`;
     } else {
@@ -38,7 +38,7 @@ export class IfExistUserDropErrorValidator
 export function ForExistsUserError(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'UserExists',
+      name: 'IfExistUserDropErrorValidator',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
