@@ -1,5 +1,4 @@
-import { IPagination } from 'src/modules/users/dto/user-interfaces';
-import { pageSize } from './../test-params/test-values';
+import { IPagination } from 'global-dto/common-interfaces';
 
 export interface paramsDto {
   totalCount: number;
@@ -12,7 +11,7 @@ export const paginationBuilder = (params: paramsDto): IPagination => {
   return {
     pagesCount: totalPages,
     page: params.pageNumber,
-    pageSize,
+    pageSize: params.pageSize,
     totalCount: params.totalCount,
   };
 };

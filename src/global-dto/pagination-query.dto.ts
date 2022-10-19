@@ -1,0 +1,26 @@
+import { Transform } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { INCORRECT_TYPE_VALIDATION_ERROR } from 'consts/ad-validation-const';
+import { toNumber } from 'helpers/helper-transform-number';
+
+export enum SortDirection {
+  desc,
+  asc,
+}
+
+export class PaginationQueryDto {
+  @IsEnum(SortDirection, { message: INCORRECT_TYPE_VALIDATION_ERROR })
+  @IsOptional()
+  readonly sortDirection: keyof typeof SortDirection;
+
+  @IsInt()
+  @Transform(({ value }) => toNumber(value, { default: 1 }))
+  // @Type(() => Number)
+  @IsOptional()
+  public pageNumber = 1;
+
+  @Transform(({ value }) => toNumber(value, { default: 10 }))
+  @IsInt()
+  @IsOptional()
+  readonly pageSize: number = 10;
+}

@@ -49,7 +49,6 @@ export class UsersController {
   @Get()
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
-  @UsePipes(new ValidationPipe({ transform: true }))
   async getAllUsers(@Query() queryParams: GetAllUsersQueryDto) {
     return await this.usersService.getAllUsers(queryParams);
   }

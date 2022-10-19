@@ -12,8 +12,8 @@ import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
-import { IfExistUserDropErrorValidator } from 'src/dto-validator/if-exist-user-drop-error';
-import { IfNotFoundByIdDropError } from 'src/dto-validator/if-not-found-dy-id-drop-error';
+import { IfNotFoundByIdDropError } from 'dto-validator/if-not-found-dy-id-drop-error';
+import { IfExistUserDropErrorValidator } from 'dto-validator/if-exist-user-drop-error';
 
 @Module({
   imports: [

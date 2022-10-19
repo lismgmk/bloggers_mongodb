@@ -3,18 +3,14 @@ import { PaginationQueryDto } from 'global-dto/pagination-query.dto';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../../consts/ad-validation-const';
 
 export enum SortByField {
-  userName,
+  name,
   createdAt,
-  email,
-  attemptCount,
+  youtubeUrl,
 }
 
-export class GetAllUsersQueryDto extends PaginationQueryDto {
+export class GetAllBlogsQueryDto extends PaginationQueryDto {
   @IsOptional()
-  readonly searchLoginTerm: string;
-
-  @IsOptional()
-  readonly searchEmailTerm: string;
+  readonly searchNameTerm: string;
 
   @IsEnum(SortByField, { message: INCORRECT_TYPE_VALIDATION_ERROR })
   @IsOptional()

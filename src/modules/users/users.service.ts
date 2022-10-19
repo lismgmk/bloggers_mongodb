@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns';
+import { IPaginationResponse } from 'global-dto/common-interfaces';
+import { paginationBuilder, paramsDto } from 'helpers/pagination-builder';
 import { Model } from 'mongoose';
-import { paginationBuilder, paramsDto } from 'src/helpers/pagination-builder';
 import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
 import { JwtPassService } from '../jwt-pass/jwt-pass.service';
 import { GetAllUsersQueryDto } from './dto/get-all-user-query.dto';
-import { IPaginationResponse, IUser } from './dto/user-interfaces';
+import { IUser } from './dto/user-interfaces';
 import {
   ICreatedUserDto,
   IResponseCreateUser,
