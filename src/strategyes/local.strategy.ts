@@ -17,7 +17,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(username: string, password: string): Promise<any> {
-    console.log('username');
     const user = (await this.usersRepository.getUserByLogin(username)) as User;
     const isMatchPass = await this.jwtPassService.checkPassBcrypt(
       password,

@@ -10,6 +10,8 @@ import {
   Delete,
   Param,
   HttpCode,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
@@ -17,6 +19,7 @@ import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ParamDTO } from './dto/delete-user.dto';
+import { GetAllUsersQueryDto } from './dto/get-all-user-query.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -41,5 +44,12 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteUser(@Param() id: ParamDTO) {
     return await this.usersService.deleteUserById(id.id);
+  }
+
+  @Get()
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  async getAllUsers(@Query() queryParams: GetAllUsersQueryDto) {
+    return await this.usersService.getAllUsers(queryParams);
   }
 }

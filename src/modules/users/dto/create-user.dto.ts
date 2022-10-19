@@ -1,5 +1,5 @@
 import { Length, IsEmail } from 'class-validator';
-import { ForExistsUserError } from 'src/dto-validator/if-exist-user-drop-error';
+import { ForExistsUserError } from 'dto-validator/if-exist-user-drop-error';
 import {
   FIELD_EXIST_VALIDATION_ERROR,
   FIELD_LENGTH_VALIDATION_ERROR,

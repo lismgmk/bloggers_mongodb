@@ -1,3 +1,4 @@
+import { UsersRepository } from '../modules/users/users.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -12,13 +13,14 @@ import { User } from '../schemas/users.schema';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
-export class UnExistValidator implements ValidatorConstraintInterface {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+export class IfNotFoundByIdDropError implements ValidatorConstraintInterface {
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private usersRepository: UsersRepository,
+  ) {}
 
-  async validate(value: any, args: ValidationArguments) {
-    const filter = {};
-    filter[args.property] = value;
-    const count = await this.userModel.findOne(filter);
+  async validate(value: any) {
+    const count = await this.usersRepository.getUserById(value);
     if (!count) {
       throw new NotFoundException();
     } else {
@@ -31,14 +33,14 @@ export class UnExistValidator implements ValidatorConstraintInterface {
   }
 }
 
-export function UserUnExists(validationOptions?: ValidationOptions) {
+export function ForUnExistsIdUserError(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'UserExists',
+      name: 'IfNotFoundByIdDropError',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: UnExistValidator,
+      validator: IfNotFoundByIdDropError,
     });
   };
 }

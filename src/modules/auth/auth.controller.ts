@@ -40,7 +40,6 @@ export class AuthController {
     @Ip() userIp: string,
     @Body(new CustomValidationPipe()) createUser: CreateUserDto,
   ) {
-    // await this.authService.checkLoginEmail(createUser.login, createUser.email);
     return this.authService.registration({ ...createUser, userIp });
   }
   @HttpCode(200)

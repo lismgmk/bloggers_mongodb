@@ -1,8 +1,8 @@
 import { IsMongoIdObject } from '../../../dto-validator/is-mongid-obj';
-import { UserUnExists } from '../../../dto-validator/is-unexist-user';
+import { ForUnExistsIdUserError } from '../../../dto-validator/if-not-found-dy-id-drop-error';
 
 export class ParamDTO {
   @IsMongoIdObject()
-  @UserUnExists()
+  @ForUnExistsIdUserError()
   id: string;
 }
