@@ -9,7 +9,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { GetAllBlogsQueryDto } from './dto/get-all-blogs-query.dto';
+import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
@@ -22,7 +22,6 @@ export class BlogsController {
 
   @Get()
   @HttpCode(200)
-  // @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   async getAllBlogs(@Query() queryParams: GetAllBlogsQueryDto) {
     return await this.blogsService.getAllBlogs(queryParams);

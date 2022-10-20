@@ -1,57 +1,64 @@
-import { IBlog } from './dto/blogs-intergaces';
-import { Blogs } from 'schemas/blogs.schema';
 import { Injectable } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { GetAllBlogsQueryDto } from './dto/get-all-blogs-query.dto';
 import { IPaginationResponse } from 'global-dto/common-interfaces';
-import { paginationBuilder, paramsDto } from 'helpers/pagination-builder';
+import { Model } from 'mongoose';
+import { Blogs } from 'schemas/blogs.schema';
+import { IBlog } from './dto/blogs-intergaces';
 import { CreateBlogDto } from './dto/create-blog.dto';
+import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 
 @Injectable()
 export class BlogsService {
-  constructor(@InjectModel(Blogs.name) private blogsModel: Model<Blogs>) {}
+  constructor(
+    @InjectModel(Blogs.name) private blogsModel: Model<Blogs>,
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
-    const namePart = new RegExp(queryParams.searchNameTerm);
+    return await this.queryBus.execute(queryParams);
 
-    const filter = {
-      name: namePart,
-    };
+    // const namePart = new RegExp(queryParams.searchNameTerm);
 
-    const allBlogs: IBlog[] = (
-      await this.blogsModel
-        .find(filter)
-        .sort({ [queryParams.sortBy]: queryParams.sortDirection })
-        .skip(
-          queryParams.pageNumber > 0
-            ? (queryParams.pageNumber - 1) * queryParams.pageSize
-            : 0,
-        )
-        .limit(queryParams.pageSize)
-        .lean()
-    ).map((i) => {
-      return {
-        id: i._id,
-        name: i.name,
-        createdAt: i.createdAt,
-        youtubeUrl: i.youtubeUrl,
-      };
-    });
+    // const filter = {
+    //   name: namePart,
+    // };
 
-    const totalCount = await this.blogsModel.countDocuments().exec();
-    const paginationParams: paramsDto = {
-      totalCount: totalCount,
-      pageSize: queryParams.pageSize,
-      pageNumber: queryParams.pageNumber,
-    };
-    return {
-      ...paginationBuilder(paginationParams),
-      items: allBlogs,
-    };
+    // const allBlogs: IBlog[] = (
+    //   await this.blogsModel
+    //     .find(filter)
+    //     .sort({ [queryParams.sortBy]: queryParams.sortDirection })
+    //     .skip(
+    //       queryParams.pageNumber > 0
+    //         ? (queryParams.pageNumber - 1) * queryParams.pageSize
+    //         : 0,
+    //     )
+    //     .limit(queryParams.pageSize)
+    //     .lean()
+    // ).map((i) => {
+    //   return {
+    //     id: i._id,
+    //     name: i.name,
+    //     createdAt: i.createdAt,
+    //     youtubeUrl: i.youtubeUrl,
+    //   };
+    // });
+
+    // const totalCount = await this.blogsModel.countDocuments().exec();
+    // const paginationParams: paramsDto = {
+    //   totalCount: totalCount,
+    //   pageSize: queryParams.pageSize,
+    //   pageNumber: queryParams.pageNumber,
+    // };
+    // return {
+    //   ...paginationBuilder(paginationParams),
+    //   items: allBlogs,
+    // };
   }
+
   async createBlog(dto: CreateBlogDto) {
     const newBlog = new this.blogsModel({
       name: dto.name,

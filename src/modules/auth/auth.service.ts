@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId, Model } from 'mongoose';
@@ -18,10 +14,12 @@ import {
 } from './dto/auth-interfaces.dto';
 import { v4 } from 'uuid';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly commandBus: CommandBus,
     private jwtPassService: JwtPassService,
     private configService: ConfigService,
     private mailService: MailService,
@@ -46,6 +44,10 @@ export class AuthService {
   }
 
   async registration(dto: IRegistrationDto) {
+    // await this.commandBus.execute<IRegistrationDto, void>(
+    //   new RegistrationCommand(dto.login, dto.password, dto.email, dto.userIp),
+    // );
+
     const confirmationCode = v4();
     const newUserDto = {
       login: dto.login,
@@ -129,14 +131,4 @@ export class AuthService {
       createdAt: currentUser.accountData.createdAt,
     } as IRegistrationConfirmationResponse;
   }
-  // async checkLoginEmail(login: string, email: string) {
-  //   const checkLogin = (await this.usersRepository.getUserByLogin(
-  //     login,
-  //   )) as User;
-
-  //   const checkEmail = await this.usersRepository.getUserByEmail(email);
-  //   if (checkEmail || checkLogin) {
-  //     throw new BadRequestException();
-  //   }
-  // }
 }
