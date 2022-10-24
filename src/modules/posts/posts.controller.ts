@@ -50,13 +50,26 @@ export class PostsController {
 
   @Put(':postId/like-status')
   @HttpCode(204)
-  @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
   async addLikeStatusePost(
-    @Param() postId: IdParamPostDTO,
-    @GetUser() user: User,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    postId: IdParamPostDTO,
+    @GetUser(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    user: User,
     @Body(new CustomValidationPipe())
     likeStatus: LikeStatusDto,
   ) {

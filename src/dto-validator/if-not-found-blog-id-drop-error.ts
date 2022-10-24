@@ -14,7 +14,6 @@ export class IfNotFoundBlogIdDropError implements ValidatorConstraintInterface {
   constructor(private blogsService: BlogsService) {}
 
   async validate(value: any) {
-    console.log('validation');
     let count;
     if (value) {
       count = await this.blogsService.getBlogById(value);

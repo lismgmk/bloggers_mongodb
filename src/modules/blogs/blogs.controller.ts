@@ -29,7 +29,16 @@ export class BlogsController {
   @Get()
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
-  async getAllBlogs(@Query() queryParams: GetAllBlogsQueryDto) {
+  async getAllBlogs(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    queryParams: GetAllBlogsQueryDto,
+  ) {
     return await this.blogsService.getAllBlogs(queryParams);
   }
 
@@ -55,9 +64,16 @@ export class BlogsController {
   @HttpCode(204)
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
-    @Param() id: IdBlogParamDTO,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdBlogParamDTO,
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
   ) {
     return await this.blogsService.changeBlog({ id: id.id, ...createBlogDto });
