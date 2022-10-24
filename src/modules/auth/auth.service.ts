@@ -1,20 +1,20 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CommandBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { ObjectId, Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
+import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
-import { JwtPassService } from '../jwt-pass/jwt-pass.service';
-import { MailService } from '../mail/mail.service';
+import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
+import { MailService } from '../common-services/mail/mail.service';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 import { BlackListRepository } from './black-list.repository';
 import {
-  IRegistrationDto,
   IRegistrationConfirmationResponse,
+  IRegistrationDto,
 } from './dto/auth-interfaces.dto';
-import { v4 } from 'uuid';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
-import { CommandBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class AuthService {

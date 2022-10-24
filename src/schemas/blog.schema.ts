@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { FIELD_REQUIRED_VALIDATION_ERROR } from '../consts/ad-validation-const';
 
-@Schema({ expires: 'blogs' })
-export class Blogs extends Document {
+@Schema({ expires: 'blog' })
+export class Blog extends Document {
   @Prop({ required: [true, FIELD_REQUIRED_VALIDATION_ERROR], type: String })
   name: string;
   @Prop({
@@ -26,4 +26,4 @@ export class Blogs extends Document {
   createdAt: string;
 }
 
-export const BlogsSchema = SchemaFactory.createForClass(Blogs);
+export const BlogSchema = SchemaFactory.createForClass(Blog);

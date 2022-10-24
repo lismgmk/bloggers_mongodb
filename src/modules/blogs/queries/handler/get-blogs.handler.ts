@@ -4,12 +4,12 @@ import { IPaginationResponse } from 'global-dto/common-interfaces';
 import { paginationBuilder, paramsDto } from 'helpers/pagination-builder';
 import { IBlog } from 'modules/blogs/dto/blogs-intergaces';
 import { Model } from 'mongoose';
-import { Blogs } from 'schemas/blogs.schema';
+import { Blog } from 'schemas/blog.schema';
 import { GetAllBlogsQueryDto } from '../impl/get-all-blogs-query.dto';
 
 @QueryHandler(GetAllBlogsQueryDto)
 export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
-  constructor(@InjectModel(Blogs.name) private blogsModel: Model<Blogs>) {}
+  constructor(@InjectModel(Blog.name) private blogsModel: Model<Blog>) {}
   async execute(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {

@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { IPaginationResponse } from 'global-dto/common-interfaces';
 import { Model } from 'mongoose';
-import { Blogs } from 'schemas/blogs.schema';
+import { Blog } from 'schemas/blog.schema';
 import { IBlog } from './dto/blogs-intergaces';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
@@ -11,7 +11,7 @@ import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 @Injectable()
 export class BlogsService {
   constructor(
-    @InjectModel(Blogs.name) private blogsModel: Model<Blogs>,
+    @InjectModel(Blog.name) private blogModel: Model<Blog>,
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
   ) {}
@@ -60,12 +60,12 @@ export class BlogsService {
   }
 
   async createBlog(dto: CreateBlogDto) {
-    const newBlog = new this.blogsModel({
+    const newBlog = new this.blogModel({
       name: dto.name,
       youtubeUrl: dto.youtubeUrl,
       createdAt: new Date(),
     });
-    const createdBlog = (await this.blogsModel.create(newBlog)) as Blogs;
+    const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
     return {
       id: createdBlog._id.toString(),
       name: createdBlog.name,
@@ -73,4 +73,22 @@ export class BlogsService {
       createdAt: createdBlog.createdAt,
     } as IBlog;
   }
+
+  async getBlogById(id: string) {
+    return await this.blogModel.findById(id).exec();
+  }
+
+  async deleteBlogById(id: string) {
+    return this.blogModel.findByIdAndDelete(id);
+  }
+
+  async changeBlog(dto: CreateBlogDto & { id: string }) {
+    const blog = (await this.blogModel.findById(dto.id)) as Blog;
+    blog.name = dto.name;
+    blog.youtubeUrl = dto.youtubeUrl;
+    blog.save();
+    return;
+  }
+
+  // async getPostsForBloggerId(id: string) {}
 }

@@ -1,4 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
+import { SendEmailHandler } from '../handlers/send-email.handler';
 
 export class SendEmailEvent extends AggregateRoot {
   constructor(
@@ -7,5 +8,9 @@ export class SendEmailEvent extends AggregateRoot {
     public readonly confirmationCode: string,
   ) {
     super();
+  }
+  startSend() {
+    // logic
+    this.apply(SendEmailHandler);
   }
 }

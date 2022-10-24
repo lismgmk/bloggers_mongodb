@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from 'consts/ad-validation-const';
 import { toNumber } from 'helpers/helper-transform-number';
@@ -15,12 +15,13 @@ export class PaginationQueryDto {
 
   @IsInt()
   @Transform(({ value }) => toNumber(value, { default: 1 }))
-  // @Type(() => Number)
+  @Type(() => Number)
   @IsOptional()
   public pageNumber = 1;
 
   @Transform(({ value }) => toNumber(value, { default: 10 }))
   @IsInt()
+  @Type(() => Number)
   @IsOptional()
   readonly pageSize: number = 10;
 }

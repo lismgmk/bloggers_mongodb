@@ -1,5 +1,4 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { SendEmailEvent } from 'modules/auth/events/impl/send-email.event';
 import { UsersService } from 'modules/users/users.service';
 import { v4 } from 'uuid';
 import { RegistrationCommand } from '../impl/registration.command';
@@ -21,10 +20,11 @@ export class RegistrationHandler
       password: command.password,
       userIp: command.userIp,
     };
-    const mail = this.publisher.mergeObjectContext(
-      new SendEmailEvent(command.email, command.login, confirmationCode),
-    );
-    mail.commit();
+    // const mail = this.eventPublisher.mergeObjectContext(
+    //   new SendEmailEvent(command.email, command.login, confirmationCode),
+    // );
+    // mail.startSend();
+    // mail.commit();
     await this.usersService.createUser(newUserDto);
   }
 }

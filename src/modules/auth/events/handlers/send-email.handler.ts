@@ -1,6 +1,6 @@
 import { IEventHandler } from '@nestjs/cqrs';
 import { EventsHandler } from '@nestjs/cqrs/dist/decorators/events-handler.decorator';
-import { MailService } from 'modules/mail/mail.service';
+import { MailService } from 'modules/common-services/mail/mail.service';
 import { SendEmailEvent } from '../impl/send-email.event';
 
 @EventsHandler(SendEmailEvent)

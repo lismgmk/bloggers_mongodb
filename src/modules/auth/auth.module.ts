@@ -12,7 +12,7 @@ import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
 import { User, UserSchema } from '../../schemas/users.schema';
 import { JwtStrategy } from '../../strategyes/jwt.strategy';
 import { LocalStrategy } from '../../strategyes/local.strategy';
-import { JwtPassService } from '../jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';

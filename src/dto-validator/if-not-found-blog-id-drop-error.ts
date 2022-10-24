@@ -1,27 +1,25 @@
-import { UsersRepository } from '../modules/users/users.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import {
+  registerDecorator,
   ValidationArguments,
+  ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationOptions,
-  registerDecorator,
 } from 'class-validator';
-import { Model } from 'mongoose';
-import { User } from '../schemas/users.schema';
+import { BlogsService } from './../modules/blogs/blogs.service';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
-export class IfNotFoundByIdDropError implements ValidatorConstraintInterface {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    private usersRepository: UsersRepository,
-  ) {}
+export class IfNotFoundBlogIdDropError implements ValidatorConstraintInterface {
+  constructor(private blogsService: BlogsService) {}
 
   async validate(value: any) {
-    const count = await this.usersRepository.getUserById(value);
-    if (!count) {
+    console.log('validation');
+    let count;
+    if (value) {
+      count = await this.blogsService.getBlogById(value);
+    }
+    if (!count || !value) {
       throw new NotFoundException();
     } else {
       return true;
@@ -33,14 +31,14 @@ export class IfNotFoundByIdDropError implements ValidatorConstraintInterface {
   }
 }
 
-export function ForUnExistsIdUserError(validationOptions?: ValidationOptions) {
+export function ForUnExistsIdBlogError(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
       name: 'IfNotFoundByIdDropError',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: IfNotFoundByIdDropError,
+      validator: IfNotFoundBlogIdDropError,
     });
   };
 }
