@@ -7,12 +7,12 @@ import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
 import { UserSchema, User } from '../../schemas/users.schema';
-import { JwtPassService } from '../jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
-import { IfNotFoundByIdDropError } from 'dto-validator/if-not-found-dy-id-drop-error';
+import { IfNotFoundUserIdDropError } from 'dto-validator/if-not-found-user-id-drop-error';
 import { IfExistUserDropErrorValidator } from 'dto-validator/if-exist-user-drop-error';
 
 @Module({
@@ -28,7 +28,7 @@ import { IfExistUserDropErrorValidator } from 'dto-validator/if-exist-user-drop-
     UsersService,
     BasicStrategy,
     IfExistUserDropErrorValidator,
-    IfNotFoundByIdDropError,
+    IfNotFoundUserIdDropError,
     isMongoObjIdValidator,
     UsersRepository,
     JwtPassService,

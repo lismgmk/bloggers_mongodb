@@ -19,8 +19,9 @@ import { CommentsModule } from './comments/comments.module';
 import { PostsModule } from './posts/posts.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
-import { MailModule } from './mail/mail.module';
-import { JwtPassModule } from './jwt-pass/jwt-pass.module';
+import { MailModule } from './common-services/mail/mail.module';
+import { JwtPassModule } from './common-services/jwt-pass/jwt-pass.module';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { JwtPassModule } from './jwt-pass/jwt-pass.module';
     ]),
     MailModule,
     JwtPassModule,
+    LikesModule,
   ],
   controllers: [],
   providers: [IpUsersRepository],
