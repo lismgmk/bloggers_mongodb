@@ -15,6 +15,7 @@ import { LikeInfoRequest } from 'global-dto/like-info.request';
 import { User } from 'schemas/users.schema';
 import { LikesService } from 'modules/likes/likes.service';
 import { LikeStatusEnum } from 'global-dto/like-status.dto';
+import { IPostsRequest } from './dto/all-posts-response';
 
 @Injectable()
 export class PostsService {
@@ -27,60 +28,113 @@ export class PostsService {
     queryParams: GetAllPostsdDto, // : Promise<IPaginationResponse<Post>>
   ) {
     const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection;
-
-    return await this.postModel.aggregate([
-      {
-        $sort: {
-          [sortField]: 1,
+    const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
+    const myStatus = 'None';
+    return (await this.postModel
+      .aggregate([
+        {
+          $sort: {
+            [sortField]: sortValue,
+          },
         },
-      },
-      {
-        $skip:
-          queryParams.pageNumber > 0
-            ? (queryParams.pageNumber - 1) * queryParams.pageSize
-            : 0,
-      },
-      { $limit: queryParams.pageSize },
-      {
-        $lookup: {
-          from: 'Like',
-          localField: '_id',
-          foreignField: 'blogId',
-          as: 'likes',
+        {
+          $skip:
+            queryParams.pageNumber > 0
+              ? (queryParams.pageNumber - 1) * queryParams.pageSize
+              : 0,
         },
-      },
-    ]);
+        { $limit: queryParams.pageSize },
+        {
+          $project: {
+            _id: 0,
+            id: '$_id',
+            title: '$title',
+            shortDescription: '$shortDescription',
+            content: '$content',
+            blogId: '$blogId',
+            blogName: '$blogName',
+            createdAt: '$createdAt',
+          },
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            localField: 'id',
+            foreignField: 'postId',
+            as: 'extendedLikesInfo.newestLikes',
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$status', 'Dislike'] }],
+                  },
+                },
+              },
+              { $sort: { createdAt: 1 } },
+              { $limit: 3 },
+              {
+                $project: {
+                  _id: 0,
+                  addedAt: '$createdAt',
+                  userId: '$blogId',
+                  login: '$login',
+                },
+              },
+            ],
+          },
+        },
 
-    // const allPosts: Post[] = (
-    //   await this.postModel
-    //     .find({})
-    //     .sort({ [queryParams.sortBy]: queryParams.sortDirection })
-    //     .skip(
-    //       queryParams.pageNumber > 0
-    //         ? (queryParams.pageNumber - 1) * queryParams.pageSize
-    //         : 0,
-    //     )
-    //     .limit(queryParams.pageSize)
-    //     .lean()
-    // ).map((i) => {
-    //   return {
-    //     id: i._id,
-    //     title: i.title,
-    //     createdAt: i.createdAt,
-    //     youtubeUrl: i.youtubeUrl,
-    //   };
-    // });
-    // const totalCount = await this.blogsModel.countDocuments().exec();
-    // const paginationParams: paramsDto = {
-    //   totalCount: totalCount,
-    //   pageSize: queryParams.pageSize,
-    //   pageNumber: queryParams.pageNumber,
-    // };
-    // return {
-    //   ...paginationBuilder(paginationParams),
-    //   items: allBlogs,
-    // };
+        {
+          $lookup: {
+            from: 'likes',
+            localField: 'id',
+            foreignField: 'postId',
+            as: 'extendedLikesInfo.likeCount',
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$status', 'Like'] }],
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          $set: {
+            'extendedLikesInfo.likeCount': {
+              $size: '$extendedLikesInfo.likeCount',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            localField: 'id',
+            foreignField: 'postId',
+            as: 'extendedLikesInfo.dislikeCount',
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$status', 'Dislike'] }],
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          $set: {
+            'extendedLikesInfo.dislikeCount': {
+              $size: '$extendedLikesInfo.dislikeCount',
+            },
+            'extendedLikesInfo.myStatus': myStatus,
+          },
+        },
+      ])
+      .exec()) as IPostsRequest;
   }
 
   async getPostById(id: string | ObjectId) {
@@ -141,22 +195,3 @@ export class PostsService {
     };
   }
 }
-//  "id": "string",
-//       "title": "string",
-//       "shortDescription": "string",
-//       "content": "string",
-//       "blogId": "string",
-//       "blogName": "string",
-//       "createdAt": "2022-10-23T18:54:02.535Z",
-//       "extendedLikesInfo": {
-//         "likesCount": 0,
-//         "dislikesCount": 0,
-//         "myStatus": "None",
-//         "newestLikes": [
-//           {
-//             "addedAt": "2022-10-23T18:54:02.535Z",
-//             "userId": "string",
-//             "login": "string"
-//           }
-//         ]
-//       }

@@ -57,8 +57,6 @@ export class PostsController {
     @Param(
       new ValidationPipe({
         transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
       }),
     )
     postId: IdParamPostDTO,
@@ -76,7 +74,7 @@ export class PostsController {
     return await this.postsService.addLikeStatusePost(
       user,
       likeStatus.likeStatus,
-      postId.id,
+      postId.postId,
     );
   }
 }
