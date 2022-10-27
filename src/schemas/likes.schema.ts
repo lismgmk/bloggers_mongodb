@@ -24,7 +24,7 @@ export class Like extends Document {
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
     enum: [LikeStatus, INCORRECT_TYPE_VALIDATION_ERROR],
   })
-  myStatus: string;
+  status: string;
 
   @Prop({
     type: String,
@@ -48,10 +48,9 @@ export class Like extends Document {
 
   @Prop({
     type: SchemaTypes.ObjectId,
-    ref: 'Blog',
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
-  blogId: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export const LikeSchema = SchemaFactory.createForClass(Like);

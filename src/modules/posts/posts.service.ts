@@ -1,20 +1,20 @@
-import { likeStatusType } from './../likes/dto/like-interfaces';
-import { Blog } from 'schemas/blog.schema';
-import { BlogsService } from './../blogs/blogs.service';
 import {
-  Injectable,
   BadRequestException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { LikeInfoRequest } from 'global-dto/like-info.request';
+import { LikeStatusEnum } from 'global-dto/like-status.dto';
+import { LikesService } from 'modules/likes/likes.service';
 import { Model, ObjectId } from 'mongoose';
+import { Blog } from 'schemas/blog.schema';
 import { Posts } from 'schemas/posts.schema';
+import { User } from 'schemas/users.schema';
+import { BlogsService } from './../blogs/blogs.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
-import { LikeInfoRequest } from 'global-dto/like-info.request';
-import { User } from 'schemas/users.schema';
-import { LikesService } from 'modules/likes/likes.service';
-import { LikeStatusEnum } from 'global-dto/like-status.dto';
+import { PostsQueryRepository } from './posts.query.repository';
 
 @Injectable()
 export class PostsService {
@@ -22,65 +22,10 @@ export class PostsService {
     @InjectModel(Posts.name) private postModel: Model<Posts>,
     private blogsService: BlogsService,
     private likesService: LikesService,
+    private postsQueryRepository: PostsQueryRepository,
   ) {}
-  async getAllPosts(
-    queryParams: GetAllPostsdDto, // : Promise<IPaginationResponse<Post>>
-  ) {
-    const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection;
-
-    return await this.postModel.aggregate([
-      {
-        $sort: {
-          [sortField]: 1,
-        },
-      },
-      {
-        $skip:
-          queryParams.pageNumber > 0
-            ? (queryParams.pageNumber - 1) * queryParams.pageSize
-            : 0,
-      },
-      { $limit: queryParams.pageSize },
-      {
-        $lookup: {
-          from: 'Like',
-          localField: '_id',
-          foreignField: 'blogId',
-          as: 'likes',
-        },
-      },
-    ]);
-
-    // const allPosts: Post[] = (
-    //   await this.postModel
-    //     .find({})
-    //     .sort({ [queryParams.sortBy]: queryParams.sortDirection })
-    //     .skip(
-    //       queryParams.pageNumber > 0
-    //         ? (queryParams.pageNumber - 1) * queryParams.pageSize
-    //         : 0,
-    //     )
-    //     .limit(queryParams.pageSize)
-    //     .lean()
-    // ).map((i) => {
-    //   return {
-    //     id: i._id,
-    //     title: i.title,
-    //     createdAt: i.createdAt,
-    //     youtubeUrl: i.youtubeUrl,
-    //   };
-    // });
-    // const totalCount = await this.blogsModel.countDocuments().exec();
-    // const paginationParams: paramsDto = {
-    //   totalCount: totalCount,
-    //   pageSize: queryParams.pageSize,
-    //   pageNumber: queryParams.pageNumber,
-    // };
-    // return {
-    //   ...paginationBuilder(paginationParams),
-    //   items: allBlogs,
-    // };
+  async getAllPosts(queryParams: GetAllPostsdDto) {
+    return this.postsQueryRepository.queryAllPostsPagination(queryParams, '');
   }
 
   async getPostById(id: string | ObjectId) {
@@ -118,7 +63,8 @@ export class PostsService {
       title: dto.title,
       content: dto.content,
       shortDescription: dto.shortDescription,
-      bloggerId: dto.blogId,
+      blogId: dto.blogId,
+      blogName: currentBlog.name,
       createdAt: new Date(),
     });
     const createdPost = (await this.postModel.create(newPost)) as Posts;
@@ -141,22 +87,3 @@ export class PostsService {
     };
   }
 }
-//  "id": "string",
-//       "title": "string",
-//       "shortDescription": "string",
-//       "content": "string",
-//       "blogId": "string",
-//       "blogName": "string",
-//       "createdAt": "2022-10-23T18:54:02.535Z",
-//       "extendedLikesInfo": {
-//         "likesCount": 0,
-//         "dislikesCount": 0,
-//         "myStatus": "None",
-//         "newestLikes": [
-//           {
-//             "addedAt": "2022-10-23T18:54:02.535Z",
-//             "userId": "string",
-//             "login": "string"
-//           }
-//         ]
-//       }

@@ -16,6 +16,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
+import { GetAllPostsdDto } from 'modules/posts/dto/get-all-posts.dto';
 import { CustomValidationPipe } from 'pipes/validation.pipe';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -57,7 +58,7 @@ export class BlogsController {
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async getBloggerById(@Param() id: IdBlogParamDTO) {
-    return await this.blogsService.getBlogById(id.id);
+    return await this.blogsService.getBlogById(id.blogId);
   }
 
   @Put(':id')
@@ -76,7 +77,10 @@ export class BlogsController {
     id: IdBlogParamDTO,
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
   ) {
-    return await this.blogsService.changeBlog({ id: id.id, ...createBlogDto });
+    return await this.blogsService.changeBlog({
+      id: id.blogId,
+      ...createBlogDto,
+    });
   }
 
   @Delete(':id')
@@ -85,14 +89,30 @@ export class BlogsController {
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteBlog(@Param() id: IdBlogParamDTO) {
-    return await this.blogsService.deleteBlogById(id.id);
+    return await this.blogsService.deleteBlogById(id.blogId);
   }
 
-  @Get('/:bloggerId/posts')
+  @Get(':blogId/posts')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async getPostsForBloggerId(@Param() bloggerId: IdBlogParamDTO) {
-    // return await this.blogsService.getPostsForBloggerId(bloggerId.id);
+  async getPostsForBloggerId(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+      }),
+    )
+    blogId: IdBlogParamDTO,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    )
+    queryParams: GetAllPostsdDto,
+  ) {
+    return await this.blogsService.getPostsForBlogId(
+      queryParams,
+      blogId.blogId,
+    );
   }
 }
