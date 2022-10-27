@@ -12,19 +12,22 @@ export class PostsQueryRepository {
   constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
   async queryAllPostsPagination(
     queryParams: GetAllPostsdDto,
-    userId: string,
     blogId: string = null,
   ) {
     const sortField = queryParams.sortBy;
     const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
-    const matchCondition = blogId
-      ? { blogId: new mongoose.Types.ObjectId(blogId) }
-      : {};
+    const singleCondition: { match: any; unset: string[] } = blogId
+      ? {
+          match: { blogId: new mongoose.Types.ObjectId(blogId) },
+          unset: ['items.total', '_id', 'items.extendedLikesInfo'],
+        }
+      : { match: {}, unset: ['items.total', '_id'] };
+
     return (
       await this.postModel
         .aggregate([
           {
-            $match: matchCondition,
+            $match: singleCondition.match,
             // {
             // _id: blogId,
             // content: '  DDDDDD ',
@@ -174,7 +177,7 @@ export class PostsQueryRepository {
             },
           },
           {
-            $unset: ['items.total', '_id'],
+            $unset: singleCondition.unset,
           },
         ])
         .exec()

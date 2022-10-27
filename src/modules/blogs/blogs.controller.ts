@@ -1,3 +1,4 @@
+import { CreatePostDto } from './../posts/dto/create-post.dto';
 import {
   Body,
   Controller,
@@ -17,6 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
 import { GetAllPostsdDto } from 'modules/posts/dto/get-all-posts.dto';
+import { PostsService } from 'modules/posts/posts.service';
 import { CustomValidationPipe } from 'pipes/validation.pipe';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -25,7 +27,10 @@ import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) {}
+  constructor(
+    private readonly blogsService: BlogsService,
+    private readonly postsService: PostsService,
+  ) {}
 
   @Get()
   @HttpCode(200)
@@ -114,5 +119,26 @@ export class BlogsController {
       queryParams,
       blogId.blogId,
     );
+  }
+
+  @Post(':blogId/posts')
+  @HttpCode(201)
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async createPostsForBloggerId(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+      }),
+    )
+    blogId: IdBlogParamDTO,
+    @Body(new CustomValidationPipe())
+    createPostDto: CreatePostDto,
+  ) {
+    return await this.postsService.createPost({
+      ...createPostDto,
+      ...blogId,
+    });
   }
 }
