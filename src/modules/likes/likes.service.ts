@@ -18,7 +18,7 @@ export class LikesService {
 
   async upDateLikesInfo(dto: ILikeInfo) {
     const filter = {
-      blogId: dto.userId,
+      userId: dto.userId,
       postId: dto.postId,
       commentId: dto.commentId,
       login: dto.login,

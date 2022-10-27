@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { IPaginationResponse } from 'global-dto/common-interfaces';
-import { Model } from 'mongoose';
+import { GetAllPostsdDto } from 'modules/posts/dto/get-all-posts.dto';
+import { PostsQueryRepository } from 'modules/posts/posts.query.repository';
+import { Model, ObjectId } from 'mongoose';
 import { Blog } from 'schemas/blog.schema';
 import { IBlog } from './dto/blogs-intergaces';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -14,49 +16,13 @@ export class BlogsService {
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
+    private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
 
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
     return await this.queryBus.execute(queryParams);
-
-    // const namePart = new RegExp(queryParams.searchNameTerm);
-
-    // const filter = {
-    //   name: namePart,
-    // };
-
-    // const allBlogs: IBlog[] = (
-    //   await this.blogsModel
-    //     .find(filter)
-    //     .sort({ [queryParams.sortBy]: queryParams.sortDirection })
-    //     .skip(
-    //       queryParams.pageNumber > 0
-    //         ? (queryParams.pageNumber - 1) * queryParams.pageSize
-    //         : 0,
-    //     )
-    //     .limit(queryParams.pageSize)
-    //     .lean()
-    // ).map((i) => {
-    //   return {
-    //     id: i._id,
-    //     name: i.name,
-    //     createdAt: i.createdAt,
-    //     youtubeUrl: i.youtubeUrl,
-    //   };
-    // });
-
-    // const totalCount = await this.blogsModel.countDocuments().exec();
-    // const paginationParams: paramsDto = {
-    //   totalCount: totalCount,
-    //   pageSize: queryParams.pageSize,
-    //   pageNumber: queryParams.pageNumber,
-    // };
-    // return {
-    //   ...paginationBuilder(paginationParams),
-    //   items: allBlogs,
-    // };
   }
 
   async createBlog(dto: CreateBlogDto) {
@@ -74,11 +40,11 @@ export class BlogsService {
     } as IBlog;
   }
 
-  async getBlogById(id: string) {
+  async getBlogById(id: string | ObjectId) {
     return await this.blogModel.findById(id).exec();
   }
 
-  async deleteBlogById(id: string) {
+  async deleteBlogById(id: string | ObjectId) {
     return this.blogModel.findByIdAndDelete(id);
   }
 
@@ -90,5 +56,15 @@ export class BlogsService {
     return;
   }
 
-  // async getPostsForBloggerId(id: string) {}
+  async getPostsForBlogId(queryParams: GetAllPostsdDto, id: string) {
+    const currentBlog = this.getBlogById(id);
+    if (!currentBlog) {
+      throw new NotFoundException();
+    }
+    return this.postsQueryRepository.queryAllPostsPagination(
+      queryParams,
+      'None',
+      id,
+    );
+  }
 }

@@ -9,6 +9,7 @@ import { Like, LikeSchema } from 'schemas/likes.schema';
 import { Posts, PostsSchema } from 'schemas/posts.schema';
 import { BlogsService } from './../blogs/blogs.service';
 import { PostsController } from './posts.controller';
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsService } from './posts.service';
 
 @Module({
@@ -26,6 +27,7 @@ import { PostsService } from './posts.service';
     BlogsService,
     IfNotFoundBlogIdDropError,
     LikesService,
+    PostsQueryRepository,
   ],
   controllers: [PostsController],
 })

@@ -40,10 +40,15 @@ export class Posts extends Document {
 
   @Prop({
     type: SchemaTypes.ObjectId,
-    ref: 'Blog',
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   blogId: Types.ObjectId;
+
+  @Prop({
+    type: String,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  blogName: string;
 }
 
 export const PostsSchema = SchemaFactory.createForClass(Posts);

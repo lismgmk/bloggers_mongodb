@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { PostsQueryRepository } from 'modules/posts/posts.query.repository';
 import { Blog, BlogSchema } from 'schemas/blog.schema';
 import { Posts, PostsSchema } from 'schemas/posts.schema';
 import { BasicStrategy } from 'strategyes/auth-basic.strategy';
@@ -19,6 +20,11 @@ import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
     CqrsModule,
   ],
   controllers: [BlogsController],
-  providers: [BlogsService, BasicStrategy, GetBlogsHandler],
+  providers: [
+    BlogsService,
+    BasicStrategy,
+    GetBlogsHandler,
+    PostsQueryRepository,
+  ],
 })
 export class BlogsModule {}
