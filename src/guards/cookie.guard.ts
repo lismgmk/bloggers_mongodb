@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlackListRepository } from '../modules/auth/black-list.repository';
-import { JwtPassService } from '../modules/jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../modules/common-services/jwt-pass/jwt-pass.service';
 import { UsersRepository } from '../modules/users/users.repository';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class CookieGuard implements CanActivate {
       iat: string;
       exp: string;
     };
-    const user = this.usersRepository.getUserById(userId.id);
+    const user = await this.usersRepository.getUserById(userId.id);
     if (isChecked || !this.jwtPassService.verifyJwt(refreshToken) || !user) {
       throw new UnauthorizedException();
     }

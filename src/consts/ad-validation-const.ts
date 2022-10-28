@@ -6,3 +6,4 @@ export const FIELD_EMAIL_VALIDATION_ERROR = 'email of field is invalid';
 export const FIELD_REQUIRED_VALIDATION_ERROR = 'field is required';
 export const FIELD_OBJECT_ID_VALIDATION_ERROR =
   'field does not suitable for ObjectId format';
+export const INCORRECT_TYPE_VALIDATION_ERROR = 'incorrect type';

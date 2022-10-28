@@ -12,14 +12,21 @@ import { User } from '../schemas/users.schema';
 
 @Injectable()
 @ValidatorConstraint({ name: 'UniqueValidator', async: true })
-export class isExistValidator implements ValidatorConstraintInterface {
+export class IfExistUserDropErrorValidator
+  implements ValidatorConstraintInterface
+{
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
-    console.log('fffffffffffffffffff');
-    const filter = {};
-    filter[args.property] = value;
-    const count = await this.userModel.findOne(filter);
+    let fieldName: string;
+    if (args.property === 'login') {
+      fieldName = `accountData.userName`;
+    } else {
+      fieldName = `accountData.${args.property}`;
+    }
+    const fieldValue = { $eq: value };
+    const filter = { [fieldName]: fieldValue };
+    const count = await this.userModel.findOne(filter).exec();
     return !count;
   }
 
@@ -28,14 +35,14 @@ export class isExistValidator implements ValidatorConstraintInterface {
   }
 }
 
-export function UserExists(validationOptions?: ValidationOptions) {
+export function ForExistsUserError(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'UserExists',
+      name: 'IfExistUserDropErrorValidator',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: isExistValidator,
+      validator: IfExistUserDropErrorValidator,
     });
   };
 }

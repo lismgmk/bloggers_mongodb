@@ -1,0 +1,128 @@
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'decorators/get-user.decorator';
+import { CommonErrorFilter } from 'exceptions/common-error-filter';
+import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
+import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
+import { LikeStatusDto } from 'global-dto/like-status.dto';
+import { JwtAuthGuard } from 'guards/jwt-auth.guard';
+import { CommentsService } from 'modules/comments/comments.service';
+import { CreateCommentDto } from 'modules/comments/dto/create-comment.dto';
+import { GetAllCommentsDto } from 'modules/comments/dto/get-all-comments.dto';
+import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
+import { CustomValidationPipe } from 'pipes/validation.pipe';
+import { User } from 'schemas/users.schema';
+import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
+import { GetAllPostsdDto } from './dto/get-all-posts.dto';
+import { PostsService } from './posts.service';
+
+@Controller('posts')
+export class PostsController {
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly commentsService: CommentsService,
+  ) {}
+
+  @Get()
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new MongoExceptionFilter())
+  async getAllPosts(
+    @Query() queryParams: GetAllPostsdDto,
+    @GetUser()
+    user: User,
+  ) {
+    return await this.postsService.getAllPosts(
+      queryParams,
+      user ? user._id : null,
+    );
+  }
+
+  @Post()
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async createUser(
+    @Body(new CustomValidationPipe())
+    createPostDto: CreatePostWithBlogIdDto,
+  ) {
+    return await this.postsService.createPost(createPostDto);
+  }
+
+  @Put(':postId/like-status')
+  @HttpCode(204)
+  @UseFilters(new ValidationBodyExceptionFilter())
+  @UseFilters(new MongoExceptionFilter())
+  @UseGuards(JwtAuthGuard)
+  async addLikeStatusePost(
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @GetUser()
+    user: User,
+    @Body(new CustomValidationPipe())
+    likeStatus: LikeStatusDto,
+  ) {
+    return await this.postsService.addLikeStatusePost(
+      user,
+      likeStatus.likeStatus,
+      postId,
+    );
+  }
+
+  @Get(':postId/comments')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new MongoExceptionFilter())
+  async getPostsForBloggerId(
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    )
+    queryParams: GetAllCommentsDto,
+    @GetUser() user: User,
+  ) {
+    return this.commentsService.getCommentsForPostId(
+      queryParams,
+      postId,
+      user ? user._id : null,
+    );
+  }
+
+  @Post(':postId/comments')
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new CommonErrorFilter())
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async createPostsForBloggerId(
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @Body(new CustomValidationPipe())
+    content: CreateCommentDto,
+    @GetUser() user: User,
+  ) {
+    return await this.commentsService.createComment({
+      postId,
+      ...content,
+      userId: user ? user._id : null,
+      userLogin: user.accountData.userName,
+    });
+  }
+}

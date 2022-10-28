@@ -1,23 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CommandBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { ObjectId, Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
+import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
-import { JwtPassService } from '../jwt-pass/jwt-pass.service';
-import { MailService } from '../mail/mail.service';
+import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
+import { MailService } from '../common-services/mail/mail.service';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 import { BlackListRepository } from './black-list.repository';
 import {
-  IRegistrationDto,
   IRegistrationConfirmationResponse,
+  IRegistrationDto,
 } from './dto/auth-interfaces.dto';
-import { v4 } from 'uuid';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly commandBus: CommandBus,
     private jwtPassService: JwtPassService,
     private configService: ConfigService,
     private mailService: MailService,
@@ -42,6 +44,10 @@ export class AuthService {
   }
 
   async registration(dto: IRegistrationDto) {
+    // await this.commandBus.execute<IRegistrationDto, void>(
+    //   new RegistrationCommand(dto.login, dto.password, dto.email, dto.userIp),
+    // );
+
     const confirmationCode = v4();
     const newUserDto = {
       login: dto.login,

@@ -1,24 +1,21 @@
 import {
-  PipeTransform,
-  Injectable,
   ArgumentMetadata,
+  Injectable,
   NotFoundException,
+  PipeTransform,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { ObjectId } from 'mongodb';
-import { Model } from 'mongoose';
-import { User } from '../schemas/users.schema';
+import { FIELD_OBJECT_ID_VALIDATION_ERROR } from 'consts/ad-validation-const';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ParamIdValidationPipe implements PipeTransform<any> {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-  async transform(value: number, metadata: ArgumentMetadata) {
-    if (!ObjectId.isValid(value)) {
-      throw new NotFoundException('Value must be greater ten.');
+  async transform(value: string, metadata: ArgumentMetadata) {
+    if (metadata.type != 'param') {
+      return value;
     }
-  }
-  toValidate(metatype): boolean {
-    const types = [String, Boolean, Number, Array, Object];
-    return !types.includes(metatype);
+    if (!Types.ObjectId.isValid(value)) {
+      throw new NotFoundException(FIELD_OBJECT_ID_VALIDATION_ERROR);
+    }
+    return value;
   }
 }

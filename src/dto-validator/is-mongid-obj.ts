@@ -1,19 +1,18 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { ObjectId } from 'bson';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
-  ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import mongoose from 'mongoose';
 import { FIELD_OBJECT_ID_VALIDATION_ERROR } from '../consts/ad-validation-const';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class isMongoObjIdValidator implements ValidatorConstraintInterface {
-  async validate(value: any, args: ValidationArguments) {
-    if (!ObjectId.isValid(value)) {
+  async validate(value: any) {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
       throw new BadRequestException({
         message: FIELD_OBJECT_ID_VALIDATION_ERROR,
       });

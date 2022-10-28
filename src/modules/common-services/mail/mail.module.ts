@@ -28,7 +28,7 @@ import { MailService } from './mail.service';
           from: `"No Reply" <${configService.get('GMAIL_SERVICE_EMAIL')}>`,
           // to: email,
           // subject: 'Hello',
-          // html: `<h1>this is a test mail.<a href=${clientSrc}>Confirm here</a></h1>`,
+          // html: `<h1>this is a test mail.<a href>Confirm here</a></h1>`,
         },
         template: {
           dir: join(__dirname, 'templates'),

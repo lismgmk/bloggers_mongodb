@@ -19,8 +19,8 @@ export class MailService {
       await this.mailerService.sendMail({
         to: user.email,
         subject: 'Welcome to Lis App! Confirm your Email',
-        // html: `<h1>this is a test mail.<a href=${clientPort}>Confirm here</a></h1>`,
-        template: './confirmation', // `.hbs` extension is appended automatically
+        html: `<h1>this is a test mail.<a href=${clientPort}>Confirm here</a></h1>`,
+        // template: './confirmation', // `.hbs` extension is appended automatically
         context: {
           // ✏️ filling curly brackets with content
           name: user.name,
