@@ -1,9 +1,9 @@
+import { Optional } from '@nestjs/common';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
   IsInt,
-  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -41,8 +41,9 @@ export class LikeInfoRequest {
   @IsInt()
   readonly likesCount: number = 0;
 
+  @Optional()
   @IsArray()
   @ValidateNested()
   @Type(() => NewestLikes)
-  readonly newestLikes: NewestLikes[] = [];
+  readonly newestLikes?: NewestLikes[] = [];
 }

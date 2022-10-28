@@ -12,7 +12,7 @@ import { Blog } from 'schemas/blog.schema';
 import { Posts } from 'schemas/posts.schema';
 import { User } from 'schemas/users.schema';
 import { BlogsService } from './../blogs/blogs.service';
-import { CreatePostDto } from './dto/create-post.dto';
+import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
 import { PostsQueryRepository } from './posts.query.repository';
 
@@ -50,7 +50,7 @@ export class PostsService {
     });
   }
 
-  async createPost(dto: CreatePostDto) {
+  async createPost(dto: CreatePostWithBlogIdDto) {
     const currentBlog = (await this.blogsService.getBlogById(
       dto.blogId,
     )) as Blog;

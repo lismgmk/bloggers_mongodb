@@ -2,8 +2,11 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { LikesService } from 'modules/likes/likes.service';
 import { PostsQueryRepository } from 'modules/posts/posts.query.repository';
+import { PostsService } from 'modules/posts/posts.service';
 import { Blog, BlogSchema } from 'schemas/blog.schema';
+import { Like, LikeSchema } from 'schemas/likes.schema';
 import { Posts, PostsSchema } from 'schemas/posts.schema';
 import { BasicStrategy } from 'strategyes/auth-basic.strategy';
 import { BlogsController } from './blogs.controller';
@@ -16,6 +19,7 @@ import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Posts.name, schema: PostsSchema },
+      { name: Like.name, schema: LikeSchema },
     ]),
     CqrsModule,
   ],
@@ -25,6 +29,8 @@ import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
     BasicStrategy,
     GetBlogsHandler,
     PostsQueryRepository,
+    PostsService,
+    LikesService,
   ],
 })
 export class BlogsModule {}

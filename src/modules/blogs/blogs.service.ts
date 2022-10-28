@@ -61,10 +61,6 @@ export class BlogsService {
     if (!currentBlog) {
       throw new NotFoundException();
     }
-    return this.postsQueryRepository.queryAllPostsPagination(
-      queryParams,
-      'None',
-      id,
-    );
+    return this.postsQueryRepository.queryAllPostsPagination(queryParams, id);
   }
 }
