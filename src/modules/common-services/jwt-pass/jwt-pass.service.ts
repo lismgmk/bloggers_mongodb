@@ -11,8 +11,14 @@ export class JwtPassService {
     private configService: ConfigService,
   ) {}
 
-  verifyJwt(token: string) {
-    return this.jwtService.verify(token);
+  async verifyJwt(token: string) {
+    try {
+      const secret = this.configService.get<string>('SECRET');
+      const tokenId = this.jwtService.verify(token, { publicKey: secret });
+      return tokenId;
+    } catch (e) {
+      console.log(e);
+    }
   }
   decodeJwt(token: string) {
     return this.jwtService.decode(token);

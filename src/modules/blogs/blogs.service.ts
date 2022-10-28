@@ -56,11 +56,19 @@ export class BlogsService {
     return;
   }
 
-  async getPostsForBlogId(queryParams: GetAllPostsdDto, id: string) {
-    const currentBlog = this.getBlogById(id);
+  async getPostsForBlogId(
+    queryParams: GetAllPostsdDto,
+    blogId: string,
+    userId: string,
+  ) {
+    const currentBlog = this.getBlogById(blogId);
     if (!currentBlog) {
       throw new NotFoundException();
     }
-    return this.postsQueryRepository.queryAllPostsPagination(queryParams, id);
+    return this.postsQueryRepository.queryAllPostsPagination(
+      queryParams,
+      blogId,
+      userId,
+    );
   }
 }

@@ -22,8 +22,10 @@ import { PostsService } from 'modules/posts/posts.service';
 import { CustomValidationPipe } from 'pipes/validation.pipe';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
-import { IdBlogParamDTO } from './dto/id-blog-param.dto';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
+import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
+import { GetUser } from 'decorators/get-user.decorator';
+import { User } from 'schemas/users.schema';
 
 @Controller('blogs')
 export class BlogsController {
@@ -62,8 +64,11 @@ export class BlogsController {
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getBloggerById(@Param() id: IdBlogParamDTO) {
-    return await this.blogsService.getBlogById(id.blogId);
+  async getBloggerById(
+    @Param('id', ParamIdValidationPipe)
+    blogId: string,
+  ) {
+    return await this.blogsService.getBlogById(blogId);
   }
 
   @Put(':id')
@@ -72,18 +77,12 @@ export class BlogsController {
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-      }),
-    )
-    id: IdBlogParamDTO,
+    @Param('id', ParamIdValidationPipe)
+    blogId: string,
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
   ) {
     return await this.blogsService.changeBlog({
-      id: id.blogId,
+      id: blogId,
       ...createBlogDto,
     });
   }
@@ -93,20 +92,19 @@ export class BlogsController {
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deleteBlog(@Param() id: IdBlogParamDTO) {
-    return await this.blogsService.deleteBlogById(id.blogId);
+  async deleteBlog(
+    @Param('id', ParamIdValidationPipe)
+    blogId: string,
+  ) {
+    return await this.blogsService.deleteBlogById(blogId);
   }
 
   @Get(':blogId/posts')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   async getPostsForBloggerId(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-      }),
-    )
-    blogId: IdBlogParamDTO,
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -114,10 +112,12 @@ export class BlogsController {
       }),
     )
     queryParams: GetAllPostsdDto,
+    @GetUser() user: User,
   ) {
     return await this.blogsService.getPostsForBlogId(
       queryParams,
-      blogId.blogId,
+      blogId,
+      user ? user._id : null,
     );
   }
 
@@ -127,18 +127,14 @@ export class BlogsController {
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPostsForBloggerId(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-      }),
-    )
-    blogId: IdBlogParamDTO,
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostDto,
   ) {
     return await this.postsService.createPost({
       ...createPostDto,
-      ...blogId,
+      blogId,
     });
   }
 }
