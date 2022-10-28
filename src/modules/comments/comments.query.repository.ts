@@ -2,40 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IPaginationResponse } from 'global-dto/common-interfaces';
 import mongoose, { Model } from 'mongoose';
-import { Posts } from 'schemas/posts.schema';
+import { Comments } from 'schemas/comments.schema';
 import { pageNumber } from '../../test-params/test-values';
-import { IPostsRequest } from './dto/all-posts-response';
-import { GetAllPostsdDto } from './dto/get-all-posts.dto';
+import { ICommentsRequest } from './dto/all-comments-response';
+import { GetAllCommentsDto } from './dto/get-all-comments.dto';
 
 @Injectable()
-export class PostsQueryRepository {
-  constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
-  async queryAllPostsPagination(
-    queryParams: GetAllPostsdDto,
-    blogId: string = null,
+export class CommentsQueryRepository {
+  constructor(@InjectModel(Comments.name) private postModel: Model<Comments>) {}
+  async queryAllCommentsPagination(
+    queryParams: GetAllCommentsDto,
+    postId: string = null,
     userId: string,
   ) {
     const sortField = queryParams.sortBy;
     const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
-    const singleCondition: { match: any; unset: string[] } = blogId
-      ? {
-          match: { blogId: new mongoose.Types.ObjectId(blogId) },
-          unset: ['items.total', '_id', 'items.extendedLikesInfo'],
-        }
-      : { match: {}, unset: ['items.total', '_id'] };
+    // const singleCondition: { match: any; unset: string[] } = blogId
+    //   ? {
+    //       match: { blogId: new mongoose.Types.ObjectId(blogId) },
+    //       unset: ['items.total', '_id', 'items.extendedLikesInfo'],
+    //     }
+    //   : { match: {}, unset: ['items.total', '_id'] };
 
     return (
       await this.postModel
         .aggregate([
           {
-            $match: singleCondition.match,
-            // {
-            // _id: blogId,
-            // content: '  DDDDDD ',
-            // $expr: {
-            //   $cond: [{ $ne: [content, null] }, { content: content }, {}],
-            // },
-            // },
+            $match: { postId: new mongoose.Types.ObjectId(postId) },
           },
           {
             $sort: {
@@ -55,11 +48,9 @@ export class PostsQueryRepository {
               _id: 0,
               total: '$totalCount',
               id: '$_id',
-              title: '$title',
-              shortDescription: '$shortDescription',
               content: '$content',
-              blogId: '$blogId',
-              blogName: '$blogName',
+              userId: '$userId',
+              userLogin: '$userLogin',
               createdAt: '$createdAt',
             },
           },
@@ -67,36 +58,8 @@ export class PostsQueryRepository {
             $lookup: {
               from: 'likes',
               localField: 'id',
-              foreignField: 'postId',
-              as: 'extendedLikesInfo.newestLikes',
-              pipeline: [
-                {
-                  $match: {
-                    $expr: {
-                      $and: [{ $eq: ['$status', 'Like'] }],
-                    },
-                  },
-                },
-                { $sort: { createdAt: 1 } },
-                { $limit: 3 },
-                {
-                  $project: {
-                    _id: 0,
-                    addedAt: '$createdAt',
-                    userId: '$userId',
-                    login: '$login',
-                  },
-                },
-              ],
-            },
-          },
-
-          {
-            $lookup: {
-              from: 'likes',
-              localField: 'id',
-              foreignField: 'postId',
-              as: 'extendedLikesInfo.likeCount',
+              foreignField: 'commentId',
+              as: 'likeInfo.likeCount',
               pipeline: [
                 {
                   $match: {
@@ -110,8 +73,8 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.likeCount': {
-                $size: '$extendedLikesInfo.likeCount',
+              'likeInfo.likeCount': {
+                $size: '$likeInfo.likeCount',
               },
             },
           },
@@ -119,32 +82,8 @@ export class PostsQueryRepository {
             $lookup: {
               from: 'likes',
               localField: 'id',
-              foreignField: 'postId',
-              as: 'extendedLikesInfo.dislikeCount',
-              pipeline: [
-                {
-                  $match: {
-                    $expr: {
-                      $and: [{ $eq: ['$status', 'Dislike'] }],
-                    },
-                  },
-                },
-              ],
-            },
-          },
-          {
-            $set: {
-              'extendedLikesInfo.dislikeCount': {
-                $size: '$extendedLikesInfo.dislikeCount',
-              },
-            },
-          },
-          {
-            $lookup: {
-              from: 'likes',
-              localField: 'id',
-              foreignField: 'postId',
-              as: 'extendedLikesInfo.myStatus',
+              foreignField: 'commentId',
+              as: 'likeInfo.myStatus',
               pipeline: [
                 {
                   $match: {
@@ -158,13 +97,37 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.myStatus': {
+              'likeInfo.myStatus': {
                 $ifNull: [
                   {
-                    $first: '$extendedLikesInfo.myStatus.status',
+                    $first: '$likeInfo.myStatus.status',
                   },
                   'None',
                 ],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'commentId',
+              as: 'likeInfo.dislikeCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Dislike'] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'likeInfo.dislikeCount': {
+                $size: '$likeInfo.dislikeCount',
               },
             },
           },
@@ -187,10 +150,10 @@ export class PostsQueryRepository {
             },
           },
           {
-            $unset: singleCondition.unset,
+            $unset: ['items.total', '_id'],
           },
         ])
         .exec()
-    )[0] as IPaginationResponse<IPostsRequest[]>;
+    )[0] as IPaginationResponse<ICommentsRequest[]>;
   }
 }

@@ -19,14 +19,14 @@ import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
 import { LikeStatusDto } from 'global-dto/like-status.dto';
 import { JwtAuthGuard } from 'guards/jwt-auth.guard';
-import { IdBlogParamDTO } from 'modules/blogs/dto/id-blog-param.dto';
 import { CommentsService } from 'modules/comments/comments.service';
 import { CreateCommentDto } from 'modules/comments/dto/create-comment.dto';
+import { GetAllCommentsDto } from 'modules/comments/dto/get-all-comments.dto';
+import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from 'pipes/validation.pipe';
 import { User } from 'schemas/users.schema';
 import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
-import { IdParamPostDTO } from './dto/IdParamPost.dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -40,8 +40,15 @@ export class PostsController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new MongoExceptionFilter())
-  async getAllPosts(@Query() queryParams: GetAllPostsdDto) {
-    return await this.postsService.getAllPosts(queryParams);
+  async getAllPosts(
+    @Query() queryParams: GetAllPostsdDto,
+    @GetUser()
+    user: User,
+  ) {
+    return await this.postsService.getAllPosts(
+      queryParams,
+      user ? user._id : null,
+    );
   }
 
   @Post()
@@ -61,19 +68,9 @@ export class PostsController {
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
   async addLikeStatusePost(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-      }),
-    )
-    postId: IdParamPostDTO,
-    @GetUser(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-      }),
-    )
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @GetUser()
     user: User,
     @Body(new CustomValidationPipe())
     likeStatus: LikeStatusDto,
@@ -81,33 +78,32 @@ export class PostsController {
     return await this.postsService.addLikeStatusePost(
       user,
       likeStatus.likeStatus,
-      postId.postId,
+      postId,
     );
   }
 
-  // @Get(':blogId/posts')
-  // @HttpCode(200)
-  // @UseFilters(new MongoExceptionFilter())
-  // async getPostsForBloggerId(
-  //   @Param(
-  //     new ValidationPipe({
-  //       transform: true,
-  //     }),
-  //   )
-  //   blogId: IdBlogParamDTO,
-  //   @Query(
-  //     new ValidationPipe({
-  //       transform: true,
-  //       transformOptions: { enableImplicitConversion: true },
-  //     }),
-  //   )
-  //   queryParams: GetAllPostsdDto,
-  // ) {
-  //   return await this.blogsService.getPostsForBlogId(
-  //     queryParams,
-  //     blogId.blogId,
-  //   );
-  // }
+  @Get(':postId/comments')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new MongoExceptionFilter())
+  async getPostsForBloggerId(
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    )
+    queryParams: GetAllCommentsDto,
+    @GetUser() user: User,
+  ) {
+    return this.commentsService.getCommentsForPostId(
+      queryParams,
+      postId,
+      user ? user._id : null,
+    );
+  }
 
   @Post(':postId/comments')
   @HttpCode(201)
@@ -116,20 +112,16 @@ export class PostsController {
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPostsForBloggerId(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-      }),
-    )
-    postId: IdBlogParamDTO,
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
     @Body(new CustomValidationPipe())
     content: CreateCommentDto,
     @GetUser() user: User,
   ) {
     return await this.commentsService.createComment({
-      postId: postId.blogId,
+      postId,
       ...content,
-      userId: user._id,
+      userId: user ? user._id : null,
       userLogin: user.accountData.userName,
     });
   }

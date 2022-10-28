@@ -4,6 +4,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { IfNotFoundBlogIdDropError } from 'dto-validator/if-not-found-blog-id-drop-error';
+import { CommentsQueryRepository } from 'modules/comments/comments.query.repository';
 import { CommentsService } from 'modules/comments/comments.service';
 import { LikesService } from 'modules/likes/likes.service';
 import { UsersRepository } from 'modules/users/users.repository';
@@ -40,6 +41,7 @@ import { PostsService } from './posts.service';
     LikesService,
     PostsQueryRepository,
     UsersRepository,
+    CommentsQueryRepository,
   ],
   controllers: [PostsController],
 })

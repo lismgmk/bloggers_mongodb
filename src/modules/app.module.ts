@@ -1,3 +1,4 @@
+import { JwtPassService } from './common-services/jwt-pass/jwt-pass.service';
 import {
   Module,
   NestModule,
@@ -8,7 +9,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { CheckIpStatusMiddleware } from '../midlvares/check-ip-status.middleware';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
@@ -22,6 +22,10 @@ import { UsersModule } from './users/users.module';
 import { MailModule } from './common-services/mail/mail.module';
 import { JwtPassModule } from './common-services/jwt-pass/jwt-pass.module';
 import { LikesModule } from './likes/likes.module';
+import { CheckBearerMiddleware } from 'midlvares/check-bearer.middlvare';
+import { CheckIpStatusMiddleware } from 'midlvares/check-ip-status.middleware';
+import { UsersRepository } from './users/users.repository';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -50,11 +54,11 @@ import { LikesModule } from './likes/likes.module';
       { name: BlackList.name, schema: BlackListSchema },
     ]),
     MailModule,
-    JwtPassModule,
     LikesModule,
+    JwtPassModule,
   ],
   controllers: [],
-  providers: [IpUsersRepository],
+  providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -65,5 +69,23 @@ export class AppModule implements NestModule {
         { path: 'users/:id', method: RequestMethod.DELETE },
         { path: 'refresh-token', method: RequestMethod.POST },
       );
+    consumer.apply(CheckBearerMiddleware).forRoutes(
+      {
+        path: '/posts/:postId/comments',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/blogs/:postId/posts',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/posts',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/posts/:postId/comments',
+        method: RequestMethod.GET,
+      },
+    );
   }
 }

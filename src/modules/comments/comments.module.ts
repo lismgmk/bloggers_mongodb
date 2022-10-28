@@ -7,6 +7,7 @@ import { Posts, PostsSchema } from 'schemas/posts.schema';
 import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { Comments, CommentsSchema } from 'schemas/comments.schema';
+import { CommentsQueryRepository } from './comments.query.repository';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { Comments, CommentsSchema } from 'schemas/comments.schema';
       { name: Comments.name, schema: CommentsSchema },
     ]),
   ],
-  providers: [CommentsService, LikesService],
+  providers: [CommentsService, LikesService, CommentsQueryRepository],
   controllers: [CommentsController],
 })
 export class CommentsModule {}

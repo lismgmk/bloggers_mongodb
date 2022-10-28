@@ -24,8 +24,12 @@ export class PostsService {
     private likesService: LikesService,
     private postsQueryRepository: PostsQueryRepository,
   ) {}
-  async getAllPosts(queryParams: GetAllPostsdDto) {
-    return this.postsQueryRepository.queryAllPostsPagination(queryParams, '');
+  async getAllPosts(queryParams: GetAllPostsdDto, userId: string) {
+    return this.postsQueryRepository.queryAllPostsPagination(
+      queryParams,
+      null,
+      userId,
+    );
   }
 
   async getPostById(id: string | ObjectId) {
