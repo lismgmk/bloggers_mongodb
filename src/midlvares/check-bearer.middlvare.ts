@@ -1,5 +1,4 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 import { JwtPassService } from 'modules/common-services/jwt-pass/jwt-pass.service';
 import { UsersRepository } from 'modules/users/users.repository';
@@ -9,7 +8,6 @@ export class CheckBearerMiddleware implements NestMiddleware {
   constructor(
     private jwtPassService: JwtPassService,
     private usersRepository: UsersRepository,
-    private configService: ConfigService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {

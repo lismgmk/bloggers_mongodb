@@ -19,21 +19,7 @@ export class CheckIpStatusMiddleware implements NestMiddleware {
     const attemptsLimit = Number(
       this.configService.get<string>('ATTEMPTS_LIMIT'),
     );
-    // let usersLoginDiffIp;
-    // let findAllUsersIp;
-    // try {
-    //   usersLoginDiffIp = await this.ipUsersRepository.usersLoginDiffIp({
-    //     userIp: 'userIp',
-    //     filter: { path: req.path },
-    //   });
-    //   // findAllUsersIp = await this.ipUsersRepository.getAllUsersIp({
-    //   //   userIp: req.ip,
-    //   //   path: req.path,
-    //   // });
-    //   console.log( usersLoginDiffIp, 'result');
-    // } catch (e) {
-    //   throw new HttpException('lll', HttpStatus.BAD_REQUEST);
-    // }
+
     const usersLoginDiffIp = await this.ipUsersRepository.usersLoginDiffIp({
       userIp: 'userIp',
       filter: { path: req.path },

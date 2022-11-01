@@ -1,3 +1,4 @@
+import { SecurityService } from 'modules/security/security.service';
 import { JwtPassService } from './common-services/jwt-pass/jwt-pass.service';
 import {
   Module,
@@ -60,7 +61,13 @@ import { SecurityModule } from './security/security.module';
     SecurityModule,
   ],
   controllers: [],
-  providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
+  providers: [
+    IpUsersRepository,
+    JwtPassService,
+    UsersRepository,
+    JwtService,
+    SecurityService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
