@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Devices, DevicesSchema } from './../../schemas/device.schema';
 import { Module } from '@nestjs/common';
 import { SecurityController } from './security.controller';
@@ -12,6 +13,7 @@ import { BlackList, BlackListSchema } from 'schemas/black-list.schema';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forFeature([
       { name: Devices.name, schema: DevicesSchema },
       { name: User.name, schema: UserSchema },

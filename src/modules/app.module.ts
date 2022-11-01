@@ -1,14 +1,16 @@
-import { SecurityService } from 'modules/security/security.service';
-import { JwtPassService } from './common-services/jwt-pass/jwt-pass.service';
 import {
+  MiddlewareConsumer,
   Module,
   NestModule,
-  MiddlewareConsumer,
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CheckBearerMiddleware } from 'midlvares/check-bearer.middlvare';
+import { CheckIpStatusMiddleware } from 'midlvares/check-ip-status.middleware';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
@@ -16,21 +18,19 @@ import { User, UserSchema } from '../schemas/users.schema';
 import { AuthModule } from './auth/auth.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CommentsModule } from './comments/comments.module';
+import { JwtPassModule } from './common-services/jwt-pass/jwt-pass.module';
+import { JwtPassService } from './common-services/jwt-pass/jwt-pass.service';
+import { MailModule } from './common-services/mail/mail.module';
+import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
+import { SecurityModule } from './security/security.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
-import { MailModule } from './common-services/mail/mail.module';
-import { JwtPassModule } from './common-services/jwt-pass/jwt-pass.module';
-import { LikesModule } from './likes/likes.module';
-import { CheckBearerMiddleware } from 'midlvares/check-bearer.middlvare';
-import { CheckIpStatusMiddleware } from 'midlvares/check-ip-status.middleware';
 import { UsersRepository } from './users/users.repository';
-import { JwtService } from '@nestjs/jwt';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { SecurityModule } from './security/security.module';
 
 @Module({
   imports: [
+    SecurityModule,
     ConfigModule.forRoot({ isGlobal: true }),
     BlogsModule,
     AuthModule,
@@ -58,16 +58,9 @@ import { SecurityModule } from './security/security.module';
     MailModule,
     LikesModule,
     JwtPassModule,
-    SecurityModule,
   ],
   controllers: [],
-  providers: [
-    IpUsersRepository,
-    JwtPassService,
-    UsersRepository,
-    JwtService,
-    SecurityService,
-  ],
+  providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
