@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
-// import * as cookieParser from 'cookie-parser';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 
 import { MongoExceptionFilter } from './exceptions/mongoose-exception-filter';
 import { AppModule } from './modules/app.module';
