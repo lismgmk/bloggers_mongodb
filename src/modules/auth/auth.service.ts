@@ -1,15 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CommandBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
 import { MailService } from '../common-services/mail/mail.service';
-import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
-import { BlackListRepository } from './black-list.repository';
 import {
   IRegistrationConfirmationResponse,
   IRegistrationDto,
@@ -19,35 +16,32 @@ import { GetNewPasswordDto } from './dto/get-new-password.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly commandBus: CommandBus,
     private jwtPassService: JwtPassService,
     private configService: ConfigService,
     private mailService: MailService,
     private usersService: UsersService,
-    private usersRepository: UsersRepository,
-    private blackListRepository: BlackListRepository,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
-  async getRefreshAccessToken(userId: ObjectId) {
+  async getRefreshAccessToken(
+    userId: string,
+    deviceId: Types.ObjectId | string,
+  ) {
     const expiredAccess = this.configService.get<string>('EXPIRED_ACCESS');
     const expiredRefresh = this.configService.get<string>('EXPIRED_REFRESH');
 
-    const accessToken = await this.jwtPassService.createJwt(
+    const accessToken = await this.jwtPassService.createJwtAccess(
       userId,
       expiredAccess,
     );
-    const refreshToken = await this.jwtPassService.createJwt(
+    const refreshToken = await this.jwtPassService.createJwtRefresh(
       userId,
       expiredRefresh,
+      deviceId,
     );
     return { accessToken, refreshToken };
   }
 
   async registration(dto: IRegistrationDto) {
-    // await this.commandBus.execute<IRegistrationDto, void>(
-    //   new RegistrationCommand(dto.login, dto.password, dto.email, dto.userIp),
-    // );
-
     const confirmationCode = v4();
     const newUserDto = {
       login: dto.login,
@@ -64,34 +58,34 @@ export class AuthService {
 
   async resendingEmail(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
-    const currentUser = await this.userModel.findOne(filter);
-    if (!currentUser) {
+    const currentUser = await this.userModel.find(filter);
+    if (!currentUser.length) {
       throw new UnauthorizedException();
     }
     const confirmationCode = v4();
     await this.mailService.sendUserConfirmation(
-      { email, name: currentUser.accountData.userName },
+      { email, name: currentUser[0].accountData.userName },
       confirmationCode,
     );
-    currentUser.emailConfirmation.confirmationCode = confirmationCode;
-    currentUser.save();
+    currentUser[0].emailConfirmation.confirmationCode = confirmationCode;
+    currentUser[0].save();
     return currentUser;
   }
 
   async passwordRecovery(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
-    const currentUser = await this.userModel.findOne(filter);
-    if (!currentUser) {
+    const currentUser = await this.userModel.find(filter);
+    if (!currentUser.length) {
       throw new UnauthorizedException();
     }
     const confirmationCode = v4();
     await this.mailService.sendUserConfirmation(
-      { email, name: currentUser.accountData.userName },
+      { email, name: currentUser[0].accountData.userName },
       confirmationCode,
     );
-    currentUser.emailConfirmation.confirmationCode = confirmationCode;
-    currentUser.emailConfirmation.isConfirmed = false;
-    currentUser.save();
+    currentUser[0].emailConfirmation.confirmationCode = confirmationCode;
+    currentUser[0].emailConfirmation.isConfirmed = false;
+    currentUser[0].save();
     return currentUser;
   }
 
@@ -99,36 +93,38 @@ export class AuthService {
     const filter = {
       'emailConfirmation.confirmationCode': { $eq: dto.recoveryCode },
     };
-    const currentUser = (await this.userModel.findOne(filter)) as User;
+    const currentUser = (await this.userModel.find(filter)) as User[];
+    if (!currentUser.length) {
+      throw new UnauthorizedException();
+    }
     if (
-      !currentUser ||
-      currentUser.emailConfirmation.confirmationCode !== dto.recoveryCode
+      currentUser[0].emailConfirmation.confirmationCode !== dto.recoveryCode
     ) {
       throw new UnauthorizedException();
     }
-    currentUser.emailConfirmation.isConfirmed = true;
+    currentUser[0].emailConfirmation.isConfirmed = true;
     const hashPassword = await this.jwtPassService.createPassBcrypt(
       dto.newPassword,
     );
-    currentUser.accountData.passwordHash = hashPassword;
-    await currentUser.save();
+    currentUser[0].accountData.passwordHash = hashPassword;
+    await currentUser[0].save();
   }
 
   async registrationConfirmation(code: string) {
     const filter = {
       'emailConfirmation.confirmationCode': { $eq: code },
     };
-    const currentUser = (await this.userModel.findOne(filter)) as User;
-    if (!currentUser) {
+    const currentUser = (await this.userModel.find(filter)) as User[];
+    if (!currentUser.length) {
       throw new UnauthorizedException();
     }
-    currentUser.emailConfirmation.isConfirmed = true;
-    await currentUser.save();
+    currentUser[0].emailConfirmation.isConfirmed = true;
+    await currentUser[0].save();
     return {
-      id: currentUser._id,
-      login: currentUser.accountData.userName,
-      email: currentUser.accountData.email,
-      createdAt: currentUser.accountData.createdAt,
+      id: currentUser[0]._id,
+      login: currentUser[0].accountData.userName,
+      email: currentUser[0].accountData.email,
+      createdAt: currentUser[0].accountData.createdAt,
     } as IRegistrationConfirmationResponse;
   }
 }
