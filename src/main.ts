@@ -10,7 +10,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalFilters(new MongoExceptionFilter());
   app.use(cookieParser());
-  await app.listen(5000);
+  await app.listen(process.env.PORT || 5000);
 }
 
 bootstrap();
