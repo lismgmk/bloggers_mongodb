@@ -13,6 +13,7 @@ export class BlackListRepository {
   }
 
   async checkToken(token: string) {
-    return this.blackListModel.findOne({ tokenValue: token }).exec();
+    const currentToken = await this.blackListModel.find({ tokenValue: token });
+    return currentToken;
   }
 }

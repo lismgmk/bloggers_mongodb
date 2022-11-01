@@ -17,12 +17,6 @@ export class CommentsQueryRepository {
   ) {
     const sortField = queryParams.sortBy;
     const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
-    // const singleCondition: { match: any; unset: string[] } = blogId
-    //   ? {
-    //       match: { blogId: new mongoose.Types.ObjectId(blogId) },
-    //       unset: ['items.total', '_id', 'items.extendedLikesInfo'],
-    //     }
-    //   : { match: {}, unset: ['items.total', '_id'] };
 
     return (
       await this.postModel
@@ -151,6 +145,106 @@ export class CommentsQueryRepository {
           },
           {
             $unset: ['items.total', '_id'],
+          },
+        ])
+        .exec()
+    )[0] as IPaginationResponse<ICommentsRequest[]>;
+  }
+
+  async queryCommentById(id: string, userId: string) {
+    const commentId = new mongoose.Types.ObjectId(id);
+    return (
+      await this.postModel
+        .aggregate([
+          {
+            $match: { _id: commentId },
+          },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              content: '$content',
+              userId: '$userId',
+              userLogin: '$userLogin',
+              createdAt: '$createdAt',
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'commentId',
+              as: 'likeInfo.likeCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Like'] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'likeInfo.likeCount': {
+                $size: '$likeInfo.likeCount',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'commentId',
+              as: 'likeInfo.myStatus',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$userId', userId] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'likeInfo.myStatus': {
+                $ifNull: [
+                  {
+                    $first: '$likeInfo.myStatus.status',
+                  },
+                  'None',
+                ],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'commentId',
+              as: 'likeInfo.dislikeCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Dislike'] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'likeInfo.dislikeCount': {
+                $size: '$likeInfo.dislikeCount',
+              },
+            },
           },
         ])
         .exec()

@@ -1,18 +1,22 @@
-import { CommentsService } from 'modules/comments/comments.service';
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   HttpCode,
   Param,
   Put,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { GetUser } from 'decorators/get-user.decorator';
 import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
 import { LikeStatusDto } from 'global-dto/like-status.dto';
 import { JwtAuthGuard } from 'guards/jwt-auth.guard';
+import { CommentsService } from 'modules/comments/comments.service';
 import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from 'pipes/validation.pipe';
 import { User } from 'schemas/users.schema';
@@ -58,6 +62,32 @@ export class CommentsController {
       id,
       content.content,
       user._id,
+    );
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new MongoExceptionFilter())
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async deleteBlog(
+    @Param('id', ParamIdValidationPipe)
+    id: string,
+  ) {
+    return await this.commentsService.deleteCommentById(id);
+  }
+
+  @Get(':id')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  async getPostById(
+    @Param('id', ParamIdValidationPipe)
+    id: string,
+    @GetUser() user: User,
+  ) {
+    return this.commentsService.getCommentByIdWithLikes(
+      id,
+      user ? user._id : null,
     );
   }
 }

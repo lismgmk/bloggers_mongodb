@@ -82,10 +82,26 @@ export class CommentsService {
   }
   async changeComment(id: string, content: string, userId: string) {
     const comment = (await this.commentModel.findById(id)) as Comments;
-    if (comment.userId.toString() !== userId) {
+    if (!comment.userId.equals(userId)) {
       throw new ForbiddenException();
     }
     comment.content = content;
     comment.save();
+  }
+
+  async deleteCommentById(id: string | ObjectId) {
+    const comment = await this.getCommentById(id);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    return this.commentModel.findByIdAndDelete(id);
+  }
+
+  async getCommentByIdWithLikes(id: string, userId: string) {
+    const comment = await this.getCommentById(id);
+    if (!comment) {
+      throw new NotFoundException();
+    }
+    return this.commentsQueryRepository.queryCommentById(id, userId);
   }
 }

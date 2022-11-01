@@ -8,7 +8,6 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
@@ -26,6 +25,8 @@ import { CheckBearerMiddleware } from 'midlvares/check-bearer.middlvare';
 import { CheckIpStatusMiddleware } from 'midlvares/check-ip-status.middleware';
 import { UsersRepository } from './users/users.repository';
 import { JwtService } from '@nestjs/jwt';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { SecurityModule } from './security/security.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { JwtService } from '@nestjs/jwt';
     MailModule,
     LikesModule,
     JwtPassModule,
+    SecurityModule,
   ],
   controllers: [],
   providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
@@ -84,6 +86,14 @@ export class AppModule implements NestModule {
       },
       {
         path: '/posts/:postId/comments',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/posts/:postId',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/comments/:id',
         method: RequestMethod.GET,
       },
     );

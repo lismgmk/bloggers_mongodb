@@ -1,16 +1,21 @@
 import {
-  Controller,
-  Post,
-  UseFilters,
-  Ip,
   Body,
-  UseGuards,
-  Res,
-  HttpCode,
+  Controller,
   Get,
+  HttpCode,
+  Ip,
+  Post,
+  Res,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
+import { DeviceName } from 'decorators/device-name.decorator';
+import { GetDeviceId } from 'decorators/get-device-id.decorator';
+import { PuerRefresgToken } from 'decorators/puer-refresh-token.decorator';
+import { UserIp } from 'decorators/user-ip.decorator';
 import { Response } from 'express';
-import { ObjectId } from 'mongoose';
+import { SecurityService } from 'modules/security/security.service';
+import mongoose from 'mongoose';
 import { GetUserId } from '../../decorators/get-user-id.decorator';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { CommonErrorFilter } from '../../exceptions/common-error-filter';
@@ -23,13 +28,17 @@ import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users.schema';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
+import { BlackListRepository } from './black-list.repository';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ResendingEmailDto } from './dto/resending-email.dto';
-
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly securityService: SecurityService,
+    private readonly blackListRepository: BlackListRepository,
+  ) {}
 
   @HttpCode(204)
   @Post('/registration')
@@ -51,9 +60,17 @@ export class AuthController {
   async getRefreshAccessToken(
     @GetUser() user: User,
     @Res({ passthrough: true }) res: Response,
+    @GetDeviceId()
+    deviceId: string,
+    @PuerRefresgToken()
+    refreshToken: string,
   ) {
-    const tokens = await this.authService.getRefreshAccessToken(user._id);
-    res.cookie('accessToken', tokens.refreshToken, { httpOnly: true });
+    await this.blackListRepository.addToken(refreshToken);
+    const tokens = await this.authService.getRefreshAccessToken(
+      user._id,
+      deviceId,
+    );
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
     return { accessToken: tokens.accessToken };
   }
 
@@ -64,12 +81,25 @@ export class AuthController {
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(LocalStrategyGuard)
   async login(
-    @GetUserId() userId: ObjectId,
+    @GetUserId() userId: string,
     @Res({ passthrough: true }) res: Response,
     @Body(new CustomValidationPipe()) loginAuthDto: LoginAuthDto,
+    @UserIp() userIp: string,
+    @DeviceName() deviceName: string,
   ) {
-    const tokens = await this.authService.getRefreshAccessToken(userId);
-    res.cookie('accessToken', tokens.refreshToken, { httpOnly: true });
+    const deviceId = new mongoose.Types.ObjectId();
+    const tokens = await this.authService.getRefreshAccessToken(
+      userId,
+      deviceId,
+    );
+
+    await this.securityService.createDevice({
+      ip: userIp,
+      userId,
+      deviceName,
+      deviceId: deviceId,
+    });
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
     return { accessToken: tokens.accessToken };
   }
 
@@ -109,8 +139,8 @@ export class AuthController {
   @Post('/registration-confirmation')
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
-  async registrationConfirmation(@Body() code: string) {
-    return this.authService.registrationConfirmation(code);
+  async registrationConfirmation(@Body() code: { code: string }) {
+    return this.authService.registrationConfirmation(code.code);
   }
 
   @HttpCode(204)

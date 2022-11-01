@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { LikeInfoRequest } from 'global-dto/like-info.request';
 import { LikeStatusEnum } from 'global-dto/like-status.dto';
 import { LikesService } from 'modules/likes/likes.service';
-import { Model, ObjectId } from 'mongoose';
+import mongoose, { Model, ObjectId } from 'mongoose';
 import { Blog } from 'schemas/blog.schema';
 import { Posts } from 'schemas/posts.schema';
 import { User } from 'schemas/users.schema';
@@ -31,7 +31,9 @@ export class PostsService {
       userId,
     );
   }
-
+  async getPostByIdWithLikes(id: string, userId: string) {
+    return this.postsQueryRepository.queryPostById(id, userId);
+  }
   async getPostById(id: string | ObjectId) {
     return await this.postModel.findById(id).exec();
   }
@@ -89,5 +91,24 @@ export class PostsService {
       createdAt: createdPost.createdAt,
       extendedLikesInfo,
     };
+  }
+  async changePost(id: string, dto: CreatePostWithBlogIdDto) {
+    const post = (await this.getPostById(id)) as Posts;
+    if (!post) {
+      throw new NotFoundException();
+    }
+    post.shortDescription = dto.shortDescription;
+    post.title = dto.title;
+    post.shortDescription = dto.shortDescription;
+    post.blogId = new mongoose.Types.ObjectId(dto.blogId);
+    post.save();
+  }
+
+  async deletePostById(id: string | ObjectId) {
+    const post = this.getPostById(id);
+    if (!post) {
+      throw new NotFoundException();
+    }
+    return this.postModel.findByIdAndDelete(id);
   }
 }

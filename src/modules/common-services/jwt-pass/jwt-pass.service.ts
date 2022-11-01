@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class JwtPassService {
@@ -32,9 +32,19 @@ export class JwtPassService {
     return await bcrypt.compare(password, hash);
   }
 
-  async createJwt(id: ObjectId, expiresIn: string) {
+  async createJwtAccess(id: string, expiresIn: string) {
     const secret = this.configService.get<string>('SECRET');
     const payload = { id };
+    return this.jwtService.sign(payload, { secret, expiresIn });
+  }
+
+  async createJwtRefresh(
+    id: string,
+    expiresIn: string,
+    deviceId: Types.ObjectId | string,
+  ) {
+    const secret = this.configService.get<string>('SECRET');
+    const payload = { id, deviceId };
     return this.jwtService.sign(payload, { secret, expiresIn });
   }
 }

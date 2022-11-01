@@ -26,8 +26,8 @@ export class IfExistUserDropErrorValidator
     }
     const fieldValue = { $eq: value };
     const filter = { [fieldName]: fieldValue };
-    const count = await this.userModel.findOne(filter).exec();
-    return !count;
+    const count = await this.userModel.find(filter);
+    return !count.length;
   }
 
   defaultMessage(args: ValidationArguments) {

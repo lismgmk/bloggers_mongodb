@@ -45,6 +45,10 @@ export class BlogsService {
   }
 
   async deleteBlogById(id: string | ObjectId) {
+    const blog = this.getBlogById(id);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return this.blogModel.findByIdAndDelete(id);
   }
 
@@ -61,7 +65,7 @@ export class BlogsService {
     blogId: string,
     userId: string,
   ) {
-    const currentBlog = this.getBlogById(blogId);
+    const currentBlog = await this.getBlogById(blogId);
     if (!currentBlog) {
       throw new NotFoundException();
     }

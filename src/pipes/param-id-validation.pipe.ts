@@ -1,7 +1,7 @@
 import {
   ArgumentMetadata,
+  BadRequestException,
   Injectable,
-  NotFoundException,
   PipeTransform,
 } from '@nestjs/common';
 import { FIELD_OBJECT_ID_VALIDATION_ERROR } from 'consts/ad-validation-const';
@@ -14,7 +14,7 @@ export class ParamIdValidationPipe implements PipeTransform<any> {
       return value;
     }
     if (!Types.ObjectId.isValid(value)) {
-      throw new NotFoundException(FIELD_OBJECT_ID_VALIDATION_ERROR);
+      throw new BadRequestException(FIELD_OBJECT_ID_VALIDATION_ERROR);
     }
     return value;
   }

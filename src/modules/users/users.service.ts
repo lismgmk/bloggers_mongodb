@@ -40,7 +40,7 @@ export class UsersService {
           hours: 1,
           minutes: 10,
         }),
-        isConfirmed: true,
+        isConfirmed: false,
         attemptCount: 0,
       },
     });
