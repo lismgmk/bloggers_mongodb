@@ -29,13 +29,6 @@ export class PostsQueryRepository {
         .aggregate([
           {
             $match: singleCondition.match,
-            // {
-            // _id: blogId,
-            // content: '  DDDDDD ',
-            // $expr: {
-            //   $cond: [{ $ne: [content, null] }, { content: content }, {}],
-            // },
-            // },
           },
           {
             $sort: {
@@ -192,5 +185,136 @@ export class PostsQueryRepository {
         ])
         .exec()
     )[0] as IPaginationResponse<IPostsRequest[]>;
+  }
+
+  async queryPostById(id: string, userId: string) {
+    const postId = new mongoose.Types.ObjectId(id);
+    return (
+      await this.postModel
+        .aggregate([
+          {
+            $match: { _id: postId },
+          },
+          {
+            $project: {
+              _id: 0,
+              total: '$totalCount',
+              id: '$_id',
+              title: '$title',
+              shortDescription: '$shortDescription',
+              content: '$content',
+              blogId: '$blogId',
+              blogName: '$blogName',
+              createdAt: '$createdAt',
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              as: 'extendedLikesInfo.newestLikes',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Like'] }],
+                    },
+                  },
+                },
+                { $sort: { createdAt: 1 } },
+                { $limit: 3 },
+                {
+                  $project: {
+                    _id: 0,
+                    addedAt: '$createdAt',
+                    userId: '$userId',
+                    login: '$login',
+                  },
+                },
+              ],
+            },
+          },
+
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              as: 'extendedLikesInfo.likeCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Like'] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'extendedLikesInfo.likeCount': {
+                $size: '$extendedLikesInfo.likeCount',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              as: 'extendedLikesInfo.dislikeCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$status', 'Dislike'] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'extendedLikesInfo.dislikeCount': {
+                $size: '$extendedLikesInfo.dislikeCount',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              as: 'extendedLikesInfo.myStatus',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$userId', userId] }],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'extendedLikesInfo.myStatus': {
+                $ifNull: [
+                  {
+                    $first: '$extendedLikesInfo.myStatus.status',
+                  },
+                  'None',
+                ],
+              },
+            },
+          },
+        ])
+        .exec()
+    )[0] as IPostsRequest;
   }
 }

@@ -6,6 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { SecurityService } from 'modules/security/security.service';
+import { Devices, DevicesSchema } from 'schemas/device.schema';
 import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
@@ -36,11 +38,13 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
       { name: User.name, schema: UserSchema },
       { name: IpUser.name, schema: IpUserSchema },
       { name: BlackList.name, schema: BlackListSchema },
+      { name: Devices.name, schema: DevicesSchema },
     ]),
     ConfigModule,
   ],
   controllers: [AuthController],
   providers: [
+    SecurityService,
     AuthService,
     BlackListRepository,
     IpUsersRepository,
