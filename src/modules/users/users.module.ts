@@ -4,7 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
 import { UserSchema, User } from '../../schemas/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
@@ -20,6 +20,10 @@ import { IfExistUserDropErrorValidator } from 'dto-validator/if-exist-user-drop-
     ConfigModule.forRoot({ isGlobal: true }),
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
   ],
   controllers: [UsersController],
 

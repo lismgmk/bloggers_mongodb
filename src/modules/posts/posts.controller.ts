@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -85,7 +86,6 @@ export class PostsController {
   @Get(':postId/comments')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
-  @UseFilters(new MongoExceptionFilter())
   async getPostsForBloggerId(
     @Param('postId', ParamIdValidationPipe)
     postId: string,
@@ -100,6 +100,20 @@ export class PostsController {
   ) {
     return this.commentsService.getCommentsForPostId(
       queryParams,
+      postId,
+      user ? user._id : null,
+    );
+  }
+
+  @Get(':postId')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  async getPostById(
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @GetUser() user: User,
+  ) {
+    return this.postsService.getPostByIdWithLikes(
       postId,
       user ? user._id : null,
     );
@@ -124,5 +138,31 @@ export class PostsController {
       userId: user ? user._id : null,
       userLogin: user.accountData.userName,
     });
+  }
+
+  @Put(':id')
+  @HttpCode(204)
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async changeBlog(
+    @Param('id', ParamIdValidationPipe)
+    id: string,
+    @Body(new CustomValidationPipe())
+    createPostDto: CreatePostWithBlogIdDto,
+  ) {
+    return await this.postsService.changePost(id, createPostDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async deleteBlog(
+    @Param('id', ParamIdValidationPipe)
+    id: string,
+  ) {
+    return await this.postsService.deletePostById(id);
   }
 }
