@@ -15,18 +15,18 @@ import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
 import { User, UserSchema } from '../schemas/users.schema';
-import { AuthModule } from './auth/auth.module';
-import { BlogsModule } from './blogs/blogs.module';
-import { CommentsModule } from './comments/comments.module';
-import { JwtPassModule } from './common-services/jwt-pass/jwt-pass.module';
-import { JwtPassService } from './common-services/jwt-pass/jwt-pass.service';
-import { MailModule } from './common-services/mail/mail.module';
-import { LikesModule } from './likes/likes.module';
-import { PostsModule } from './posts/posts.module';
-import { SecurityModule } from './security/security.module';
-import { TestingModule } from './testing/testing.module';
-import { UsersModule } from './users/users.module';
-import { UsersRepository } from './users/users.repository';
+import { AuthModule } from '../modules/auth/auth.module';
+import { BlogsModule } from '../modules/blogs/blogs.module';
+import { CommentsModule } from '../modules/comments/comments.module';
+import { JwtPassModule } from '../modules/common-services/jwt-pass/jwt-pass.module';
+import { JwtPassService } from '../modules/common-services/jwt-pass/jwt-pass.service';
+import { MailModule } from '../modules/common-services/mail/mail.module';
+import { LikesModule } from '../modules/likes/likes.module';
+import { PostsModule } from '../modules/posts/posts.module';
+import { SecurityModule } from '../modules/security/security.module';
+import { TestingModule } from '../modules/testing/testing.module';
+import { UsersModule } from '../modules/users/users.module';
+import { UsersRepository } from '../modules/users/users.repository';
 
 @Module({
   imports: [
