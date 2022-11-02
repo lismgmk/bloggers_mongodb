@@ -19,7 +19,6 @@ import { AuthModule } from '../modules/auth/auth.module';
 import { BlogsModule } from '../modules/blogs/blogs.module';
 import { CommentsModule } from '../modules/comments/comments.module';
 import { JwtPassModule } from '../modules/common-services/jwt-pass/jwt-pass.module';
-import { JwtPassService } from '../modules/common-services/jwt-pass/jwt-pass.service';
 import { MailModule } from '../modules/common-services/mail/mail.module';
 import { LikesModule } from '../modules/likes/likes.module';
 import { PostsModule } from '../modules/posts/posts.module';
@@ -27,6 +26,7 @@ import { SecurityModule } from '../modules/security/security.module';
 import { TestingModule } from '../modules/testing/testing.module';
 import { UsersModule } from '../modules/users/users.module';
 import { UsersRepository } from '../modules/users/users.repository';
+import { JwtPassService } from '../modules/common-services/jwt-pass/jwt-pass.service';
 
 @Module({
   imports: [
