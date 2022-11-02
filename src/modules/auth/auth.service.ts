@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
-import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { MailService } from '../common-services/mail/mail.service';
 import { UsersService } from '../users/users.service';
 import {

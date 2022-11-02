@@ -7,7 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
 import { UserSchema, User } from '../../schemas/users.schema';
-import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';

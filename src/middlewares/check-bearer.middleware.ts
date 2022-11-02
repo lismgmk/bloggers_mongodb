@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { JwtPassService } from 'modules/common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from 'modules/common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersRepository } from 'modules/users/users.repository';
 
 @Injectable()

@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { BlackListRepository } from '../modules/auth/black-list.repository';
-import { JwtPassService } from '../modules/common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../modules/common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersRepository } from '../modules/users/users.repository';
 
 @Injectable()

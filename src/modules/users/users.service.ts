@@ -6,7 +6,7 @@ import { paginationBuilder, paramsDto } from 'helpers/pagination-builder';
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
-import { JwtPassService } from '../common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { GetAllUsersQueryDto } from './dto/get-all-user-query.dto';
 import { IUser } from './dto/user-interfaces';
 import {

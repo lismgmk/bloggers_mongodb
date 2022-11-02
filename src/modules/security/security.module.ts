@@ -6,7 +6,7 @@ import { SecurityService } from './security.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'schemas/users.schema';
 import { BlackListRepository } from 'modules/auth/black-list.repository';
-import { JwtPassService } from 'modules/common-services/jwt-pass/jwt-pass.service';
+import { JwtPassService } from 'modules/common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersRepository } from 'modules/users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { BlackList, BlackListSchema } from 'schemas/black-list.schema';
