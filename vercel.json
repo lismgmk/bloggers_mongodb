@@ -5,7 +5,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts"
+      "dest": "main.ts"
     }
   ]
 }
