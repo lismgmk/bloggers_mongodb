@@ -9,6 +9,7 @@ import { Comments, CommentsSchema } from '../../schemas/comments.schema';
 import { Like, LikeSchema } from '../../schemas/likes.schema';
 import { Posts, PostsSchema } from '../../schemas/posts.schema';
 import { User, UserSchema } from '../../schemas/users.schema';
+import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtStrategy } from '../../strategyes/jwt.strategy';
 import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
@@ -33,6 +34,7 @@ import { PostsService } from './posts.service';
     ]),
   ],
   providers: [
+    BasicStrategy,
     JwtStrategy,
     CommentsService,
     PostsService,
