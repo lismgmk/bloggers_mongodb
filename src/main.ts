@@ -8,6 +8,7 @@ import { AppModule } from './modules/app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.enableCors();
   // app.useGlobalFilters(new MongoExceptionFilter());
   app.use(cookieParser());
   await app.listen(process.env.PORT || 5000);
