@@ -1,15 +1,15 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikeInfoRequest } from 'global-dto/like-info.request';
-import { LikeStatusEnum } from 'global-dto/like-status.dto';
-import { LikesService } from 'modules/likes/likes.service';
 import { Model, ObjectId } from 'mongoose';
-import { Comments } from 'schemas/comments.schema';
-import { User } from 'schemas/users.schema';
+import { LikeInfoRequest } from '../../global-dto/like-info.request';
+import { LikeStatusEnum } from '../../global-dto/like-status.dto';
+import { Comments } from '../../schemas/comments.schema';
+import { User } from '../../schemas/users.schema';
+import { LikesService } from '../likes/likes.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { ICreateComment } from './dto/comments-interfaces';
 import { GetAllCommentsDto } from './dto/get-all-comments.dto';

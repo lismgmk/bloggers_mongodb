@@ -1,6 +1,6 @@
-import { IsEnum, IsOptional } from 'class-validator';
-import { PaginationQueryDto } from 'global-dto/pagination-query.dto';
+import { IsOptional, IsEnum } from 'class-validator';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../../consts/ad-validation-const';
+import { PaginationQueryDto } from '../../../global-dto/pagination-query.dto';
 
 export enum SortByField {
   userName,

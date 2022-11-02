@@ -1,4 +1,4 @@
-import { IsMongoIdObject } from 'dto-validator/is-mongid-obj';
+import { IsMongoIdObject } from '../../../dto-validator/is-mongid-obj';
 
 export class IdParamPostDTO {
   @IsMongoIdObject()

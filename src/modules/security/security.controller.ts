@@ -1,19 +1,19 @@
 import {
   Controller,
-  Delete,
   Get,
   HttpCode,
-  Param,
-  UseFilters,
-  UseGuards,
   UsePipes,
   ValidationPipe,
+  UseFilters,
+  UseGuards,
+  Delete,
+  Param,
 } from '@nestjs/common';
-import { GetDeviceId } from 'decorators/get-device-id.decorator';
-import { GetUserId } from 'decorators/get-user-id.decorator';
-import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
-import { CookieGuard } from 'guards/cookie.guard';
-import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
+import { GetDeviceId } from '../../decorators/get-device-id.decorator';
+import { GetUserId } from '../../decorators/get-user-id.decorator';
+import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
+import { CookieGuard } from '../../guards/cookie.guard';
+import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { SecurityService } from './security.service';
 
 @Controller('security/devices')

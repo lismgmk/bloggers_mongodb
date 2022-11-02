@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
-import { INCORRECT_TYPE_VALIDATION_ERROR } from 'consts/ad-validation-const';
-import { toNumber } from 'helpers/helper-transform-number';
+import { IsEnum, IsOptional, IsInt } from 'class-validator';
+import { INCORRECT_TYPE_VALIDATION_ERROR } from '../consts/ad-validation-const';
+import { toNumber } from '../helpers/helper-transform-number';
 
 export enum SortDirection {
   desc,

@@ -1,23 +1,21 @@
 import {
-  Body,
   Controller,
-  Get,
   HttpCode,
-  Ip,
   Post,
-  Res,
   UseFilters,
+  Ip,
+  Body,
   UseGuards,
+  Res,
+  Get,
 } from '@nestjs/common';
-import { DeviceName } from 'decorators/device-name.decorator';
-import { GetDeviceId } from 'decorators/get-device-id.decorator';
-import { PuerRefresgToken } from 'decorators/puer-refresh-token.decorator';
-import { UserIp } from 'decorators/user-ip.decorator';
-import { Response } from 'express';
-import { SecurityService } from 'modules/security/security.service';
 import mongoose from 'mongoose';
+import { DeviceName } from '../../decorators/device-name.decorator';
+import { GetDeviceId } from '../../decorators/get-device-id.decorator';
 import { GetUserId } from '../../decorators/get-user-id.decorator';
 import { GetUser } from '../../decorators/get-user.decorator';
+import { PuerRefresgToken } from '../../decorators/puer-refresh-token.decorator';
+import { UserIp } from '../../decorators/user-ip.decorator';
 import { CommonErrorFilter } from '../../exceptions/common-error-filter';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
@@ -26,12 +24,14 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { LocalStrategyGuard } from '../../guards/local-strategy.guard';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users.schema';
+import { SecurityService } from '../security/security.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { BlackListRepository } from './black-list.repository';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ResendingEmailDto } from './dto/resending-email.dto';
+
 @Controller('auth')
 export class AuthController {
   constructor(

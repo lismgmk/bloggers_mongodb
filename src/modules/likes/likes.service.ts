@@ -1,8 +1,8 @@
-import { Like } from 'schemas/likes.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { LikeStatusEnum } from 'global-dto/like-status.dto';
+import { LikeStatusEnum } from '../../global-dto/like-status.dto';
+import { Like } from '../../schemas/likes.schema';
 
 export interface ILikeInfo {
   postId: string | null | ObjectId;

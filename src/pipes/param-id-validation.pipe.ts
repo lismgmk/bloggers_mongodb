@@ -1,11 +1,11 @@
 import {
-  ArgumentMetadata,
-  BadRequestException,
   Injectable,
   PipeTransform,
+  ArgumentMetadata,
+  BadRequestException,
 } from '@nestjs/common';
-import { FIELD_OBJECT_ID_VALIDATION_ERROR } from 'consts/ad-validation-const';
 import { Types } from 'mongoose';
+import { FIELD_OBJECT_ID_VALIDATION_ERROR } from '../consts/ad-validation-const';
 
 @Injectable()
 export class ParamIdValidationPipe implements PipeTransform<any> {

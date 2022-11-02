@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { IPaginationResponse } from 'global-dto/common-interfaces';
-import { GetAllPostsdDto } from 'modules/posts/dto/get-all-posts.dto';
-import { PostsQueryRepository } from 'modules/posts/posts.query.repository';
 import { Model, ObjectId } from 'mongoose';
-import { Blog } from 'schemas/blog.schema';
+import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { Blog } from '../../schemas/blog.schema';
+import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
+import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { IBlog } from './dto/blogs-intergaces';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';

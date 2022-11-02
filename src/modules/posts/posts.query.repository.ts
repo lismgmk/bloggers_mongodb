@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IPaginationResponse } from 'global-dto/common-interfaces';
 import mongoose, { Model } from 'mongoose';
-import { Posts } from 'schemas/posts.schema';
+import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { Posts } from '../../schemas/posts.schema';
 import { pageNumber } from '../../test-params/test-values';
 import { IPostsRequest } from './dto/all-posts-response';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';

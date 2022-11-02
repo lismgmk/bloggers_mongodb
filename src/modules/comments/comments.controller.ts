@@ -1,25 +1,25 @@
 import {
-  Body,
   Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
   Put,
+  HttpCode,
   UseFilters,
   UseGuards,
+  Param,
+  Body,
+  Delete,
   UsePipes,
   ValidationPipe,
+  Get,
 } from '@nestjs/common';
-import { GetUser } from 'decorators/get-user.decorator';
-import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
-import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
-import { LikeStatusDto } from 'global-dto/like-status.dto';
-import { JwtAuthGuard } from 'guards/jwt-auth.guard';
-import { CommentsService } from 'modules/comments/comments.service';
-import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
-import { CustomValidationPipe } from 'pipes/validation.pipe';
-import { User } from 'schemas/users.schema';
+import { GetUser } from '../../decorators/get-user.decorator';
+import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
+import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
+import { LikeStatusDto } from '../../global-dto/like-status.dto';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
+import { CustomValidationPipe } from '../../pipes/validation.pipe';
+import { User } from '../../schemas/users.schema';
+import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Controller('comments')

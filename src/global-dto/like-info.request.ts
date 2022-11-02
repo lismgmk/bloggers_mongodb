@@ -1,15 +1,15 @@
 import { Optional } from '@nestjs/common';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsArray,
+  IsString,
   IsEnum,
   IsInt,
-  IsString,
+  IsArray,
   ValidateNested,
 } from 'class-validator';
-import { INCORRECT_TYPE_VALIDATION_ERROR } from 'consts/ad-validation-const';
-import { toNumber } from 'helpers/helper-transform-number';
 import { Types } from 'mongoose';
+import { INCORRECT_TYPE_VALIDATION_ERROR } from '../consts/ad-validation-const';
+import { toNumber } from '../helpers/helper-transform-number';
 import { SortDirection } from './pagination-query.dto';
 
 enum LikeStatusEnum {

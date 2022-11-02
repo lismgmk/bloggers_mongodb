@@ -1,10 +1,13 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { IPaginationResponse } from 'global-dto/common-interfaces';
-import { paginationBuilder, paramsDto } from 'helpers/pagination-builder';
-import { IBlog } from 'modules/blogs/dto/blogs-intergaces';
 import { Model } from 'mongoose';
-import { Blog } from 'schemas/blog.schema';
+import { IPaginationResponse } from '../../../../global-dto/common-interfaces';
+import {
+  paramsDto,
+  paginationBuilder,
+} from '../../../../helpers/pagination-builder';
+import { Blog } from '../../../../schemas/blog.schema';
+import { IBlog } from '../../dto/blogs-intergaces';
 import { GetAllBlogsQueryDto } from '../impl/get-all-blogs-query.dto';
 
 @QueryHandler(GetAllBlogsQueryDto)

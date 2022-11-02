@@ -1,4 +1,4 @@
-import { likeStatusType } from 'modules/likes/dto/like-interfaces';
+import { likeStatusType } from '../../likes/dto/like-interfaces';
 
 export interface ICommentsRequest {
   id: string;

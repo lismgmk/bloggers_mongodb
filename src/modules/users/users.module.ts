@@ -4,16 +4,16 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { BasicStrategy } from 'passport-http';
+import { IfExistUserDropErrorValidator } from '../../dto-validator/if-exist-user-drop-error';
+import { IfNotFoundUserIdDropError } from '../../dto-validator/if-not-found-user-id-drop-error';
 import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
-import { UserSchema, User } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
-import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
-import { IfNotFoundUserIdDropError } from 'dto-validator/if-not-found-user-id-drop-error';
-import { IfExistUserDropErrorValidator } from 'dto-validator/if-exist-user-drop-error';
 
 @Module({
   imports: [

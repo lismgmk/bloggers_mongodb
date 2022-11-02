@@ -1,14 +1,13 @@
-import { Types } from 'mongoose';
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns';
-import { Model } from 'mongoose';
-import { Devices } from './../../schemas/device.schema';
+import { Model, Types } from 'mongoose';
+import { Devices } from '../../schemas/device.schema';
 
 @Injectable()
 export class SecurityService {

@@ -1,4 +1,4 @@
-import { IPagination } from 'global-dto/common-interfaces';
+import { IPagination } from '../global-dto/common-interfaces';
 
 export interface paramsDto {
   totalCount: number;

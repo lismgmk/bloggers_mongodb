@@ -1,31 +1,31 @@
-import { CreatePostDto } from './../posts/dto/create-post.dto';
 import {
-  Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
-  Param,
-  Post,
-  Put,
-  Query,
   UseFilters,
-  UseGuards,
-  UsePipes,
   ValidationPipe,
+  Post,
+  UseGuards,
+  Body,
+  UsePipes,
+  Param,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
-import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
-import { GetAllPostsdDto } from 'modules/posts/dto/get-all-posts.dto';
-import { PostsService } from 'modules/posts/posts.service';
-import { CustomValidationPipe } from 'pipes/validation.pipe';
+import { Query } from 'mongoose';
+import { GetUser } from '../../decorators/get-user.decorator';
+import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
+import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
+import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
+import { CustomValidationPipe } from '../../pipes/validation.pipe';
+import { User } from '../../schemas/users.schema';
+import { CreatePostDto } from '../posts/dto/create-post.dto';
+import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
+import { PostsService } from '../posts/posts.service';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
-import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
-import { GetUser } from 'decorators/get-user.decorator';
-import { User } from 'schemas/users.schema';
 
 @Controller('blogs')
 export class BlogsController {

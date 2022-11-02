@@ -1,10 +1,10 @@
 import { Length, IsEmail } from 'class-validator';
-import { ForExistsUserError } from 'dto-validator/if-exist-user-drop-error';
 import {
   FIELD_EXIST_VALIDATION_ERROR,
   FIELD_LENGTH_VALIDATION_ERROR,
   FIELD_EMAIL_VALIDATION_ERROR,
 } from '../../../consts/ad-validation-const';
+import { ForExistsUserError } from '../../../dto-validator/if-exist-user-drop-error';
 
 export class CreateUserDto {
   @ForExistsUserError({

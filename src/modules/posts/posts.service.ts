@@ -1,17 +1,17 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { LikeInfoRequest } from 'global-dto/like-info.request';
-import { LikeStatusEnum } from 'global-dto/like-status.dto';
-import { LikesService } from 'modules/likes/likes.service';
 import mongoose, { Model, ObjectId } from 'mongoose';
-import { Blog } from 'schemas/blog.schema';
-import { Posts } from 'schemas/posts.schema';
-import { User } from 'schemas/users.schema';
-import { BlogsService } from './../blogs/blogs.service';
+import { LikeInfoRequest } from '../../global-dto/like-info.request';
+import { LikeStatusEnum } from '../../global-dto/like-status.dto';
+import { Blog } from '../../schemas/blog.schema';
+import { Posts } from '../../schemas/posts.schema';
+import { User } from '../../schemas/users.schema';
+import { BlogsService } from '../blogs/blogs.service';
+import { LikesService } from '../likes/likes.service';
 import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
 import { PostsQueryRepository } from './posts.query.repository';

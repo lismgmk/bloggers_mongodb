@@ -1,31 +1,31 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseFilters,
-  UseGuards,
   UsePipes,
   ValidationPipe,
+  UseFilters,
+  Post,
+  UseGuards,
+  Body,
+  Put,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'decorators/get-user.decorator';
-import { CommonErrorFilter } from 'exceptions/common-error-filter';
-import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
-import { ValidationBodyExceptionFilter } from 'exceptions/validation-body-exception-filter';
-import { LikeStatusDto } from 'global-dto/like-status.dto';
-import { JwtAuthGuard } from 'guards/jwt-auth.guard';
-import { CommentsService } from 'modules/comments/comments.service';
-import { CreateCommentDto } from 'modules/comments/dto/create-comment.dto';
-import { GetAllCommentsDto } from 'modules/comments/dto/get-all-comments.dto';
-import { ParamIdValidationPipe } from 'pipes/param-id-validation.pipe';
-import { CustomValidationPipe } from 'pipes/validation.pipe';
-import { User } from 'schemas/users.schema';
+import { Query } from 'mongoose';
+import { GetUser } from '../../decorators/get-user.decorator';
+import { CommonErrorFilter } from '../../exceptions/common-error-filter';
+import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
+import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
+import { LikeStatusDto } from '../../global-dto/like-status.dto';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
+import { CustomValidationPipe } from '../../pipes/validation.pipe';
+import { User } from '../../schemas/users.schema';
+import { CommentsService } from '../comments/comments.service';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { GetAllCommentsDto } from '../comments/dto/get-all-comments.dto';
 import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
 import { PostsService } from './posts.service';

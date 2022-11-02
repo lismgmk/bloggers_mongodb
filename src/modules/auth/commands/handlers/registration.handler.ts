@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { UsersService } from 'modules/users/users.service';
 import { v4 } from 'uuid';
+import { UsersService } from '../../../users/users.service';
 import { RegistrationCommand } from '../impl/registration.command';
 
 @CommandHandler(RegistrationCommand)

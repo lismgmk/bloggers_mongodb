@@ -1,5 +1,5 @@
 import { IsEnum } from 'class-validator';
-import { INCORRECT_TYPE_VALIDATION_ERROR } from 'consts/ad-validation-const';
+import { INCORRECT_TYPE_VALIDATION_ERROR } from '../consts/ad-validation-const';
 
 export enum LikeStatusEnum {
   'None',

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { LikesService } from 'modules/likes/likes.service';
-import { Like, LikeSchema } from 'schemas/likes.schema';
-import { Posts, PostsSchema } from 'schemas/posts.schema';
-import { CommentsService } from './comments.service';
+import { Comments, CommentsSchema } from '../../schemas/comments.schema';
+import { Like, LikeSchema } from '../../schemas/likes.schema';
+import { Posts, PostsSchema } from '../../schemas/posts.schema';
+import { LikesService } from '../likes/likes.service';
 import { CommentsController } from './comments.controller';
-import { Comments, CommentsSchema } from 'schemas/comments.schema';
 import { CommentsQueryRepository } from './comments.query.repository';
+import { CommentsService } from './comments.service';
 
 @Module({
   imports: [

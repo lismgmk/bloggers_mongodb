@@ -1,5 +1,5 @@
 import { Controller, Delete, HttpCode, UseFilters } from '@nestjs/common';
-import { MongoExceptionFilter } from 'exceptions/mongoose-exception-filter';
+import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { TestingService } from './testing.service';
 
 @Controller('testing/all-data')
