@@ -9,8 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { CheckBearerMiddleware } from 'middlewares/check-bearer.middleware';
-import { CheckIpStatusMiddleware } from 'middlewares/check-ip-status.middleware';
+import { CheckBearerMiddleware } from '../middlewares/check-bearer.middleware';
+import { CheckIpStatusMiddleware } from '../middlewares/check-ip-status.middleware';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
@@ -64,13 +64,13 @@ import { UsersRepository } from './users/users.repository';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(CheckIpStatusMiddleware)
-    //   .forRoutes(
-    //     { path: '/auth/registration', method: RequestMethod.POST },
-    //     { path: 'users/:id', method: RequestMethod.DELETE },
-    //     { path: 'refresh-token', method: RequestMethod.POST },
-    //   );
+    consumer
+      .apply(CheckIpStatusMiddleware)
+      .forRoutes(
+        { path: '/auth/registration', method: RequestMethod.POST },
+        { path: 'users/:id', method: RequestMethod.DELETE },
+        { path: 'refresh-token', method: RequestMethod.POST },
+      );
     consumer.apply(CheckBearerMiddleware).forRoutes(
       {
         path: '/posts/:postId/comments',
