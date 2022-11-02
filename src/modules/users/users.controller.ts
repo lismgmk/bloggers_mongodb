@@ -11,9 +11,9 @@ import {
   ValidationPipe,
   Param,
   Get,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Query } from 'mongoose';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';

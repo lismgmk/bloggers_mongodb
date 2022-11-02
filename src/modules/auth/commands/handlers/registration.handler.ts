@@ -1,5 +1,4 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { v4 } from 'uuid';
 import { UsersService } from '../../../users/users.service';
 import { RegistrationCommand } from '../impl/registration.command';
 
@@ -13,7 +12,6 @@ export class RegistrationHandler
   ) {}
 
   async execute(command: RegistrationCommand) {
-    const confirmationCode = v4();
     const newUserDto = {
       login: command.login,
       email: command.email,

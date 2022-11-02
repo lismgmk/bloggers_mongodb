@@ -1,14 +1,16 @@
 import {
-  Controller,
-  HttpCode,
-  Post,
-  UseFilters,
-  Ip,
   Body,
-  UseGuards,
-  Res,
+  Controller,
   Get,
+  HttpCode,
+  Ip,
+  Post,
+  Res,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
+
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import { DeviceName } from '../../decorators/device-name.decorator';
 import { GetDeviceId } from '../../decorators/get-device-id.decorator';
@@ -31,7 +33,6 @@ import { BlackListRepository } from './black-list.repository';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ResendingEmailDto } from './dto/resending-email.dto';
-
 @Controller('auth')
 export class AuthController {
   constructor(

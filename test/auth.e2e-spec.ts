@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { useContainer } from 'class-validator';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { disconnect } from 'mongoose';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
 import { BlackListRepository } from '../src/modules/auth/black-list.repository';
 import { UsersRepository } from '../src/modules/users/users.repository';
@@ -53,7 +53,7 @@ describe('test user-router "/auth"', () => {
       .set('Authorization', `Basic ${adminToken.correct}`)
       .send(bodyParams);
     newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
-    token = await jwtPassService.createJwt(
+    token = await jwtPassService.createJwtAccess(
       newUser._id,
       process.env.EXPIRED_REFRESH,
     );

@@ -11,9 +11,9 @@ import {
   Put,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Query } from 'mongoose';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { CommonErrorFilter } from '../../exceptions/common-error-filter';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
