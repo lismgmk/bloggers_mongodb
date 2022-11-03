@@ -17,11 +17,6 @@ export const getStatusCode = <T>(exception: T): number => {
     : HttpStatus.INTERNAL_SERVER_ERROR;
 };
 
-// export const getErrorMessage = <T>(exception: T): string => {
-//   return exception instanceof HttpException
-//     ? exception.message
-//     : String(exception);
-// };
 export const getErrorMessage = <T>(exception: T): any => {
   if (exception instanceof HttpException) {
     const errorResponse = exception.getResponse();

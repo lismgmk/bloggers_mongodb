@@ -7,7 +7,6 @@ import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { IfExistUserDropErrorValidator } from '../../dto-validator/if-exist-user-drop-error';
 import { IfNotFoundUserIdDropError } from '../../dto-validator/if-not-found-user-id-drop-error';
-import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
 import { User, UserSchema } from '../../schemas/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
@@ -33,7 +32,6 @@ import { UsersService } from './users.service';
     BasicStrategy,
     IfExistUserDropErrorValidator,
     IfNotFoundUserIdDropError,
-    isMongoObjIdValidator,
     UsersRepository,
     JwtPassService,
     {

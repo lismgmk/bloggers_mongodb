@@ -8,7 +8,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { TestingModule } from '@nestjs/testing';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CheckBearerMiddleware } from '../middlewares/check-bearer.middleware';
 import { CheckIpStatusMiddleware } from '../middlewares/check-ip-status.middleware';
@@ -25,6 +24,7 @@ import { MailModule } from './common-services/mail/mail.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { SecurityModule } from './security/security.module';
+import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { UsersRepository } from './users/users.repository';
 

@@ -29,5 +29,6 @@ export class TestingService {
     await this.postModel.deleteMany({});
     await this.blackListModel.deleteMany({});
     await this.ipUserModel.deleteMany({});
+    return;
   }
 }

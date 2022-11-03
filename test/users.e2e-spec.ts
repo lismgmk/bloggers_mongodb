@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectId } from 'bson';
 import { useContainer } from 'class-validator';
 import { disconnect } from 'mongoose';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
 import { UsersRepository } from '../src/modules/users/users.repository';
 import { fakerConnectDb } from '../src/test-params/fake-connect-db';

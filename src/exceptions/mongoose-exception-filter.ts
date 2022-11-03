@@ -5,15 +5,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-import * as MongooseError from 'mongoose/lib/error'; // I couldn't see the error class is being exported from Mongoose
-
+import MongooseError from 'mongoose/lib/error';
 @Catch(MongooseError)
 export class MongoExceptionFilter implements ExceptionFilter {
   catch(exception: MongooseError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     let error;
-    console.log(exception.name, 'mongo exception!!!');
     switch (exception.name) {
       case 'DocumentNotFoundError': {
         error = {
