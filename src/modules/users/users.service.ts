@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { add, formatISO } from 'date-fns';
+import { add } from 'date-fns';
 
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
@@ -27,22 +27,22 @@ export class UsersService {
     );
 
     const confirmationCode = v4();
+
     const newUser = new this.userModel({
       accountData: {
         userName: dto.login,
         email: dto.email,
         passwordHash: hashPassword,
-        createdAt: formatISO(new Date()),
+        createdAt: new Date().toISOString(),
         userIp: dto.userIp,
       },
       emailConfirmation: {
         confirmationCode,
-        expirationDate: formatISO(
-          add(new Date(), {
-            hours: 1,
-            minutes: 10,
-          }),
-        ),
+        expirationDate: add(new Date(), {
+          hours: 1,
+          minutes: 10,
+        }).toISOString(),
+
         isConfirmed: false,
         attemptCount: 0,
       },
