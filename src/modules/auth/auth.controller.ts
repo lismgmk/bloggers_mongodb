@@ -89,6 +89,7 @@ export class AuthController {
     @DeviceName() deviceName: string,
   ) {
     const deviceId = new mongoose.Types.ObjectId();
+    console.log(userId, deviceId, userId, 'controller!!!!!!!!!!!!!');
     const tokens = await this.authService.getRefreshAccessToken(
       userId,
       deviceId,
