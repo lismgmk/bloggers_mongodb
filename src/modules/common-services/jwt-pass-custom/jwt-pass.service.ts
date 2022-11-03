@@ -14,11 +14,10 @@ export class JwtPassService {
   async verifyJwt(token: string) {
     try {
       const secret = this.configService.get<string>('SECRET');
-      const tokenId = this.jwtService
-        .verifyAsync(token, { publicKey: secret })
-        .catch((error) => {
-          if (error === 'jwt expired') return;
-        });
+      const tokenId = await this.jwtService.verify(token, {
+        publicKey: secret,
+      });
+
       return tokenId;
     } catch (e) {
       console.log(e);
