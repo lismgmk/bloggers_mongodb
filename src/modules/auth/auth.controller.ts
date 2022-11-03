@@ -155,7 +155,11 @@ export class AuthController {
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)
-  async logout() {
+  async logout(
+    @PuerRefresgToken()
+    refreshToken: string,
+  ) {
+    await this.blackListRepository.addToken(refreshToken);
     return;
   }
 
