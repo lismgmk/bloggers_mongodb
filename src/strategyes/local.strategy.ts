@@ -4,12 +4,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../modules/users/users.repository';
 import { User } from '../schemas/users.schema';
 import { JwtPassService } from '../modules/common-services/jwt-pass-custom/jwt-pass.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
     private usersRepository: UsersRepository,
     private jwtPassService: JwtPassService,
+    private configService: ConfigService,
   ) {
     super({
       usernameField: 'login',
@@ -19,7 +21,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(username: string, password: string): Promise<any> {
     const user = (await this.usersRepository.getUserByLogin(username)) as User;
     let isMatchPass;
-    console.log(user, 'uer!!!!!!!!!!!!!!');
+    console.log(
+      user,
+      'uer!!!!!!!!!!!!!!',
+      this.configService.get<string>('DB_CONN_MONGOOSE_STRING'),
+    );
     if (user) {
       isMatchPass = await this.jwtPassService.checkPassBcrypt(
         password,
