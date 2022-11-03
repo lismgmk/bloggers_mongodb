@@ -39,10 +39,10 @@ import { UsersRepository } from './users/users.repository';
     TestingModule,
     UsersModule,
     PassportModule,
-    ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
-    }),
+    // ThrottlerModule.forRoot({
+    //   ttl: 10,
+    //   limit: 5,
+    // }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -64,13 +64,11 @@ import { UsersRepository } from './users/users.repository';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CheckIpStatusMiddleware)
-      .forRoutes(
-        { path: '/auth/registration', method: RequestMethod.POST },
-        { path: 'users/:id', method: RequestMethod.DELETE },
-        { path: 'refresh-token', method: RequestMethod.POST },
-      );
+    // consumer.apply(CheckIpStatusMiddleware).forRoutes(
+    //   { path: '/auth/registration', method: RequestMethod.POST },
+    //   { path: 'users/:id', method: RequestMethod.DELETE },
+    //   { path: 'refresh-token', method: RequestMethod.POST },
+    // );
     consumer.apply(CheckBearerMiddleware).forRoutes(
       {
         path: '/posts/:postId/comments',

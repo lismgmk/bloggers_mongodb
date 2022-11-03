@@ -55,10 +55,10 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
     RegistrationHandler,
     SendEmailHandler,
     LocalStrategy,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
 export class AuthModule {}

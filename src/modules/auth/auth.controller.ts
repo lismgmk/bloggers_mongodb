@@ -103,7 +103,6 @@ export class AuthController {
       deviceName,
       deviceId: deviceId,
     });
-    console.log('refreshToken', tokens.refreshToken);
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
