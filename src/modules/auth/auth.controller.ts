@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
-import { compareDesc } from 'date-fns';
+import { add, compareDesc } from 'date-fns';
 
 import { Response } from 'express';
 import mongoose from 'mongoose';
@@ -155,7 +155,22 @@ export class AuthController {
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   async registrationConfirmation(@Body() code: { code: string }) {
-    if (compareDesc(new Date(code.code), new Date()) === -1) {
+    const d = compareDesc(
+      new Date(),
+      add(new Date(code.code), {
+        seconds: 10,
+      }),
+    );
+    console.log(code.code, 'codddd', d);
+
+    if (
+      compareDesc(
+        new Date(),
+        add(new Date(code.code), {
+          seconds: 10,
+        }),
+      ) === -1
+    ) {
       throw new BadRequestException();
     }
     return this.authService.registrationConfirmation(code.code);
