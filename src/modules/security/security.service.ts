@@ -76,11 +76,21 @@ export class SecurityService {
 
       return this.devicesModel.create(newDevice);
     } else {
-      currentDevice[0].createdAt = new Date();
-      currentDevice[0].expiredAt = add(new Date(), {
-        seconds: Number(expiredRefresh.slice(0, -1)),
-      });
-      currentDevice[0].save();
+      await this.devicesModel.findOneAndUpdate(
+        {
+          userId: dto.userId,
+          deviceName: dto.deviceName,
+        },
+        {
+          createdAt: new Date(),
+          expiredAt: add(new Date(), {
+            seconds: Number(expiredRefresh.slice(0, -1)),
+          }),
+        },
+      );
     }
+
+
+    
   }
 }
