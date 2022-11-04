@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
@@ -27,6 +26,10 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
   imports: [
     CqrsModule,
     PassportModule,
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

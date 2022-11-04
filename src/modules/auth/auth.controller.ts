@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -9,6 +10,8 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
+import { compareDesc } from 'date-fns';
 
 import { Response } from 'express';
 import mongoose from 'mongoose';
@@ -54,13 +57,14 @@ export class AuthController {
   }
   @HttpCode(200)
   @Post('/refresh-token')
+  @SkipThrottle()
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)
   async getRefreshAccessToken(
-    @GetUser() user: User,
     @Res({ passthrough: true }) res: Response,
+    @GetUser() user: User,
     @GetDeviceId()
     deviceId: string,
     @PuerRefresgToken()
@@ -151,24 +155,33 @@ export class AuthController {
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   async registrationConfirmation(@Body() code: { code: string }) {
+    if (compareDesc(new Date(), new Date(code.code)) === -1) {
+      throw new BadRequestException();
+    }
     return this.authService.registrationConfirmation(code.code);
   }
 
   @HttpCode(204)
   @Post('/logout')
+  @SkipThrottle()
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)
   async logout(
+    @GetUser() user: User,
+    @GetDeviceId()
+    deviceId: string,
     @PuerRefresgToken()
     refreshToken: string,
   ) {
+    await this.securityService.deleteCurrentDevice(deviceId, user._id);
     await this.blackListRepository.addToken(refreshToken);
     return;
   }
 
   @HttpCode(200)
   @Get('/me')
+  @SkipThrottle()
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)

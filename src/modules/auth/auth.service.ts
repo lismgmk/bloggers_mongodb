@@ -42,12 +42,13 @@ export class AuthService {
   }
 
   async registration(dto: IRegistrationDto) {
-    const confirmationCode = v4();
+    const confirmationCode = new Date();
     const newUserDto = {
       login: dto.login,
       email: dto.email,
       password: dto.password,
       userIp: dto.userIp,
+      confirmationCode,
     };
     await this.mailService.sendUserConfirmation(
       { email: dto.email, name: dto.login },
