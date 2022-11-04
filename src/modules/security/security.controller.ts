@@ -9,6 +9,7 @@ import {
   Delete,
   Param,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { GetDeviceId } from '../../decorators/get-device-id.decorator';
 import { GetUserId } from '../../decorators/get-user-id.decorator';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
@@ -22,6 +23,7 @@ export class SecurityController {
 
   @Get()
   @HttpCode(200)
+  @SkipThrottle()
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)
@@ -34,6 +36,7 @@ export class SecurityController {
 
   @Delete()
   @HttpCode(204)
+  @SkipThrottle()
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)
@@ -48,6 +51,7 @@ export class SecurityController {
 
   @Delete(':id')
   @HttpCode(204)
+  @SkipThrottle()
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(CookieGuard)

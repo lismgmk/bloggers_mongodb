@@ -19,10 +19,10 @@ import { UsersService } from './users.service';
     ConfigModule.forRoot({ isGlobal: true }),
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
-    }),
+    // ThrottlerModule.forRoot({
+    //   ttl: 10,
+    //   limit: 5,
+    // }),
   ],
   controllers: [UsersController],
 
@@ -34,10 +34,10 @@ import { UsersService } from './users.service';
     IfNotFoundUserIdDropError,
     UsersRepository,
     JwtPassService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
 export class UsersModule {}
