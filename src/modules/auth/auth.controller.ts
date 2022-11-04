@@ -155,7 +155,7 @@ export class AuthController {
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   async registrationConfirmation(@Body() code: { code: string }) {
-    if (compareDesc(new Date(), new Date(code.code)) === -1) {
+    if (compareDesc(new Date(code.code), new Date()) === -1) {
       throw new BadRequestException();
     }
     return this.authService.registrationConfirmation(code.code);
