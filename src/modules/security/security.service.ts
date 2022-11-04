@@ -17,7 +17,18 @@ export class SecurityService {
   ) {}
 
   async getAllDevices(userId: string) {
-    return this.devicesModel.find({ userId }).exec();
+    return this.devicesModel.aggregate([
+      { $match: { userId } },
+      {
+        $project: {
+          ip: '$ip',
+          title: '$deviceName',
+          lastActiveDate: '$createdAt',
+          deviceId: '$_id',
+          _id: 0,
+        },
+      },
+    ]);
   }
 
   async deleteAllExcludeCurrent(userId: string, deviceId: string) {
@@ -47,9 +58,10 @@ export class SecurityService {
   }) {
     const expiredRefresh = this.configService.get<string>('EXPIRED_REFRESH');
 
-    const currentDevice = await this.devicesModel.find({
+    const currentDevice = (await this.devicesModel.find({
+      userId: dto.userId,
       deviceName: dto.deviceName,
-    });
+    })) as Devices[];
     if (!currentDevice.length) {
       const newDevice = new this.devicesModel({
         _id: dto.deviceId,
@@ -63,6 +75,12 @@ export class SecurityService {
       });
 
       return this.devicesModel.create(newDevice);
+    } else {
+      currentDevice[0].createdAt = new Date();
+      currentDevice[0].expiredAt = add(new Date(), {
+        seconds: Number(expiredRefresh.slice(0, -1)),
+      });
+      currentDevice[0].save();
     }
   }
 }

@@ -23,12 +23,7 @@ export class CookieGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     const isChecked = await this.blackListRepository.checkToken(refreshToken);
-    const payload = this.jwtPassService.decodeJwt(refreshToken) as {
-      id: string;
-      deviceId: string;
-      iat: string;
-      exp: string;
-    };
+    const payload = await this.jwtPassService.decodeJwt(refreshToken);
     const user = await this.usersRepository.getUserById(payload.id);
     const verify = await this.jwtPassService.verifyJwt(refreshToken);
     if (isChecked.length > 0 || !verify || !user) {

@@ -23,8 +23,11 @@ export class JwtPassService {
       console.log(e);
     }
   }
-  decodeJwt(token: string) {
-    return this.jwtService.decode(token);
+  async decodeJwt(token: string) {
+    const decodeToken = (await this.jwtService.decode(token, {
+      complete: true,
+    })) as { payload: { id: string; deviceId: string } };
+    return decodeToken.payload;
   }
 
   async createPassBcrypt(password: string) {
