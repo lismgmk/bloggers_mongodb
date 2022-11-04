@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
@@ -58,10 +59,10 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
     RegistrationHandler,
     SendEmailHandler,
     LocalStrategy,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ThrottlerGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AuthModule {}
