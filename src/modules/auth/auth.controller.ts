@@ -71,6 +71,10 @@ export class AuthController {
       user._id,
       deviceId,
     );
+    await this.securityService.updateDevice({
+      userId: user._id,
+      deviceId,
+    });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,

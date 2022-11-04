@@ -15,7 +15,7 @@ export class SecurityService {
     @InjectModel(Devices.name) private devicesModel: Model<Devices>,
     private configService: ConfigService,
   ) {}
-
+  expiredRefresh = this.configService.get<string>('EXPIRED_REFRESH');
   async getAllDevices(userId: string) {
     return this.devicesModel.aggregate([
       { $match: { userId } },
@@ -56,8 +56,6 @@ export class SecurityService {
     deviceName: string;
     deviceId: Types.ObjectId;
   }) {
-    const expiredRefresh = this.configService.get<string>('EXPIRED_REFRESH');
-
     const currentDevice = (await this.devicesModel.find({
       userId: dto.userId,
       deviceName: dto.deviceName,
@@ -67,7 +65,7 @@ export class SecurityService {
         _id: dto.deviceId,
         createdAt: new Date(),
         expiredAt: add(new Date(), {
-          seconds: Number(expiredRefresh.slice(0, -1)),
+          seconds: Number(this.expiredRefresh.slice(0, -1)),
         }),
         ip: dto.ip,
         userId: dto.userId,
@@ -76,21 +74,16 @@ export class SecurityService {
 
       return this.devicesModel.create(newDevice);
     } else {
-      await this.devicesModel.findOneAndUpdate(
-        {
-          userId: dto.userId,
-          deviceName: dto.deviceName,
-        },
-        {
-          createdAt: new Date(),
-          expiredAt: add(new Date(), {
-            seconds: Number(expiredRefresh.slice(0, -1)),
-          }),
-        },
-      );
+      this.updateDevice({ userId: dto.userId, deviceName: dto.deviceName });
     }
+  }
 
-
-    
+  async updateDevice(filter: { [key: string]: string }) {
+    return this.devicesModel.findOneAndUpdate(filter, {
+      createdAt: new Date(),
+      expiredAt: add(new Date(), {
+        seconds: Number(this.expiredRefresh.slice(0, -1)),
+      }),
+    });
   }
 }
