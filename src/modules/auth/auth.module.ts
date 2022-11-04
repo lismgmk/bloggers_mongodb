@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { IsExpired } from '../../dto-validator/check-expiration-code';
 import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
@@ -59,6 +60,7 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
     RegistrationHandler,
     SendEmailHandler,
     LocalStrategy,
+    IsExpired,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

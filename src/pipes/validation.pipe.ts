@@ -20,8 +20,12 @@ export class CustomValidationPipe implements PipeTransform<any> {
         const object = plainToInstance(argumentMetadata.metatype, value);
 
         const errors = await validate(object);
+
         const errorsArr = errors.map((el) => {
-          return { message: el.constraints, field: el.property };
+          return {
+            message: Object.values(el.constraints)[0],
+            field: el.property,
+          };
         });
         if (errors.length > 0) {
           throw new BadRequestException(errorsArr);

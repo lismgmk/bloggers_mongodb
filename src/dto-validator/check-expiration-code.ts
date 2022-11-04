@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
@@ -9,7 +9,7 @@ import { add, compareDesc } from 'date-fns';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
-export class isExpired implements ValidatorConstraintInterface {
+export class IsExpired implements ValidatorConstraintInterface {
   async validate(value: any) {
     if (
       compareDesc(
@@ -19,7 +19,7 @@ export class isExpired implements ValidatorConstraintInterface {
         }),
       ) === -1
     ) {
-      throw new BadRequestException();
+      return false;
     } else {
       return true;
     }
@@ -34,7 +34,7 @@ export function CheckExpirationCode(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       constraints: [],
       options: validationOptions,
-      validator: isExpired,
+      validator: IsExpired,
     });
   };
 }
