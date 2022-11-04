@@ -33,7 +33,7 @@ export class SecurityService {
 
   async deleteAllExcludeCurrent(userId: string, deviceId: string) {
     return this.devicesModel
-      .deleteMany({ userId, deviceId: { $ne: deviceId } })
+      .deleteMany({ userId, _id: { $ne: deviceId } })
       .exec();
   }
 
