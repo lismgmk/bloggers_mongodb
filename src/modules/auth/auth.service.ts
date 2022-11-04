@@ -111,7 +111,7 @@ export class AuthService {
     await currentUser[0].save();
   }
 
-  async registrationConfirmation(code: string) {
+  async registrationConfirmation(code: Date) {
     const filter = {
       'emailConfirmation.confirmationCode': { $eq: code },
     };

@@ -18,6 +18,7 @@ export class CustomValidationPipe implements PipeTransform<any> {
     } else {
       if (argumentMetadata.type === 'body') {
         const object = plainToInstance(argumentMetadata.metatype, value);
+
         const errors = await validate(object);
         const errorsArr = errors.map((el) => {
           return { message: el.constraints, field: el.property };

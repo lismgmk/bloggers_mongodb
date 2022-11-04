@@ -33,6 +33,7 @@ import { SecurityService } from '../security/security.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { BlackListRepository } from './black-list.repository';
+import { CodeAuthDto } from './dto/code-auth.dto copy';
 import { GetNewPasswordDto } from './dto/get-new-password.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ResendingEmailDto } from './dto/resending-email.dto';
@@ -154,7 +155,9 @@ export class AuthController {
   @Post('/registration-confirmation')
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
-  async registrationConfirmation(@Body() code: { code: string }) {
+  async registrationConfirmation(
+    @Body(new CustomValidationPipe()) code: CodeAuthDto,
+  ) {
     const d = compareDesc(
       new Date(),
       add(new Date(code.code), {
