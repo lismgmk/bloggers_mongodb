@@ -59,34 +59,34 @@ export class AuthService {
 
   async resendingEmail(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
-    const currentUser = await this.userModel.find(filter);
-    if (!currentUser.length) {
+    const currentUser = await this.userModel.findOne(filter);
+    if (!currentUser) {
       throw new UnauthorizedException();
     }
     const confirmationCode = v4();
     await this.mailService.sendUserConfirmation(
-      { email, name: currentUser[0].accountData.userName },
+      { email, name: currentUser.accountData.userName },
       confirmationCode,
     );
-    currentUser[0].emailConfirmation.confirmationCode = confirmationCode;
-    currentUser[0].save();
+    currentUser.emailConfirmation.confirmationCode = confirmationCode;
+    currentUser.save();
     return currentUser;
   }
 
   async passwordRecovery(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
-    const currentUser = await this.userModel.find(filter);
-    if (!currentUser.length) {
-      throw new UnauthorizedException();
+    const currentUser = await this.userModel.findOne(filter);
+    if (currentUser) {
+      const confirmationCode = new Date();
+      await this.mailService.sendUserConfirmation(
+        { email, name: currentUser.accountData.userName },
+        confirmationCode,
+      );
+      currentUser.emailConfirmation.confirmationCode = confirmationCode;
+      currentUser.emailConfirmation.isConfirmed = false;
+      currentUser.save();
     }
-    const confirmationCode = v4();
-    await this.mailService.sendUserConfirmation(
-      { email, name: currentUser[0].accountData.userName },
-      confirmationCode,
-    );
-    currentUser[0].emailConfirmation.confirmationCode = confirmationCode;
-    currentUser[0].emailConfirmation.isConfirmed = false;
-    currentUser[0].save();
+
     return currentUser;
   }
 
@@ -94,38 +94,36 @@ export class AuthService {
     const filter = {
       'emailConfirmation.confirmationCode': { $eq: dto.recoveryCode },
     };
-    const currentUser = (await this.userModel.find(filter)) as User[];
-    if (!currentUser.length) {
+    const currentUser = (await this.userModel.findOne(filter)) as User;
+    if (!currentUser) {
       throw new UnauthorizedException();
     }
-    if (
-      currentUser[0].emailConfirmation.confirmationCode !== dto.recoveryCode
-    ) {
+    if (currentUser.emailConfirmation.confirmationCode !== dto.recoveryCode) {
       throw new UnauthorizedException();
     }
-    currentUser[0].emailConfirmation.isConfirmed = true;
+    currentUser.emailConfirmation.isConfirmed = true;
     const hashPassword = await this.jwtPassService.createPassBcrypt(
       dto.newPassword,
     );
-    currentUser[0].accountData.passwordHash = hashPassword;
-    await currentUser[0].save();
+    currentUser.accountData.passwordHash = hashPassword;
+    await currentUser.save();
   }
 
   async registrationConfirmation(code: Date) {
     const filter = {
       'emailConfirmation.confirmationCode': { $eq: code },
     };
-    const currentUser = (await this.userModel.find(filter)) as User[];
-    if (!currentUser.length) {
+    const currentUser = (await this.userModel.findOne(filter)) as User;
+    if (!currentUser) {
       throw new UnauthorizedException();
     }
-    currentUser[0].emailConfirmation.isConfirmed = true;
-    await currentUser[0].save();
+    currentUser.emailConfirmation.isConfirmed = true;
+    await currentUser.save();
     return {
-      id: currentUser[0]._id,
-      login: currentUser[0].accountData.userName,
-      email: currentUser[0].accountData.email,
-      createdAt: currentUser[0].accountData.createdAt,
+      id: currentUser._id,
+      login: currentUser.accountData.userName,
+      email: currentUser.accountData.email,
+      createdAt: currentUser.accountData.createdAt,
     } as IRegistrationConfirmationResponse;
   }
 }

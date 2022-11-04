@@ -14,7 +14,7 @@ class EmailConfirmation extends Document {
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
     unique: true,
   })
-  confirmationCode: string;
+  confirmationCode: Date;
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],

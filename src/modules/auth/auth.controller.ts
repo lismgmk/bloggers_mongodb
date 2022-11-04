@@ -158,24 +158,6 @@ export class AuthController {
   async registrationConfirmation(
     @Body(new CustomValidationPipe()) code: CodeAuthDto,
   ) {
-    const d = compareDesc(
-      new Date(),
-      add(new Date(code.code), {
-        seconds: 10,
-      }),
-    );
-    console.log(code.code, 'codddd', d);
-
-    if (
-      compareDesc(
-        new Date(),
-        add(new Date(code.code), {
-          seconds: 10,
-        }),
-      ) === -1
-    ) {
-      throw new BadRequestException();
-    }
     return this.authService.registrationConfirmation(code.code);
   }
 
