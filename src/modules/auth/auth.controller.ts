@@ -145,7 +145,9 @@ export class AuthController {
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
-  async getNewPassword(@Body() getNewPassword: GetNewPasswordDto) {
+  async getNewPassword(
+    @Body(new CustomValidationPipe()) getNewPassword: GetNewPasswordDto,
+  ) {
     return this.authService.getNewPassword(getNewPassword);
   }
 
