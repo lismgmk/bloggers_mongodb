@@ -26,7 +26,7 @@ export class UsersService {
       dto.password,
     );
 
-    const confirmationCode = v4();
+    const confirmationCode = new Date();
 
     const newUser = new this.userModel({
       accountData: {

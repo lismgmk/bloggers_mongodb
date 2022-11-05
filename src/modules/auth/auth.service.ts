@@ -1,9 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { compareDesc, add } from 'date-fns';
+import { compareDesc } from 'date-fns';
 import { Model, Types } from 'mongoose';
-import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { MailService } from '../common-services/mail/mail.service';
@@ -64,7 +63,7 @@ export class AuthService {
     if (!currentUser) {
       throw new UnauthorizedException();
     }
-    const confirmationCode = v4();
+    const confirmationCode = new Date();
     await this.mailService.sendUserConfirmation(
       { email, name: currentUser.accountData.userName },
       confirmationCode,
@@ -93,32 +92,20 @@ export class AuthService {
 
   async getNewPassword(dto: GetNewPasswordDto) {
     const filter = {
-      'emailConfirmation.confirmationCode': { $eq: dto.recoveryCode },
+      'emailConfirmation.confirmationCode': {
+        $eq: new Date(dto.recoveryCode),
+      },
     };
+
     const currentUser = (await this.userModel.findOne(filter)) as User;
     if (!currentUser) {
       throw new UnauthorizedException();
     }
-    // if (currentUser.emailConfirmation.confirmationCode !== dto.recoveryCode) {
-    console.log(
-      compareDesc(
-        new Date(currentUser.emailConfirmation.confirmationCode),
-        add(new Date(dto.recoveryCode), {
-          seconds: 10,
-        }),
-      ) !== 0,
-      'ussssswer',
-      currentUser,
-      'recovery send',
-      dto.recoveryCode,
-    );
 
     if (
       compareDesc(
         new Date(currentUser.emailConfirmation.confirmationCode),
-        add(new Date(dto.recoveryCode), {
-          seconds: 10,
-        }),
+        new Date(dto.recoveryCode),
       ) !== 0
     ) {
       throw new UnauthorizedException();
