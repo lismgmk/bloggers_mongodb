@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
+import { compareDesc, add } from 'date-fns';
 import { Model, Types } from 'mongoose';
 import { v4 } from 'uuid';
 import { User } from '../../schemas/users.schema';
@@ -98,7 +99,28 @@ export class AuthService {
     if (!currentUser) {
       throw new UnauthorizedException();
     }
-    if (currentUser.emailConfirmation.confirmationCode !== dto.recoveryCode) {
+    // if (currentUser.emailConfirmation.confirmationCode !== dto.recoveryCode) {
+    console.log(
+      compareDesc(
+        new Date(currentUser.emailConfirmation.confirmationCode),
+        add(new Date(dto.recoveryCode), {
+          seconds: 10,
+        }),
+      ) !== 0,
+      'ussssswer',
+      currentUser,
+      'recovery send',
+      dto.recoveryCode,
+    );
+
+    if (
+      compareDesc(
+        new Date(currentUser.emailConfirmation.confirmationCode),
+        add(new Date(dto.recoveryCode), {
+          seconds: 10,
+        }),
+      ) !== 0
+    ) {
       throw new UnauthorizedException();
     }
     currentUser.emailConfirmation.isConfirmed = true;
