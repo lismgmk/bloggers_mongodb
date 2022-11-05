@@ -7,7 +7,7 @@ export class GetNewPasswordDto {
   @Length(6, 20, { message: FIELD_LENGTH_VALIDATION_ERROR })
   readonly newPassword: string;
 
-  @CheckExpirationCode()
+  // @CheckExpirationCode({ message: 'expired code' })
   @IsDate()
   @Type(() => Date)
   readonly recoveryCode: Date;
