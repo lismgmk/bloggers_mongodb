@@ -29,7 +29,7 @@ export class BlogsService {
     const newBlog = new this.blogModel({
       name: dto.name,
       youtubeUrl: dto.youtubeUrl,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     });
     const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
     return {

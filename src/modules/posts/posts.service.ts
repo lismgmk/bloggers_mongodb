@@ -71,7 +71,7 @@ export class PostsService {
       shortDescription: dto.shortDescription,
       blogId: dto.blogId,
       blogName: currentBlog.name,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     });
     const createdPost = (await this.postModel.create(newPost)) as Posts;
 

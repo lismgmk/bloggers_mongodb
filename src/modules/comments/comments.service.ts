@@ -28,7 +28,7 @@ export class CommentsService {
       userId: dto.userId,
       content: dto.content,
       userLogin: dto.userLogin,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     });
     const createdComment = (await this.commentModel.create(
       newComment,

@@ -23,7 +23,7 @@ export class LikesService {
       commentId: dto.commentId,
       login: dto.login,
     };
-    const update = { status: dto.status, createdAt: new Date() };
+    const update = { status: dto.status, createdAt: new Date().toISOString() };
     return this.likeModel.findOneAndUpdate(filter, update, {
       new: true,
       upsert: true,
