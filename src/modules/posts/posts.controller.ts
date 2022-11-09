@@ -56,7 +56,7 @@ export class PostsController {
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
-  async createUser(
+  async createPost(
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostWithBlogIdDto,
   ) {

@@ -34,7 +34,7 @@ export class CommentsService {
       newComment,
     )) as Comments;
 
-    const extendedLikesInfo: LikeInfoRequest = {
+    const likesInfo: LikeInfoRequest = {
       likesCount: 0,
       dislikesCount: 0,
       myStatus: 'None',
@@ -45,7 +45,7 @@ export class CommentsService {
       userId: createdComment.userId,
       userLogin: createdComment.userLogin,
       createdAt: createdComment.createdAt,
-      extendedLikesInfo,
+      likesInfo,
     };
   }
 
@@ -72,6 +72,7 @@ export class CommentsService {
     if (!currentComment) {
       throw new NotFoundException();
     }
+
     await this.likesService.upDateLikesInfo({
       postId: null,
       commentId,
