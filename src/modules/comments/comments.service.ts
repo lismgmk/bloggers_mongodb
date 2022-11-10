@@ -55,7 +55,14 @@ export class CommentsService {
     userId: string,
   ) {
     try {
-      return this.commentsQueryRepository.queryAllCommentsPagination(
+      const f = await this.commentsQueryRepository.queryAllCommentsPagination(
+        queryParams,
+        postId,
+        userId,
+      );
+      console.log(f, 'dddd');
+
+      return await this.commentsQueryRepository.queryAllCommentsPagination(
         queryParams,
         postId,
         userId,
