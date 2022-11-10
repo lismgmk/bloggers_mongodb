@@ -46,8 +46,11 @@ export class UsersService {
         attemptCount: 0,
       },
     });
+    console.log(newUser, 'newwwwwwwww');
+
     try {
       const createdUser = await this.userModel.create(newUser);
+
       return {
         id: createdUser._id.toString(),
         login: createdUser.accountData.userName,
