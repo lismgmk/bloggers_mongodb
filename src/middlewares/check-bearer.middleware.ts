@@ -23,5 +23,6 @@ export class CheckBearerMiddleware implements NestMiddleware {
       }
       return next();
     }
+    return next();
   }
 }
