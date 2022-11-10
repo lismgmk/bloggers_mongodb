@@ -248,6 +248,6 @@ export class CommentsQueryRepository {
           },
         ])
         .exec()
-    )[0] as IPaginationResponse<ICommentsRequest[]>;
+    )[0] as IPaginationResponse<ICommentsRequest>;
   }
 }
