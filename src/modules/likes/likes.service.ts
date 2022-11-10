@@ -24,9 +24,13 @@ export class LikesService {
       login: dto.login,
     };
     const update = { status: dto.status, createdAt: new Date().toISOString() };
-    return this.likeModel.findOneAndUpdate(filter, update, {
-      new: true,
-      upsert: true,
-    });
+    try {
+      return this.likeModel.findOneAndUpdate(filter, update, {
+        new: true,
+        upsert: true,
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

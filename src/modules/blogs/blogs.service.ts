@@ -31,13 +31,17 @@ export class BlogsService {
       youtubeUrl: dto.youtubeUrl,
       createdAt: new Date().toISOString(),
     });
-    const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
-    return {
-      id: createdBlog._id.toString(),
-      name: createdBlog.name,
-      youtubeUrl: createdBlog.youtubeUrl,
-      createdAt: createdBlog.createdAt,
-    } as IBlog;
+    try {
+      const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
+      return {
+        id: createdBlog._id.toString(),
+        name: createdBlog.name,
+        youtubeUrl: createdBlog.youtubeUrl,
+        createdAt: createdBlog.createdAt,
+      } as IBlog;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async getBlogById(id: string | ObjectId) {

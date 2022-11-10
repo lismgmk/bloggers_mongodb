@@ -54,11 +54,15 @@ export class CommentsService {
     postId: string,
     userId: string,
   ) {
-    return this.commentsQueryRepository.queryAllCommentsPagination(
-      queryParams,
-      postId,
-      userId,
-    );
+    try {
+      return this.commentsQueryRepository.queryAllCommentsPagination(
+        queryParams,
+        postId,
+        userId,
+      );
+    } catch (e) {
+      console.log(e);
+    }
   }
   async getCommentById(id: string | ObjectId) {
     return await this.commentModel.findById(id).exec();

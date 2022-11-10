@@ -46,13 +46,17 @@ export class UsersService {
         attemptCount: 0,
       },
     });
-    const createdUser = await this.userModel.create(newUser);
-    return {
-      id: createdUser._id.toString(),
-      login: createdUser.accountData.userName,
-      email: createdUser.accountData.email,
-      createdAt: createdUser.accountData.createdAt,
-    } as IResponseCreateUser;
+    try {
+      const createdUser = await this.userModel.create(newUser);
+      return {
+        id: createdUser._id.toString(),
+        login: createdUser.accountData.userName,
+        email: createdUser.accountData.email,
+        createdAt: createdUser.accountData.createdAt,
+      } as IResponseCreateUser;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async deleteUserById(id: string) {
