@@ -7,8 +7,11 @@ export interface ICommentsRequest {
   userName: string;
   createdAt: Date;
   likesInfo: {
-    dislikesCount: number;
-    likesCount: number;
-    myStatus: likeStatusType;
+    dislikesCount: string;
+    likesCount: string;
+    myStatus: string;
+    // dislikesCount: number;
+    // likesCount: number;
+    // myStatus: likeStatusType;
   };
 }

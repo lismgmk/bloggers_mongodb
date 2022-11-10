@@ -12,7 +12,7 @@ class EmailConfirmation extends Document {
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
-    unique: true,
+    // unique: true,
   })
   confirmationCode: Date;
   @Prop({
