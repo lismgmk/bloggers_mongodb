@@ -17,6 +17,7 @@ export class CommentsQueryRepository {
   ) {
     const sortField = queryParams.sortBy;
     const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
+    console.log(sortField, sortValue, queryParams, 'valll');
 
     return (
       await this.postModel

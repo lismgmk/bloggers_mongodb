@@ -101,6 +101,8 @@ export class PostsController {
     queryParams: GetAllCommentsDto,
     @GetUser() user: User,
   ) {
+    console.log(queryParams, postId, user ? user._id : null, 'dddddddddd');
+
     return this.commentsService.getCommentsForPostId(
       queryParams,
       postId,
