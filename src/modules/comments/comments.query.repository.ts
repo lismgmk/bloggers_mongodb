@@ -22,7 +22,7 @@ export class CommentsQueryRepository {
       await this.postModel
         .aggregate([
           {
-            $match: { postId: new mongoose.Types.ObjectId(postId) },
+            $match: { commentId: new mongoose.Types.ObjectId(postId) },
           },
           {
             $sort: {
