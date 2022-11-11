@@ -53,7 +53,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.likeCount',
+              as: 'likesInfo.likesCount',
               pipeline: [
                 {
                   $match: {
@@ -67,8 +67,8 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.likeCount': {
-                $size: '$likeInfo.likeCount',
+              'likesInfo.likeCount': {
+                $size: '$likesInfo.likesCount',
               },
             },
           },
@@ -77,7 +77,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.myStatus',
+              as: 'likesInfo.myStatus',
               pipeline: [
                 {
                   $match: {
@@ -91,10 +91,10 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.myStatus': {
+              'likesInfo.myStatus': {
                 $ifNull: [
                   {
-                    $first: '$likeInfo.myStatus.status',
+                    $first: '$likesInfo.myStatus.status',
                   },
                   'None',
                 ],
@@ -106,7 +106,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.dislikeCount',
+              as: 'likesInfo.dislikesCount',
               pipeline: [
                 {
                   $match: {
@@ -120,8 +120,8 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.dislikeCount': {
-                $size: '$likeInfo.dislikeCount',
+              'likesInfo.dislikesCount': {
+                $size: '$likesInfo.dislikesCount',
               },
             },
           },
@@ -174,7 +174,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.likeCount',
+              as: 'likesInfo.likesCount',
               pipeline: [
                 {
                   $match: {
@@ -188,8 +188,8 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.likeCount': {
-                $size: '$likeInfo.likeCount',
+              'likesInfo.likesCount': {
+                $size: '$likesInfo.likesCount',
               },
             },
           },
@@ -198,7 +198,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.myStatus',
+              as: 'likesInfo.myStatus',
               pipeline: [
                 {
                   $match: {
@@ -212,10 +212,10 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.myStatus': {
+              'likesInfo.myStatus': {
                 $ifNull: [
                   {
-                    $first: '$likeInfo.myStatus.status',
+                    $first: '$likesInfo.myStatus.status',
                   },
                   'None',
                 ],
@@ -227,7 +227,7 @@ export class CommentsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'commentId',
-              as: 'likeInfo.dislikeCount',
+              as: 'likesInfo.dislikesCount',
               pipeline: [
                 {
                   $match: {
@@ -241,8 +241,8 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likeInfo.dislikeCount': {
-                $size: '$likeInfo.dislikeCount',
+              'likesInfo.dislikesCount': {
+                $size: '$likesInfo.dislikesCount',
               },
             },
           },

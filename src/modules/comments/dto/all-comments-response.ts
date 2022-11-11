@@ -6,12 +6,9 @@ export interface ICommentsRequest {
   userId: string;
   userName: string;
   createdAt: Date;
-  // likesInfo: {
-  //   dislikesCount: number;
-  //   likesCount: number;
-  //   myStatus: string;
-  //   // dislikesCount: number;
-  //   // likesCount: number;
-  //   // myStatus: likeStatusType;
-  // };
+  likeInfo: {
+    dislikesCount: number;
+    likesCount: number;
+    myStatus: likeStatusType;
+  };
 }
