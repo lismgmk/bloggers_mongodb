@@ -34,7 +34,7 @@ export class UsersService {
         userIp: dto.userIp,
       },
       emailConfirmation: {
-        confirmationCode: dto.confirmationCode,
+        confirmationCode: new Date().toISOString(),
         expirationDate: add(new Date(), {
           hours: 1,
           minutes: 10,
