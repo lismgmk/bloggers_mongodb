@@ -9,21 +9,23 @@ import { GetAllCommentsDto } from './dto/get-all-comments.dto';
 
 @Injectable()
 export class CommentsQueryRepository {
-  constructor(@InjectModel(Comments.name) private postModel: Model<Comments>) {}
+  constructor(
+    @InjectModel(Comments.name) private commentModel: Model<Comments>,
+  ) {}
   async queryAllCommentsPagination(
     queryParams: GetAllCommentsDto,
     postId: string = null,
     userId: string,
   ) {
     const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
+    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
     console.log(sortField, sortValue, queryParams, 'valll');
 
     return (
-      await this.postModel
+      await this.commentModel
         .aggregate([
           {
-            $match: { commentId: new mongoose.Types.ObjectId(postId) },
+            $match: { postId: new mongoose.Types.ObjectId(postId) },
           },
           {
             $sort: {
@@ -155,7 +157,7 @@ export class CommentsQueryRepository {
   async queryCommentById(id: string, userId: string) {
     const commentId = new mongoose.Types.ObjectId(id);
     return (
-      await this.postModel
+      await this.commentModel
         .aggregate([
           {
             $match: { _id: commentId },
