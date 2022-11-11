@@ -14,7 +14,7 @@ class EmailConfirmation extends Document {
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
     // unique: true,
   })
-  confirmationCode: Date;
+  confirmationCode: string;
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
@@ -36,7 +36,7 @@ class EmailConfirmation extends Document {
 class AccountData extends Document {
   @Prop({
     type: String,
-    unique: true,
+    // unique: true,
     required: true,
     min: [3, FIELD_LENGTH_VALIDATION_ERROR_SHORT],
     max: [10, FIELD_LENGTH_VALIDATION_ERROR_LONG],

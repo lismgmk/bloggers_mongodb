@@ -9,4 +9,5 @@ export interface IResponseCreateUser {
 
 export interface ICreatedUserDto extends CreateUserDto {
   userIp: string;
+  confirmationCode: string;
 }

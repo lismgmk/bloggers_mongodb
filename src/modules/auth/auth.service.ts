@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   async registration(dto: IRegistrationDto) {
-    const confirmationCode = new Date();
+    const confirmationCode = new Date().toISOString();
     const newUserDto = {
       login: dto.login,
       email: dto.email,
@@ -63,7 +63,7 @@ export class AuthService {
     if (!currentUser) {
       throw new UnauthorizedException();
     }
-    const confirmationCode = new Date();
+    const confirmationCode = new Date().toISOString();
     await this.mailService.sendUserConfirmation(
       { email, name: currentUser.accountData.userName },
       confirmationCode,
@@ -77,7 +77,7 @@ export class AuthService {
     const filter = { 'accountData.email': { $eq: email } };
     const currentUser = await this.userModel.findOne(filter);
     if (currentUser) {
-      const confirmationCode = new Date();
+      const confirmationCode = new Date().toISOString();
       await this.mailService.sendUserConfirmation(
         { email, name: currentUser.accountData.userName },
         confirmationCode,

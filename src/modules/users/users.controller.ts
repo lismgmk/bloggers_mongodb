@@ -35,8 +35,12 @@ export class UsersController {
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
     console.log(createUserDto, 'add Users');
-
-    return await this.usersService.createUser({ ...createUserDto, userIp });
+    const confirmationCode = new Date().toISOString();
+    return await this.usersService.createUser({
+      ...createUserDto,
+      userIp,
+      confirmationCode,
+    });
   }
 
   @Delete(':id')

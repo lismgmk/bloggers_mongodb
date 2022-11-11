@@ -11,7 +11,7 @@ export class MailService {
 
   async sendUserConfirmation(
     user: { email: string; name: string },
-    code: Date,
+    code: string,
   ) {
     const clientPort = this.configService.get<string>('CLIENT_PORT');
     const url = `http://localhost:${clientPort}/client-confirm?code=${code}`;

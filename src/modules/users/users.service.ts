@@ -25,8 +25,6 @@ export class UsersService {
       dto.password,
     );
 
-    const confirmationCode = new Date();
-
     const newUser = new this.userModel({
       accountData: {
         userName: dto.login,
@@ -36,7 +34,7 @@ export class UsersService {
         userIp: dto.userIp,
       },
       emailConfirmation: {
-        confirmationCode,
+        confirmationCode: dto.confirmationCode,
         expirationDate: add(new Date(), {
           hours: 1,
           minutes: 10,
