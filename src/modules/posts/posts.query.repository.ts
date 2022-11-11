@@ -20,7 +20,7 @@ export class PostsQueryRepository {
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
           match: { blogId: new mongoose.Types.ObjectId(blogId) },
-          unset: ['items.total', '_id', 'items.extendedLikesInfo'],
+          unset: ['items.total', '_id'],
         }
       : { match: {}, unset: ['items.total', '_id'] };
 
