@@ -14,6 +14,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { SkipThrottle } from '@nestjs/throttler';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { CommonErrorFilter } from '../../exceptions/common-error-filter';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
@@ -68,6 +69,7 @@ export class PostsController {
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
+  @SkipThrottle()
   async addLikeStatusePost(
     @Param('postId', ParamIdValidationPipe)
     postId: string,
@@ -85,6 +87,7 @@ export class PostsController {
 
   @Get(':postId/comments')
   @HttpCode(200)
+  @SkipThrottle()
   @UseFilters(new MongoExceptionFilter())
   async getPostsForBloggerId(
     @Param('postId', ParamIdValidationPipe)
@@ -121,6 +124,7 @@ export class PostsController {
 
   @Post(':postId/comments')
   @HttpCode(201)
+  @SkipThrottle()
   @UseGuards(JwtAuthGuard)
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())

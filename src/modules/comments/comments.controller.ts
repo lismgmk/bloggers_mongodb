@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   Get,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
@@ -28,6 +29,7 @@ export class CommentsController {
 
   @Put(':commentId/like-status')
   @HttpCode(204)
+  @SkipThrottle()
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
