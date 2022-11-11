@@ -168,7 +168,7 @@ export class PostsQueryRepository {
               page: { $first: pageNumber },
               pageSize: { $first: queryParams.pageSize },
               totalCount: { $first: '$$ROOT.total' },
-              pageCount: {
+              pagesCount: {
                 $first: {
                   $round: [
                     { $divide: ['$$ROOT.total', queryParams.pageSize] },
