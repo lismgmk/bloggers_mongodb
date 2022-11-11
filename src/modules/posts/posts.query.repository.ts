@@ -89,7 +89,7 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
-              as: 'extendedLikesInfo.likeCount',
+              as: 'extendedLikesInfo.likesCount',
               pipeline: [
                 {
                   $match: {
@@ -103,8 +103,8 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.likeCount': {
-                $size: '$extendedLikesInfo.likeCount',
+              'extendedLikesInfo.likesCount': {
+                $size: '$extendedLikesInfo.likesCount',
               },
             },
           },
@@ -113,7 +113,7 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
-              as: 'extendedLikesInfo.dislikeCount',
+              as: 'extendedLikesInfo.dislikesCount',
               pipeline: [
                 {
                   $match: {
@@ -127,8 +127,8 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.dislikeCount': {
-                $size: '$extendedLikesInfo.dislikeCount',
+              'extendedLikesInfo.dislikesCount': {
+                $size: '$extendedLikesInfo.dislikesCount',
               },
             },
           },
@@ -241,7 +241,7 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
-              as: 'extendedLikesInfo.likeCount',
+              as: 'extendedLikesInfo.likesCount',
               pipeline: [
                 {
                   $match: {
@@ -255,8 +255,8 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.likeCount': {
-                $size: '$extendedLikesInfo.likeCount',
+              'extendedLikesInfo.likesCount': {
+                $size: '$extendedLikesInfo.likesCount',
               },
             },
           },
@@ -265,7 +265,7 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
-              as: 'extendedLikesInfo.dislikeCount',
+              as: 'extendedLikesInfo.dislikesCount',
               pipeline: [
                 {
                   $match: {
@@ -279,8 +279,8 @@ export class PostsQueryRepository {
           },
           {
             $set: {
-              'extendedLikesInfo.dislikeCount': {
-                $size: '$extendedLikesInfo.dislikeCount',
+              'extendedLikesInfo.dislikesCount': {
+                $size: '$extendedLikesInfo.dislikesCount',
               },
             },
           },

@@ -28,10 +28,10 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
   imports: [
     CqrsModule,
     PassportModule,
-    ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
-    }),
+    // ThrottlerModule.forRoot({
+    //   ttl: 10,
+    //   limit: 5,
+    // }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -61,10 +61,10 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
     SendEmailHandler,
     LocalStrategy,
     IsExpired,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
 export class AuthModule {}
