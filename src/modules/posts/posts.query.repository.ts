@@ -70,7 +70,7 @@ export class PostsQueryRepository {
                     },
                   },
                 },
-                { $sort: { createdAt: 1 } },
+                { $sort: { createdAt: -1 } },
                 { $limit: 3 },
                 {
                   $project: {
@@ -222,7 +222,7 @@ export class PostsQueryRepository {
                     },
                   },
                 },
-                { $sort: { createdAt: 1 } },
+                { $sort: { createdAt: -1 } },
                 { $limit: 3 },
                 {
                   $project: {
