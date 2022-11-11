@@ -34,6 +34,8 @@ export class UsersController {
     @Ip() userIp: string,
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
+    console.log(createUserDto, 'add Users');
+
     return await this.usersService.createUser({ ...createUserDto, userIp });
   }
 
