@@ -17,6 +17,7 @@ export class RegistrationHandler
       email: command.email,
       password: command.password,
       userIp: command.userIp,
+      confirmationCode: new Date().toISOString(),
     };
     // const mail = this.eventPublisher.mergeObjectContext(
     //   new SendEmailEvent(command.email, command.login, confirmationCode),

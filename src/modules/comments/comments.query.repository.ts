@@ -67,7 +67,7 @@ export class CommentsQueryRepository {
           },
           {
             $set: {
-              'likesInfo.likeCount': {
+              'likesInfo.likesCount': {
                 $size: '$likesInfo.likesCount',
               },
             },

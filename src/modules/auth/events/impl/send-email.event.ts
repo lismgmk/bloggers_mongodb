@@ -5,7 +5,7 @@ export class SendEmailEvent extends AggregateRoot {
   constructor(
     public readonly email: string,
     public readonly name: string,
-    public readonly confirmationCode: Date,
+    public readonly confirmationCode: string,
   ) {
     super();
   }
