@@ -54,7 +54,7 @@ export class PostsController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('basic'))
+  // @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPost(
@@ -68,7 +68,7 @@ export class PostsController {
   @HttpCode(204)
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new MongoExceptionFilter())
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @SkipThrottle()
   async addLikeStatusePost(
     @Param('postId', ParamIdValidationPipe)
@@ -125,7 +125,7 @@ export class PostsController {
   @Post(':postId/comments')
   @HttpCode(201)
   @SkipThrottle()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
@@ -146,7 +146,7 @@ export class PostsController {
 
   @Put(':id')
   @HttpCode(204)
-  @UseGuards(AuthGuard('basic'))
+  // @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
@@ -160,7 +160,7 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(AuthGuard('basic'))
+  // @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteBlog(
