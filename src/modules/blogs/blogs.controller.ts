@@ -69,7 +69,8 @@ export class BlogsController {
     @Param('id', ParamIdValidationPipe)
     blogId: string,
   ) {
-    return await this.blogsService.getBlogById(blogId);
+    const blog = await this.blogsService.getBlogById(blogId);
+    return { id: blog._id, name: blog.name, youtubeUrl: blog.youtubeUrl };
   }
 
   @Put(':id')
@@ -124,7 +125,7 @@ export class BlogsController {
 
   @Post(':blogId/posts')
   @HttpCode(201)
-  @UseGuards(AuthGuard('basic'))
+  // @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPostsForBloggerId(
