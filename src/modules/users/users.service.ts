@@ -74,36 +74,41 @@ export class UsersService {
       'accountData.userName': loginPart,
       'accountData.email': emailPart,
     };
+    try {
+      const k = await this.userModel.find();
 
-    const allUsers: IUser[] = (
-      await this.userModel
-        .find(filter)
-        .sort({ [queryParams.sortBy]: queryParams.sortDirection })
-        .skip(
-          queryParams.pageNumber > 0
-            ? (queryParams.pageNumber - 1) * queryParams.pageSize
-            : 0,
-        )
-        .limit(queryParams.pageSize)
-        .lean()
-    ).map((i) => {
-      return {
-        id: i._id,
-        login: i.accountData.userName,
-        createdAt: i.accountData.createdAt,
-        email: i.accountData.email,
+      const allUsers: IUser[] = (
+        await this.userModel
+          .find(filter)
+          .sort({ [queryParams.sortBy]: queryParams.sortDirection })
+          .skip(
+            queryParams.pageNumber > 0
+              ? (queryParams.pageNumber - 1) * queryParams.pageSize
+              : 0,
+          )
+          .limit(queryParams.pageSize)
+          .lean()
+      ).map((i) => {
+        return {
+          id: i._id,
+          login: i.accountData.userName,
+          createdAt: i.accountData.createdAt,
+          email: i.accountData.email,
+        };
+      });
+
+      const totalCount = await this.userModel.countDocuments().exec();
+      const paginationParams: paramsDto = {
+        totalCount: totalCount,
+        pageSize: queryParams.pageSize,
+        pageNumber: queryParams.pageNumber,
       };
-    });
-
-    const totalCount = await this.userModel.countDocuments().exec();
-    const paginationParams: paramsDto = {
-      totalCount: totalCount,
-      pageSize: queryParams.pageSize,
-      pageNumber: queryParams.pageNumber,
-    };
-    return {
-      ...paginationBuilder(paginationParams),
-      items: allUsers,
-    };
+      return {
+        ...paginationBuilder(paginationParams),
+        items: allUsers,
+      };
+    } catch (e) {
+      return e;
+    }
   }
 }

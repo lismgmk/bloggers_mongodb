@@ -15,7 +15,9 @@ export class SecurityService {
     @InjectModel(Devices.name) private devicesModel: Model<Devices>,
     private configService: ConfigService,
   ) {}
+
   expiredRefresh = this.configService.get<string>('EXPIRED_REFRESH');
+
   async getAllDevices(userId: string) {
     return this.devicesModel.aggregate([
       { $match: { userId } },

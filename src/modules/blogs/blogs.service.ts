@@ -22,6 +22,19 @@ export class BlogsService {
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
+    const count = (a, b) => {
+      return a + b;
+    };
+
+    const promisify = (a, b) => {
+      return new Promise((res, rej) => {
+        res(count(a, b));
+      });
+    };
+
+    const res = await promisify(2, 2).then((res: number) => res ** 2);
+    console.log(res, '16!!!!!!!!!!');
+
     return await this.queryBus.execute(queryParams);
   }
 

@@ -15,7 +15,7 @@ export class IsExpired implements ValidatorConstraintInterface {
       compareDesc(
         new Date(),
         add(new Date(value), {
-          seconds: 10,
+          seconds: 1000,
         }),
       ) === -1
     ) {

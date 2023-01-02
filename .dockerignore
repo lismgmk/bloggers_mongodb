@@ -1,0 +1,16 @@
+node_modules
+
+# docker
+Dockerfile
+
+# misc
+.git
+.github
+coverage
+docker-compose.yml
+README.md
+
+# Node Files #
+node_modules
+npm-debug.log
+npm-debug.log.*

@@ -21,6 +21,38 @@ export class CommentsQueryRepository {
     const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
     console.log(sortField, sortValue, queryParams, 'valll');
 
+    // const db = mongoose.connection.createCollection('user');
+    const UserSchema = new mongoose.Schema(
+      {
+        userName: {
+          type: String,
+          required: true,
+        },
+        count: {
+          type: Number,
+          required: true,
+          default: 0,
+        },
+        log: [
+          {
+            description: { type: String, required: true },
+            duration: { type: Number, required: true },
+          },
+        ],
+      },
+      { collection: 'user' },
+    );
+    mongoose.model('user', UserSchema).aggregate([
+      {
+        $project: {
+          id: '$_id',
+          userName: '$userName',
+          count: '$count',
+          log: { $slice: ['$log', 2] },
+        },
+      },
+    ]);
+
     return (
       await this.commentModel
         .aggregate([
