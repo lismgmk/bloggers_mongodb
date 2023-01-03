@@ -20,10 +20,12 @@ services:
     ports:
       - 27017:27017
     environment:
+      MONGO_INITDB_DATABASE: bloggers_posts
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongodata:/data/db
+      - ./mongo_init_script/:/docker-entrypoint-initdb.d/:ro
 
   mongo-express:
     image: mongo-express
@@ -33,9 +35,8 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_SERVER: "bloggers_posts"
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
     
 volumes:

@@ -39,7 +39,7 @@ import { UsersRepository } from './users/users.repository';
     UsersModule,
     PassportModule,
     MongooseModule.forRoot(
-      'mongodb://mongo:27017/bloggers_posts',
+      'mongodb://root:example@mongo:27017/bloggers_posts',
       // 'mongodb://mongo:27017/bloggers_posts?authSource=bloggers_posts&w=1',
       {
         useNewUrlParser: true,
