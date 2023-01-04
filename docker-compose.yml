@@ -14,6 +14,7 @@ services:
     environment:
       NODE_ENV: 'dev'
       DB_CONNECT_MONGOOSE: 'mongodb://root:example@mongo:27017/bloggers_posts?authSource=admin'
+      IS_TS_NODE: 'true'
     command: yarn start:debug
   mongo:
     image: mongo
