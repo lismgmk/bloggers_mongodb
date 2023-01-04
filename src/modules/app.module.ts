@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { configRoot } from 'src/config/configuration';
+import { validationSchema } from 'src/config/validation';
 import { CheckBearerMiddleware } from '../middlewares/check-bearer.middleware';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
@@ -30,7 +30,7 @@ import { UsersRepository } from './users/users.repository';
 @Module({
   imports: [
     SecurityModule,
-    ConfigModule.forRoot(configRoot),
+    ConfigModule.forRoot({ isGlobal: true, validationSchema }),
     BlogsModule,
     AuthModule,
     CommentsModule,
