@@ -1,3 +1,4 @@
+import { validationSchema } from '@app/config/validation';
 import {
   MiddlewareConsumer,
   Module,
@@ -8,7 +9,6 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { validationSchema } from 'src/config/validation';
 import { CheckBearerMiddleware } from '../middlewares/check-bearer.middleware';
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
