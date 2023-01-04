@@ -26,6 +26,7 @@ services:
     volumes:
       - mongodata:/data/db
       - ./mongo_init_script/:/docker-entrypoint-initdb.d/:ro
+    # command: [--auth]
 
   mongo-express:
     image: mongo-express
@@ -37,7 +38,7 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-    
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017
+
 volumes:
   mongodata:
