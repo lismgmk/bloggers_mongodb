@@ -1,4 +1,4 @@
-import { validationSchema } from '@app/config/validation';
+import { validationSchema } from '../config/validation';
 import {
   MiddlewareConsumer,
   Module,
