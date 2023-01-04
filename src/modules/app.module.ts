@@ -38,18 +38,7 @@ import { UsersRepository } from './users/users.repository';
     TestingModule,
     UsersModule,
     PassportModule,
-    MongooseModule.forRoot(
-      'mongodb://root:example@mongo:27017/bloggers_posts?authSource=admin',
-      // 'mongodb://root:example@localhost:27017/bloggers_posts?authSource=admin',
-      // {
-      //   useNewUrlParser: true,
-      //   useCreateIndex: true,
-      //   useFindAndModify: false,
-      //   useUnifiedTopology: true,
-      //   autoIndex: false,
-      // },
-    ),
-    // MongooseModule.forRoot(process.env.DB_CONNECT_MONGOOSE),
+    MongooseModule.forRoot(process.env.DB_CONNECT_MONGOOSE),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: IpUser.name, schema: IpUserSchema },

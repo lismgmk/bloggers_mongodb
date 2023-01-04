@@ -13,6 +13,7 @@ services:
       - ./:/app
     environment:
       NODE_ENV: 'dev'
+      DB_CONNECT_MONGOOSE: 'mongodb://root:example@mongo:27017/bloggers_posts?authSource=admin'
     command: yarn start:debug
   mongo:
     image: mongo
@@ -26,7 +27,6 @@ services:
     volumes:
       - mongodata:/data/db
       - ./mongo_init_script/:/docker-entrypoint-initdb.d/:ro
-    # command: [--auth]
 
   mongo-express:
     image: mongo-express

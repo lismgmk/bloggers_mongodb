@@ -33,7 +33,6 @@ export class BlogsService {
     };
 
     const res = await promisify(2, 2).then((res: number) => res ** 2);
-    console.log(res, '16!!!!!!!!!!');
 
     return await this.queryBus.execute(queryParams);
   }

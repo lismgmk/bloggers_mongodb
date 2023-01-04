@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  nest:
+    build: .
+    restart: always
+    ports:
+      - '5000:5000'
+      - '9229:9229'
+    depends_on:
+      - mongo
+    volumes:
+      - /app/node_modules
+      - ./:/app
+    environment:
+      NODE_ENV: 'dev'
+      DB_CONNECT_MONGOOSE: 'mongodb+srv://lismgmk:2156Lis@cluster0.bebay.mongodb.net/bloggers_posts?retryWrites=true&w=majority'
+    command: yarn start:debug
