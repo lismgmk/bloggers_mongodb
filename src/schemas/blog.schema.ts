@@ -6,6 +6,8 @@ import { FIELD_REQUIRED_VALIDATION_ERROR } from '../consts/ad-validation-const';
 export class Blog extends Document {
   @Prop({ required: [true, FIELD_REQUIRED_VALIDATION_ERROR], type: String })
   name: string;
+  @Prop({ required: [true, FIELD_REQUIRED_VALIDATION_ERROR], type: String })
+  description: string;
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
@@ -18,7 +20,7 @@ export class Blog extends Document {
       message: (props) => `${props.value} is not a valid url`,
     },
   })
-  youtubeUrl: string;
+  websiteUrl: string;
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],

@@ -22,17 +22,17 @@ export class BlogsService {
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
-    const count = (a, b) => {
-      return a + b;
-    };
+    // const count = (a, b) => {
+    //   return a + b;
+    // };
 
-    const promisify = (a, b) => {
-      return new Promise((res, rej) => {
-        res(count(a, b));
-      });
-    };
+    // const promisify = (a, b) => {
+    //   return new Promise((res, rej) => {
+    //     res(count(a, b));
+    //   });
+    // };
 
-    const res = await promisify(2, 2).then((res: number) => res ** 2);
+    // const res = await promisify(2, 2).then((res: number) => res ** 2);
 
     return await this.queryBus.execute(queryParams);
   }
@@ -40,7 +40,8 @@ export class BlogsService {
   async createBlog(dto: CreateBlogDto) {
     const newBlog = new this.blogModel({
       name: dto.name,
-      youtubeUrl: dto.youtubeUrl,
+      websiteUrl: dto.websiteUrl,
+      description: dto.description,
       createdAt: new Date().toISOString(),
     });
     try {
@@ -48,7 +49,8 @@ export class BlogsService {
       return {
         id: createdBlog._id.toString(),
         name: createdBlog.name,
-        youtubeUrl: createdBlog.youtubeUrl,
+        websiteUrl: createdBlog.websiteUrl,
+        description: createdBlog.description,
         createdAt: createdBlog.createdAt,
       } as IBlog;
     } catch (e) {
@@ -71,7 +73,8 @@ export class BlogsService {
   async changeBlog(dto: CreateBlogDto & { id: string }) {
     const blog = (await this.blogModel.findById(dto.id)) as Blog;
     blog.name = dto.name;
-    blog.youtubeUrl = dto.youtubeUrl;
+    blog.description = dto.description;
+    blog.websiteUrl = dto.websiteUrl;
     blog.save();
     return;
   }

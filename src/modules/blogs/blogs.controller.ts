@@ -70,7 +70,12 @@ export class BlogsController {
     blogId: string,
   ) {
     const blog = await this.blogsService.getBlogById(blogId);
-    return { id: blog._id, name: blog.name, youtubeUrl: blog.youtubeUrl };
+    return {
+      id: blog._id,
+      name: blog.name,
+      websiteUrl: blog.websiteUrl,
+      decription: blog.description,
+    };
   }
 
   @Put(':id')

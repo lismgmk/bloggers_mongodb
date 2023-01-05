@@ -38,7 +38,8 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
         id: i._id,
         name: i.name,
         createdAt: i.createdAt,
-        youtubeUrl: i.youtubeUrl,
+        websiteUrl: i.websiteUrl,
+        description: i.description,
       };
     });
 
