@@ -1,8 +1,7 @@
-if (!process.env.IS_TS_NODE) {
-  require('module-alias/register');
-}
-console.log('ffff');
-
+// if (!process.env.IS_TS_NODE) {
+//   require('module-alias/register');
+// }
+import 'module-alias/register';
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
