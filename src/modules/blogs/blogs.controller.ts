@@ -93,6 +93,10 @@ export class BlogsController {
     blogId: string,
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
   ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return await this.blogsService.changeBlog({
       id: blogId,
       ...createBlogDto,

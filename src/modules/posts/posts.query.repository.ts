@@ -16,7 +16,7 @@ export class PostsQueryRepository {
     userId: string,
   ) {
     const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
+    const sortValue = queryParams.sortDirection === 'desc';
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
           match: { blogId: new mongoose.Types.ObjectId(blogId) },

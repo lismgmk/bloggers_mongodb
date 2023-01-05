@@ -68,7 +68,7 @@ export class UsersService {
   ): Promise<IPaginationResponse<IUser>> {
     const loginPart = new RegExp(queryParams.searchLoginTerm);
     const emailPart = new RegExp(queryParams.searchEmailTerm);
-    const sortValue = queryParams.sortDirection || 'asc';
+    const sortValue = queryParams.sortDirection || 'desc';
     const filter = {
       'accountData.userName': loginPart,
       'accountData.email': emailPart,
