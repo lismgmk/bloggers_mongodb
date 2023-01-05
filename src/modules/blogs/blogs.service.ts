@@ -44,18 +44,14 @@ export class BlogsService {
       description: dto.description,
       createdAt: new Date().toISOString(),
     });
-    try {
-      const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
-      return {
-        id: createdBlog._id.toString(),
-        name: createdBlog.name,
-        websiteUrl: createdBlog.websiteUrl,
-        description: createdBlog.description,
-        createdAt: createdBlog.createdAt,
-      } as IBlog;
-    } catch (e) {
-      console.log(e);
-    }
+    const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
+    return {
+      id: createdBlog._id.toString(),
+      name: createdBlog.name,
+      websiteUrl: createdBlog.websiteUrl,
+      description: createdBlog.description,
+      createdAt: createdBlog.createdAt,
+    } as IBlog;
   }
 
   async getBlogById(id: string | ObjectId) {

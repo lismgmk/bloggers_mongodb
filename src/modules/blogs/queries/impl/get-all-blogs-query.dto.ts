@@ -5,7 +5,8 @@ import { PaginationQueryDto } from '../../../../global-dto/pagination-query.dto'
 export enum SortByField {
   name,
   createdAt,
-  youtubeUrl,
+  description,
+  websiteUrl,
 }
 
 export class GetAllBlogsQueryDto extends PaginationQueryDto {

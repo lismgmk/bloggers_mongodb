@@ -79,6 +79,7 @@ export class BlogsController {
       name: blog.name,
       websiteUrl: blog.websiteUrl,
       description: blog.description,
+      createdAt: blog.createdAt,
     };
   }
 

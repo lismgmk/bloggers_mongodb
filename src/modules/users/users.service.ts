@@ -44,7 +44,6 @@ export class UsersService {
         attemptCount: 0,
       },
     });
-    console.log(newUser, 'newwwwwwwww');
 
     try {
       const createdUser = await this.userModel.create(newUser);
@@ -69,7 +68,7 @@ export class UsersService {
   ): Promise<IPaginationResponse<IUser>> {
     const loginPart = new RegExp(queryParams.searchLoginTerm);
     const emailPart = new RegExp(queryParams.searchEmailTerm);
-    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
+    const sortValue = queryParams.sortDirection || 'asc';
     const filter = {
       'accountData.userName': loginPart,
       'accountData.email': emailPart,
@@ -78,7 +77,8 @@ export class UsersService {
       const allUsers: IUser[] = (
         await this.userModel
           .find(filter)
-          .sort({ [queryParams.sortBy]: sortValue })
+          // .sort({ userName: -1 })
+          .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
           .skip(
             queryParams.pageNumber > 0
               ? (queryParams.pageNumber - 1) * queryParams.pageSize

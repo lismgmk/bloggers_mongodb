@@ -98,6 +98,7 @@ export class PostsService {
       throw new NotFoundException();
     }
     post.shortDescription = dto.shortDescription;
+    post.content = dto.content;
     post.title = dto.title;
     post.shortDescription = dto.shortDescription;
     post.blogId = new mongoose.Types.ObjectId(dto.blogId);

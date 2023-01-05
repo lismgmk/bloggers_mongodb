@@ -16,7 +16,7 @@ export class PostsQueryRepository {
     userId: string,
   ) {
     const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
+    const sortValue = queryParams.sortDirection === 'desc' ? -1 : 1;
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
           match: { blogId: new mongoose.Types.ObjectId(blogId) },
@@ -170,10 +170,7 @@ export class PostsQueryRepository {
               totalCount: { $first: '$$ROOT.total' },
               pagesCount: {
                 $first: {
-                  $ceil: [
-                    { $divide: ['$$ROOT.total', queryParams.pageSize] },
-                    0,
-                  ],
+                  $ceil: [{ $divide: ['$$ROOT.total', queryParams.pageSize] }],
                 },
               },
               items: { $push: '$$ROOT' },

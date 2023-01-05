@@ -17,7 +17,7 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
     const namePart = new RegExp(queryParams.searchNameTerm);
-    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
+    const sortValue = queryParams.sortDirection || 'asc';
     const filter = {
       name: namePart,
     };
