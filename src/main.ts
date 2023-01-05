@@ -1,6 +1,7 @@
 // if (!process.env.IS_TS_NODE) {
 //   require('module-alias/register');
 // }
+import './config/aliases';
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
