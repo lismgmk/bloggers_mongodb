@@ -69,18 +69,16 @@ export class UsersService {
   ): Promise<IPaginationResponse<IUser>> {
     const loginPart = new RegExp(queryParams.searchLoginTerm);
     const emailPart = new RegExp(queryParams.searchEmailTerm);
-
+    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
     const filter = {
       'accountData.userName': loginPart,
       'accountData.email': emailPart,
     };
     try {
-      const k = await this.userModel.find();
-
       const allUsers: IUser[] = (
         await this.userModel
           .find(filter)
-          .sort({ [queryParams.sortBy]: queryParams.sortDirection })
+          .sort({ [queryParams.sortBy]: sortValue })
           .skip(
             queryParams.pageNumber > 0
               ? (queryParams.pageNumber - 1) * queryParams.pageSize

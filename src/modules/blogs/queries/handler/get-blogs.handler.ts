@@ -17,7 +17,7 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
     const namePart = new RegExp(queryParams.searchNameTerm);
-
+    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
     const filter = {
       name: namePart,
     };
@@ -25,7 +25,7 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
     const allBlogs: IBlog[] = (
       await this.blogsModel
         .find(filter)
-        .sort({ [queryParams.sortBy]: queryParams.sortDirection })
+        .sort({ [queryParams.sortBy]: sortValue })
         .skip(
           queryParams.pageNumber > 0
             ? (queryParams.pageNumber - 1) * queryParams.pageSize

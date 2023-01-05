@@ -169,7 +169,7 @@ export class CommentsQueryRepository {
               totalCount: { $first: '$$ROOT.total' },
               pagesCount: {
                 $first: {
-                  $round: [
+                  $ceil: [
                     { $divide: ['$$ROOT.total', queryParams.pageSize] },
                     0,
                   ],

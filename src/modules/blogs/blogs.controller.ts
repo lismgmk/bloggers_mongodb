@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -70,11 +71,14 @@ export class BlogsController {
     blogId: string,
   ) {
     const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return {
       id: blog._id,
       name: blog.name,
       websiteUrl: blog.websiteUrl,
-      decription: blog.description,
+      description: blog.description,
     };
   }
 
@@ -103,6 +107,10 @@ export class BlogsController {
     @Param('id', ParamIdValidationPipe)
     blogId: string,
   ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return await this.blogsService.deleteBlogById(blogId);
   }
 
@@ -121,6 +129,10 @@ export class BlogsController {
     queryParams: GetAllPostsdDto,
     @GetUser() user: User,
   ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return await this.blogsService.getPostsForBlogId(
       queryParams,
       blogId,
@@ -139,6 +151,10 @@ export class BlogsController {
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostDto,
   ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return await this.postsService.createPost({
       ...createPostDto,
       blogId,

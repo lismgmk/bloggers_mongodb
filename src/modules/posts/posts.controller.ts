@@ -12,6 +12,7 @@ import {
   Param,
   Delete,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -78,6 +79,10 @@ export class PostsController {
     @Body(new CustomValidationPipe())
     likeStatus: LikeStatusDto,
   ) {
+    const post = await this.postsService.getPostById(postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return await this.postsService.addLikeStatusePost(
       user,
       likeStatus.likeStatus,
@@ -101,6 +106,10 @@ export class PostsController {
     queryParams: GetAllCommentsDto,
     @GetUser() user: User,
   ) {
+    const post = await this.postsService.getPostById(postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return this.commentsService.getCommentsForPostId(
       queryParams,
       postId,
@@ -116,6 +125,10 @@ export class PostsController {
     postId: string,
     @GetUser() user: User,
   ) {
+    const post = await this.postsService.getPostById(postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return this.postsService.getPostByIdWithLikes(
       postId,
       user ? user._id : null,
@@ -155,6 +168,10 @@ export class PostsController {
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostWithBlogIdDto,
   ) {
+    const post = await this.postsService.getPostById(id);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return await this.postsService.changePost(id, createPostDto);
   }
 
@@ -167,6 +184,10 @@ export class PostsController {
     @Param('id', ParamIdValidationPipe)
     id: string,
   ) {
+    const post = await this.postsService.getPostById(id);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return await this.postsService.deletePostById(id);
   }
 }
