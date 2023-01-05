@@ -9,7 +9,7 @@
     "target": "es2019",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -17,9 +17,9 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true,
-    "paths": {
-      "@app/*": ["./src/*"]
-    }
+    "esModuleInterop": true
+    // "paths": {
+    //   "@app/*": ["./src/*"]
+    // }
   }
 }
