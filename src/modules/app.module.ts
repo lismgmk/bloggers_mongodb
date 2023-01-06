@@ -1,3 +1,4 @@
+import { UsersRepository } from '@app/modules/users/users.repository';
 import {
   MiddlewareConsumer,
   Module,
@@ -25,7 +26,6 @@ import { PostsModule } from './posts/posts.module';
 import { SecurityModule } from './security/security.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
-import { UsersRepository } from './users/users.repository';
 
 @Module({
   imports: [
