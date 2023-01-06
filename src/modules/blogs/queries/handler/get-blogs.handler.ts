@@ -16,7 +16,7 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
   async execute(
     queryParams: GetAllBlogsQueryDto,
   ): Promise<IPaginationResponse<IBlog>> {
-    const namePart = new RegExp(queryParams.searchNameTerm);
+    const namePart = new RegExp(queryParams.searchNameTerm, 'i');
     const sortValue = queryParams.sortDirection || 'desc';
     const filter = {
       name: namePart,
@@ -43,7 +43,11 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
       };
     });
 
-    const totalCount = await this.blogsModel.countDocuments().exec();
+    const totalCount = await this.blogsModel
+      .find(filter)
+      .sort({ [queryParams.sortBy]: sortValue })
+      .countDocuments()
+      .exec();
     const paginationParams: paramsDto = {
       totalCount: totalCount,
       pageSize: queryParams.pageSize,

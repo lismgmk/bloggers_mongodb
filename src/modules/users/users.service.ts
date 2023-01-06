@@ -77,7 +77,6 @@ export class UsersService {
       const allUsers: IUser[] = (
         await this.userModel
           .find(filter)
-          // .sort({ userName: -1 })
           .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
           .skip(
             queryParams.pageNumber > 0
@@ -95,7 +94,11 @@ export class UsersService {
         };
       });
 
-      const totalCount = await this.userModel.countDocuments().exec();
+      const totalCount = await this.userModel
+        .find(filter)
+        .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
+        .countDocuments()
+        .exec();
       const paginationParams: paramsDto = {
         totalCount: totalCount,
         pageSize: queryParams.pageSize,

@@ -19,7 +19,6 @@ export class CommentsQueryRepository {
   ) {
     const sortField = queryParams.sortBy;
     const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
-    console.log(sortField, sortValue, queryParams, 'valll');
 
     // const db = mongoose.connection.createCollection('user');
     const UserSchema = new mongoose.Schema(
