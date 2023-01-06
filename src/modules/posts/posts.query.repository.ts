@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { Posts } from '../../schemas/posts.schema';
-import { pageNumber } from '../../test-params/test-values';
 import { IPostsRequest } from './dto/all-posts-response';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
 
@@ -165,7 +164,7 @@ export class PostsQueryRepository {
           {
             $group: {
               _id: sortField,
-              page: { $first: pageNumber },
+              page: { $first: queryParams.pageNumber },
               pageSize: { $first: queryParams.pageSize },
               totalCount: { $first: '$$ROOT.total' },
               pagesCount: {
