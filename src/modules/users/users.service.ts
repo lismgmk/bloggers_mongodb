@@ -69,14 +69,16 @@ export class UsersService {
     const loginPart = new RegExp(queryParams.searchLoginTerm);
     const emailPart = new RegExp(queryParams.searchEmailTerm);
     const sortValue = queryParams.sortDirection || 'desc';
-    const filter = {
+    const filterName = {
       'accountData.userName': loginPart,
+    };
+    const filterEmail = {
       'accountData.email': emailPart,
     };
     try {
       const allUsers: IUser[] = (
         await this.userModel
-          .find(filter)
+          .find({ $or: [filterEmail, filterName] })
           .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
           .skip(
             queryParams.pageNumber > 0
@@ -95,7 +97,7 @@ export class UsersService {
       });
 
       const totalCount = await this.userModel
-        .find(filter)
+        .find({ $or: [filterEmail, filterName] })
         .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
         .exec();
       const paginationParams: paramsDto = {
