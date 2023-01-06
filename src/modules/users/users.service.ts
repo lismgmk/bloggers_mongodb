@@ -66,19 +66,25 @@ export class UsersService {
   async getAllUsers(
     queryParams: GetAllUsersQueryDto,
   ): Promise<IPaginationResponse<IUser>> {
-    const loginPart = new RegExp(queryParams.searchLoginTerm);
-    const emailPart = new RegExp(queryParams.searchEmailTerm);
+    const loginPart = new RegExp(queryParams.searchLoginTerm, 'i');
+    const emailPart = new RegExp(queryParams.searchEmailTerm, 'i');
     const sortValue = queryParams.sortDirection || 'desc';
-    const filterName = {
-      'accountData.userName': loginPart,
-    };
-    const filterEmail = {
-      'accountData.email': emailPart,
-    };
+    const filterArr = [];
+    queryParams.searchLoginTerm &&
+      filterArr.push({
+        'accountData.userName': loginPart,
+      });
+    queryParams.searchEmailTerm &&
+      filterArr.push({
+        'accountData.email': emailPart,
+      });
+    !queryParams.searchEmailTerm &&
+      !queryParams.searchLoginTerm &&
+      filterArr.push({});
     try {
       const allUsers: IUser[] = (
         await this.userModel
-          .find({ $or: [filterEmail, filterName] })
+          .find({ $or: filterArr })
           .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
           .skip(
             queryParams.pageNumber > 0
@@ -96,10 +102,7 @@ export class UsersService {
         };
       });
 
-      const totalCount = await this.userModel
-        .find({ $or: [filterEmail, filterName] })
-        .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
-        .exec();
+      const totalCount = await this.userModel.find({ $or: filterArr }).exec();
       const paginationParams: paramsDto = {
         totalCount: totalCount.length,
         pageSize: queryParams.pageSize,
