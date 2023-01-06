@@ -43,13 +43,9 @@ export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
       };
     });
 
-    const totalCount = await this.blogsModel
-      .find(filter)
-      .sort({ [queryParams.sortBy]: sortValue })
-      .countDocuments()
-      .exec();
+    const totalCount = await this.blogsModel.find(filter).exec();
     const paginationParams: paramsDto = {
-      totalCount: totalCount,
+      totalCount: totalCount.length,
       pageSize: queryParams.pageSize,
       pageNumber: queryParams.pageNumber,
     };

@@ -3,7 +3,7 @@ import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../../consts/ad-validation-c
 import { PaginationQueryDto } from '../../../global-dto/pagination-query.dto';
 
 export enum SortByField {
-  userName,
+  login,
   createdAt,
   email,
   attemptCount,
