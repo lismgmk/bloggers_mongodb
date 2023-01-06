@@ -85,7 +85,11 @@ export class UsersService {
       const allUsers: IUser[] = (
         await this.userModel
           .find({ $or: filterArr })
-          .sort({ [`accountData.${queryParams.sortBy}`]: sortValue })
+          .sort({
+            [`accountData.${
+              queryParams.sortBy === 'login' ? 'userName' : queryParams.sortBy
+            }`]: sortValue,
+          })
           .skip(
             queryParams.pageNumber > 0
               ? (queryParams.pageNumber - 1) * queryParams.pageSize

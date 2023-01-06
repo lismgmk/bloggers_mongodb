@@ -7,6 +7,7 @@ export enum SortByFieldPost {
   title,
   shortDescription,
   content,
+  blogName,
 }
 
 export class GetAllPostsdDto extends PaginationQueryDto {
