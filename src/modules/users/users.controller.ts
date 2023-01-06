@@ -27,7 +27,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createUser(
@@ -45,7 +45,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteUser(@Param() id: IdParamDTO) {

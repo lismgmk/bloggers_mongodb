@@ -53,7 +53,7 @@ export class BlogsController {
   }
 
   @Post()
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createUser(
@@ -85,7 +85,7 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(204)
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
@@ -105,7 +105,7 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteBlog(
@@ -147,7 +147,7 @@ export class BlogsController {
 
   @Post(':blogId/posts')
   @HttpCode(201)
-  // @UseGuards(AuthGuard('basic'))
+  @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPostsForBloggerId(
