@@ -106,8 +106,5 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  },
-  "_moduleAliases": {
-    "@app": "./dist/src/"
   }
 }
