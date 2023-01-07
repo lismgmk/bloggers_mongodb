@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { compareDesc } from 'date-fns';
 import { Model, Types } from 'mongoose';
-import { BadRequestError } from 'passport-headerapikey';
 import { User } from '../../schemas/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { MailService } from '../common-services/mail/mail.service';
@@ -65,9 +64,12 @@ export class AuthService {
   async resendingEmail(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
     const currentUser = await this.userModel.findOne(filter);
-    if (!currentUser) {
-      throw new UnauthorizedException();
-    }
+    // if (!currentUser) {
+    //   throw new BadRequestException({
+    //     message: FIELD_EPSENT_VALIDATION_ERROR,
+    //     field: 'email',
+    //   });
+    // }
     if (currentUser.emailConfirmation.isConfirmed) {
       throw new BadRequestException();
     }

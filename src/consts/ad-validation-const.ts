@@ -1,4 +1,5 @@
 export const FIELD_EXIST_VALIDATION_ERROR = 'field already exists';
+export const FIELD_EPSENT_VALIDATION_ERROR = 'field does not exists';
 export const FIELD_LENGTH_VALIDATION_ERROR = 'length of field is invalid';
 export const FIELD_LENGTH_VALIDATION_ERROR_LONG = 'length of field too long';
 export const FIELD_LENGTH_VALIDATION_ERROR_SHORT = 'length of field too short';

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { IfEpsentUserDropErrorValidator } from '../../dto-validator/if-epsent-user-drop-error';
 import { IfExistUserDropErrorValidator } from '../../dto-validator/if-exist-user-drop-error';
 import { IfNotFoundUserIdDropError } from '../../dto-validator/if-not-found-user-id-drop-error';
 import { User, UserSchema } from '../../schemas/users.schema';
@@ -25,6 +26,7 @@ import { UsersService } from './users.service';
     UsersService,
     BasicStrategy,
     IfExistUserDropErrorValidator,
+    IfEpsentUserDropErrorValidator,
     IfNotFoundUserIdDropError,
     UsersRepository,
     JwtPassService,

@@ -30,7 +30,8 @@ import { UsersRepository } from './users/users.repository';
 @Module({
   imports: [
     SecurityModule,
-    ConfigModule.forRoot({ isGlobal: true, validationSchema }),
+    // ConfigModule.forRoot({ isGlobal: true, validationSchema }),
+    ConfigModule.forRoot({ isGlobal: true }),
     BlogsModule,
     AuthModule,
     CommentsModule,
@@ -38,7 +39,10 @@ import { UsersRepository } from './users/users.repository';
     TestingModule,
     UsersModule,
     PassportModule,
-    MongooseModule.forRoot(process.env.DB_CONNECT_MONGOOSE),
+    MongooseModule.forRoot(
+      process.env.DB_CONNECT_MONGOOSE ||
+        'mongodb://root:example@localhost:27017/bloggers_posts?authSource=admin',
+    ),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: IpUser.name, schema: IpUserSchema },
