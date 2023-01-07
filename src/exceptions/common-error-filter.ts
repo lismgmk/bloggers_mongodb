@@ -19,8 +19,8 @@ export class CommonErrorFilter implements ExceptionFilter {
     const request = context.getRequest<Request>();
     const message = getErrorMessage(exception);
     response.status(statusCode).json({
-      statusCode,
-      path: request.url,
+      // statusCode,
+      // path: request.url,
       errorsMessages: message,
     });
   }

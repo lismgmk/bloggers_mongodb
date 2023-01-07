@@ -120,7 +120,7 @@ export class AuthController {
   @HttpCode(204)
   @Post('/registration-email-resending')
   @UseFilters(new ValidationBodyExceptionFilter())
-  // @UseFilters(new CommonErrorFilter())
+  @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   async registrationEmailResending(
     @Res({ passthrough: true }) res: Response,
@@ -153,7 +153,7 @@ export class AuthController {
 
   @HttpCode(204)
   @Post('/registration-confirmation')
-  // @UseFilters(new CommonErrorFilter())
+  @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   async registrationConfirmation(
     @Body(new CustomValidationPipe()) code: CodeAuthDto,
