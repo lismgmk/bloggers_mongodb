@@ -19,12 +19,11 @@ export class MailService {
       await this.mailerService.sendMail({
         to: user.email,
         subject: 'Welcome to Lis App! Confirm your Email',
-        html: ` 
-                 <a href=https://somesite.com/password-recovery?recoveryCode=${code}>https://somesite.com/password-recovery?recoveryCode=${code}</a>
-      `,
-        // template: './confirmation', // `.hbs` extension is appended automatically
+        html: ` <h1>Password recovery</h1>
+       <p>To finish password recovery please follow the link below:
+          <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
+      </p>`,
         context: {
-          // ✏️ filling curly brackets with content
           name: user.name,
           url,
         },
