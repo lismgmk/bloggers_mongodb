@@ -19,7 +19,9 @@ export class MailService {
       await this.mailerService.sendMail({
         to: user.email,
         subject: 'Welcome to Lis App! Confirm your Email',
-        text: `https://somesite.com/password-recovery?recoveryCode=${code}`,
+        text: ` 
+                 <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>https://somesite.com/password-recovery?recoveryCode=${code}</a>
+      `,
         // template: './confirmation', // `.hbs` extension is appended automatically
         context: {
           // ✏️ filling curly brackets with content
