@@ -64,13 +64,7 @@ export class AuthService {
   async resendingEmail(email: string) {
     const filter = { 'accountData.email': { $eq: email } };
     const currentUser = await this.userModel.findOne(filter);
-    // if (!currentUser) {
-    //   throw new BadRequestException({
-    //     message: FIELD_EPSENT_VALIDATION_ERROR,
-    //     field: 'email',
-    //   });
-    // }
-    if (currentUser.emailConfirmation.isConfirmed) {
+    if (currentUser.emailConfirmation.isConfirmed === true) {
       throw new BadRequestException();
     }
     const confirmationCode = new Date().toISOString();
