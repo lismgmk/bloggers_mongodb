@@ -88,7 +88,7 @@ export class AuthService {
     const currentUser = await this.userModel.findOne(filter);
     if (currentUser) {
       const confirmationCode = new Date().toISOString();
-      await this.mailService.sendUserConfirmation(
+      await this.mailService.sendUserRecovery(
         { email, name: currentUser.accountData.userName },
         confirmationCode,
       );
