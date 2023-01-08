@@ -37,6 +37,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if ((!userEmail && !user) || !isMatchPass) {
       throw new UnauthorizedException();
     }
-    return user._id;
+    return user;
   }
 }

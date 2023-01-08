@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -92,21 +93,24 @@ export class AuthController {
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(LocalStrategyGuard)
   async login(
-    @GetUserId() userId: string,
+    @GetUser() user: User,
     @Res({ passthrough: true }) res: Response,
     @Body(new CustomValidationPipe()) loginAuthDto: LoginAuthDto,
     @UserIp() userIp: string,
     @DeviceName() deviceName: string,
   ) {
+    if (user.emailConfirmation.isConfirmed === false) {
+      throw new BadRequestException('unConfirmed user');
+    }
     const deviceId = new mongoose.Types.ObjectId();
     const tokens = await this.authService.getRefreshAccessToken(
-      userId,
+      user._id,
       deviceId,
     );
 
     await this.securityService.createDevice({
       ip: userIp,
-      userId,
+      userId: user._id,
       deviceName,
       deviceId: deviceId,
     });
