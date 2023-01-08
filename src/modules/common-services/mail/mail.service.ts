@@ -20,7 +20,7 @@ export class MailService {
         to: user.email,
         subject: 'Welcome to Lis App! Confirm your Email',
         text: ` 
-                 <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>https://somesite.com/password-recovery?recoveryCode=${code}</a>
+                 <a href=https://somesite.com/password-recovery?recoveryCode=${code}>https://somesite.com/password-recovery?recoveryCode=${code}</a>
       `,
         // template: './confirmation', // `.hbs` extension is appended automatically
         context: {
