@@ -13,8 +13,6 @@ export class MailService {
     user: { email: string; name: string },
     code: string,
   ) {
-    const clientPort = this.configService.get<string>('CLIENT_PORT');
-    const url = `http://localhost:${clientPort}/client-confirm?code=${code}`;
     try {
       await this.mailerService.sendMail({
         to: user.email,
@@ -24,10 +22,6 @@ export class MailService {
           <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
       </p>`,
         text: 'https://somesite.com/password-recovery?recoveryCode=${code}',
-        context: {
-          name: user.name,
-          url,
-        },
       });
     } catch (e) {
       return new BadRequestException(e);
