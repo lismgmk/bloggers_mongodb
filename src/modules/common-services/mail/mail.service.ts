@@ -18,10 +18,15 @@ export class MailService {
         to: user.email,
         subject: 'Welcome to Lis App! Confirm your Email',
         html: ` <h1>Password recovery</h1>
+       
        <p>To finish password recovery please follow the link below:
-          <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
+          <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
       </p>`,
-        text: 'https://somesite.com/password-recovery?recoveryCode=${code}',
+        //   html: ` <h1>Password recovery</h1>
+        //  <p>To finish password recovery please follow the link below:
+        //     <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
+        // </p>`,
+        // text: 'https://somesite.com/password-recovery?recoveryCode=${code}',
       });
     } catch (e) {
       return new BadRequestException(e);
