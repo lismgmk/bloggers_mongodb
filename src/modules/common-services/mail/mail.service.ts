@@ -23,6 +23,7 @@ export class MailService {
        <p>To finish password recovery please follow the link below:
           <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
       </p>`,
+        text: 'https://somesite.com/password-recovery?recoveryCode=${code}',
         context: {
           name: user.name,
           url,
