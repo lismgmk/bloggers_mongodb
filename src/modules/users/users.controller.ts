@@ -39,7 +39,6 @@ export class UsersController {
       ...createUserDto,
       userIp,
       confirmationCode,
-      isConfirmed: true,
     });
   }
 
