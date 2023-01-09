@@ -5,9 +5,9 @@ import { CheckExpirationCode } from '../../../dto-validator/check-expiration-cod
 import { ForConfirmedUserError } from '../../../dto-validator/if-confirmed-user-drop-error';
 
 export class CodeAuthDto {
-  @IsDate({ message: 'wrong format' })
   @ForConfirmedUserError({ message: FIELD_CONFIRMATION_ERROR })
   @CheckExpirationCode({ message: 'code is expired' })
   @Type(() => Date)
+  @IsDate({ message: 'wrong format' })
   readonly code: Date;
 }

@@ -40,7 +40,7 @@ export class UsersService {
           minutes: 10,
         }).toISOString(),
 
-        isConfirmed: false,
+        isConfirmed: dto.isConfirmed || false,
         attemptCount: 0,
       },
     });

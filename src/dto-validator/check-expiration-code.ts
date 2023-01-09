@@ -15,7 +15,7 @@ export class IsExpired implements ValidatorConstraintInterface {
       compareDesc(
         new Date(),
         add(new Date(value), {
-          seconds: 1000000,
+          seconds: Number(process.env.TIME_EXPIRED_CONFIRMATION_SEC),
         }),
       ) === -1
     ) {

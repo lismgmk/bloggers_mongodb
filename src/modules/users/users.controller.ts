@@ -34,12 +34,12 @@ export class UsersController {
     @Ip() userIp: string,
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
-    console.log(createUserDto, 'add Users');
     const confirmationCode = new Date().toISOString();
     return await this.usersService.createUser({
       ...createUserDto,
       userIp,
       confirmationCode,
+      isConfirmed: true,
     });
   }
 
