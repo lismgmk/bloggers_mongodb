@@ -9,6 +9,8 @@ import {
   Res,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 
@@ -125,10 +127,16 @@ export class AuthController {
   @Post('/registration-email-resending')
   @UseFilters(new ValidationBodyExceptionFilter())
   @UseFilters(new CommonErrorFilter())
+  // @UsePipes(
+  //   new ValidationPipe({
+  //     stopAtFirstError: true,
+  //   }),
+  // )
   @UseFilters(new MongoExceptionFilter())
   async registrationEmailResending(
     @Res({ passthrough: true }) res: Response,
-    @Body(new CustomValidationPipe()) resendingEmail: ResendingEmailDto,
+    @Body(new CustomValidationPipe({ stopAtFirstError: true }))
+    resendingEmail: ResendingEmailDto,
   ) {
     return this.authService.resendingEmail(resendingEmail.email);
   }
