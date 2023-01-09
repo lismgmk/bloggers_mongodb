@@ -19,12 +19,12 @@ export class IfConfirmedUserDropErrorValidator
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async validate(value: any, args: ValidationArguments) {
-    if (args.property === 'code' || !isValid(value)) {
+    if (args.property === 'code' && !isValid(value)) {
       return false;
     } else {
       let fieldName: string;
       let searchVal: string;
-      if (args.property === 'code' || isValid(value)) {
+      if (args.property === 'code' && isValid(value)) {
         fieldName = `emailConfirmation.confirmationCode`;
         searchVal = value.toISOString();
       } else {
