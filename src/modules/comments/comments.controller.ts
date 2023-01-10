@@ -75,8 +75,9 @@ export class CommentsController {
   async deleteBlog(
     @Param('id', ParamIdValidationPipe)
     id: string,
+    @GetUser() user: User,
   ) {
-    return await this.commentsService.deleteCommentById(id);
+    return await this.commentsService.deleteCommentById(id, user._id);
   }
 
   @Get(':id')

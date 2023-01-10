@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import {
   registerDecorator,
   ValidationArguments,
@@ -6,23 +7,17 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { BlogsService } from './../modules/blogs/blogs.service';
+import { Model } from 'mongoose';
+import { Blog } from '../schemas/blog.schema';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class IfNotFoundBlogIdDropError implements ValidatorConstraintInterface {
-  constructor(private blogsService: BlogsService) {}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
 
   async validate(value: any) {
-    let count;
-    if (value) {
-      count = await this.blogsService.getBlogById(value);
-    }
-    if (!count || !value) {
-      throw new NotFoundException();
-    } else {
-      return true;
-    }
+    const blog = await this.blogModel.findOne(value).exec();
+    return !!blog;
   }
 
   defaultMessage(args: ValidationArguments) {

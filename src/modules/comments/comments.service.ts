@@ -94,6 +94,9 @@ export class CommentsService {
   }
   async changeComment(id: string, content: string, userId: string) {
     const comment = (await this.commentModel.findById(id)) as Comments;
+    if (!comment) {
+      throw new NotFoundException();
+    }
     if (!comment.userId.equals(userId)) {
       throw new ForbiddenException();
     }
@@ -101,10 +104,13 @@ export class CommentsService {
     comment.save();
   }
 
-  async deleteCommentById(id: string | ObjectId) {
+  async deleteCommentById(id: string | ObjectId, userId: string) {
     const comment = await this.getCommentById(id);
     if (!comment) {
       throw new NotFoundException();
+    }
+    if (!comment.userId.equals(userId)) {
+      throw new ForbiddenException();
     }
     return this.commentModel.findByIdAndDelete(id);
   }

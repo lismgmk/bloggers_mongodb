@@ -3,6 +3,6 @@ import { Length } from 'class-validator';
 
 export class CreateCommentDto {
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  @Length(1, 1000)
+  @Length(20, 300)
   readonly content: string;
 }
