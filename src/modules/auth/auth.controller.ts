@@ -9,8 +9,6 @@ import {
   Res,
   UseFilters,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 
@@ -18,7 +16,6 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import { DeviceName } from '../../decorators/device-name.decorator';
 import { GetDeviceId } from '../../decorators/get-device-id.decorator';
-import { GetUserId } from '../../decorators/get-user-id.decorator';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { PuerRefresgToken } from '../../decorators/puer-refresh-token.decorator';
 import { UserIp } from '../../decorators/user-ip.decorator';

@@ -13,6 +13,7 @@ import { User } from '../../schemas/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { LikesService } from '../likes/likes.service';
 import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
+import { ICreatePostWithBlogId } from './dto/create-post.interface';
 import { GetAllPostsdDto } from './dto/get-all-posts.dto';
 import { PostsQueryRepository } from './posts.query.repository';
 
@@ -56,7 +57,7 @@ export class PostsService {
     });
   }
 
-  async createPost(dto: CreatePostWithBlogIdDto) {
+  async createPost(dto: ICreatePostWithBlogId) {
     const currentBlog = (await this.blogsService.getBlogById(
       dto.blogId,
     )) as Blog;
@@ -92,7 +93,7 @@ export class PostsService {
       extendedLikesInfo,
     };
   }
-  async changePost(id: string, dto: CreatePostWithBlogIdDto) {
+  async changePost(id: string, dto: ICreatePostWithBlogId) {
     const post = (await this.getPostById(id)) as Posts;
     if (!post) {
       throw new NotFoundException();
