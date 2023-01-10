@@ -40,12 +40,14 @@ export class SecurityService {
   }
 
   async deleteCurrentDevice(deviceId: string, userId: string) {
+    console.log(deviceId, userId, 'device & user');
+
     const device = (await this.devicesModel
       .findById(deviceId)
       .exec()) as Devices;
-    // if (!device) {
-    //   throw new NotFoundException();
-    // }
+    if (!device) {
+      throw new NotFoundException();
+    }
     if (!device.userId.equals(userId)) {
       throw new ForbiddenException();
     }
