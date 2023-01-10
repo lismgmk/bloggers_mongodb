@@ -16,7 +16,7 @@ export class IfNotFoundBlogIdDropError implements ValidatorConstraintInterface {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
 
   async validate(value: any) {
-    const blog = await this.blogModel.findOne(value).exec();
+    const blog = await this.blogModel.findById(value).exec();
     return !!blog;
   }
 
