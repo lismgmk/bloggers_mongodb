@@ -183,7 +183,7 @@ export class AuthController {
     @PuerRefresgToken()
     refreshToken: string,
   ) {
-    await this.securityService.deleteCurrentDevice(deviceId, user._id);
+    // await this.securityService.deleteCurrentDevice(deviceId, user._id);
     await this.blackListRepository.addToken(refreshToken);
     return;
   }

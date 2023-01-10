@@ -57,13 +57,20 @@ import { UsersRepository } from './users/users.repository';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CheckIpStatusMiddleware)
-      .forRoutes(
-        { path: '/auth/registration', method: RequestMethod.POST },
-        { path: 'users/:id', method: RequestMethod.DELETE },
-        { path: 'refresh-token', method: RequestMethod.POST },
-      );
+    consumer.apply(CheckIpStatusMiddleware).forRoutes(
+      { path: '/auth/registration', method: RequestMethod.POST },
+      {
+        path: '/auth/registration-email-resending',
+        method: RequestMethod.POST,
+      },
+      {
+        path: '/auth/registration-confirmation',
+        method: RequestMethod.POST,
+      },
+      { path: '/auth/login', method: RequestMethod.POST },
+      { path: 'users/:id', method: RequestMethod.DELETE },
+      { path: 'refresh-token', method: RequestMethod.POST },
+    );
     consumer.apply(CheckBearerMiddleware).forRoutes(
       {
         path: '/posts/:postId/comments',
