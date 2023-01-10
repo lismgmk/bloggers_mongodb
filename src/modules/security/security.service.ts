@@ -47,7 +47,7 @@ export class SecurityService {
       .exec()) as Devices;
     if (!device) {
       throw new NotFoundException(
-        `${userId}---userId,  ${deviceId}----deviceId, ${device}-----deviceObj`,
+        `${userId}---userId,  ${deviceId}----deviceId, ${device}-----deviceOb`,
       );
     }
     if (!device.userId.equals(userId)) {
