@@ -149,6 +149,10 @@ export class PostsController {
     content: CreateCommentDto,
     @GetUser() user: User,
   ) {
+    const post = await this.postsService.getPostById(postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
     return await this.commentsService.createComment({
       postId,
       ...content,
