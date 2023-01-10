@@ -76,7 +76,7 @@ export class AuthController {
     );
     await this.securityService.updateDevice({
       userId: user._id,
-      deviceId,
+      _id: deviceId,
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
@@ -102,6 +102,8 @@ export class AuthController {
       throw new BadRequestException('unConfirmed user');
     }
     const deviceId = new mongoose.Types.ObjectId();
+    console.log(deviceId);
+
     const tokens = await this.authService.getRefreshAccessToken(
       user._id,
       deviceId,
