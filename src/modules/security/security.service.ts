@@ -46,7 +46,9 @@ export class SecurityService {
       .findById(deviceId)
       .exec()) as Devices;
     if (!device) {
-      throw new NotFoundException();
+      throw new NotFoundException(
+        `${userId}u!!!!!!!!!!!!!!!!!!!!!!d${deviceId}`,
+      );
     }
     if (!device.userId.equals(userId)) {
       throw new ForbiddenException();
