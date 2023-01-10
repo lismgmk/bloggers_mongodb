@@ -6,13 +6,11 @@ import { FIELD_REQUIRED_VALIDATION_ERROR } from '../consts/ad-validation-const';
 export class Devices extends Document {
   @Prop({
     type: Date,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   createdAt: Date;
   @Prop({
     type: Date,
-    unique: true,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   expiredAt: Date;

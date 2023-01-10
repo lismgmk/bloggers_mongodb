@@ -43,9 +43,9 @@ export class SecurityService {
     const device = (await this.devicesModel
       .findById(deviceId)
       .exec()) as Devices;
-    if (!device) {
-      throw new NotFoundException();
-    }
+    // if (!device) {
+    //   throw new NotFoundException();
+    // }
     if (!device.userId.equals(userId)) {
       throw new ForbiddenException();
     }
