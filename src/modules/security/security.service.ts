@@ -75,6 +75,7 @@ export class SecurityService {
         userId: dto.userId,
         deviceName: dto.deviceName,
       });
+      console.log(newDevice, 'newDevice');
 
       return this.devicesModel.create(newDevice);
     } else {
