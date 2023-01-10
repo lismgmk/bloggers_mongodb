@@ -1,3 +1,4 @@
+import { Transform, TransformFnParams } from 'class-transformer';
 import { Length, IsEmail } from 'class-validator';
 import {
   FIELD_EXIST_VALIDATION_ERROR,
@@ -13,6 +14,7 @@ export class CreateUserDto {
   @Length(3, 10)
   readonly login: string;
 
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @Length(6, 20, { message: FIELD_LENGTH_VALIDATION_ERROR })
   readonly password: string;
 

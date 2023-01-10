@@ -2,13 +2,12 @@
 //
 // }
 // require('module-alias/register');
-import './config/aliases';
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
+import './config/aliases';
 import { MongoExceptionFilter } from './exceptions/mongoose-exception-filter';
 import { AppModule } from './modules/app.module';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
