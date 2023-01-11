@@ -21,7 +21,7 @@ export class IfNotFoundBlogIdDropError implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.value} is already taken`;
+    return `${args.value} is already taken!`;
   }
 }
 

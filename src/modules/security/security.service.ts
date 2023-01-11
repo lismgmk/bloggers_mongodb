@@ -81,7 +81,10 @@ export class SecurityService {
 
       return this.devicesModel.create(newDevice);
     } else {
-      this.updateDevice({ userId: dto.userId, deviceName: dto.deviceName });
+      return this.updateDevice({
+        userId: dto.userId,
+        deviceName: dto.deviceName,
+      });
     }
   }
 

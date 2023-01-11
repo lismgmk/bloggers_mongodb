@@ -104,17 +104,17 @@ export class AuthController {
     const deviceId = new mongoose.Types.ObjectId();
     console.log(deviceId);
 
-    const tokens = await this.authService.getRefreshAccessToken(
-      user._id,
-      deviceId,
-    );
-
-    await this.securityService.createDevice({
+    const currentDevice = await this.securityService.createDevice({
       ip: userIp,
       userId: user._id,
       deviceName,
       deviceId: deviceId,
     });
+
+    const tokens = await this.authService.getRefreshAccessToken(
+      user._id,
+      currentDevice._id,
+    );
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
