@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { Blog } from '../../schemas/blog.schema';
+import { IAllBlogsSaResponse } from '../sa/types_dto/front_interfaces/all-blogs-sa.response';
 import { GetAllBlogsQueryMain } from './types_dto/main_interfaces/get-all-blogs.interface';
 
 @Injectable()
@@ -94,6 +95,6 @@ export class BlogsQueryRepository {
           },
         ])
         .exec()
-    )[0] as IPaginationResponse<any[]>;
+    )[0] as IPaginationResponse<IAllBlogsSaResponse[]>;
   }
 }
