@@ -10,7 +10,7 @@ import {
 import { Types } from 'mongoose';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from '../consts/ad-validation-const';
 import { toNumber } from '../helpers/helper-transform-number';
-import { SortDirection } from './pagination-query.dto';
+import { SortDirection } from './dto_validate/pagination-query.dto';
 
 enum LikeStatusEnum {
   'None',

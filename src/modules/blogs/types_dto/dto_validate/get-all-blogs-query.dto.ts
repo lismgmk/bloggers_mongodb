@@ -1,6 +1,7 @@
 import { IsOptional, IsEnum } from 'class-validator';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../../../consts/ad-validation-const';
 import { PaginationQueryDto } from '../../../../global-dto/dto_validate/pagination-query.dto';
+import { GetAllBlogsQueryMain } from '../main_interfaces/get-all-blogs.interface';
 
 export enum SortByField {
   name,
@@ -9,7 +10,10 @@ export enum SortByField {
   websiteUrl,
 }
 
-export class GetAllBlogsQueryDto extends PaginationQueryDto {
+export class GetAllBlogsQueryDto
+  extends PaginationQueryDto
+  implements GetAllBlogsQueryMain
+{
   @IsOptional()
   readonly searchNameTerm: string;
 

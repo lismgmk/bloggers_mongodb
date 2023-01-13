@@ -11,6 +11,7 @@ import { LikesService } from '../likes/likes.service';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsService } from '../posts/posts.service';
 import { BlogsController } from './blogs.controller';
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { BlogsService } from './blogs.service';
 import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
 
@@ -33,6 +34,7 @@ import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
     PostsService,
     LikesService,
     IfNotFoundBlogIdDropError,
+    BlogsQueryRepository,
   ],
 })
 export class BlogsModule {}

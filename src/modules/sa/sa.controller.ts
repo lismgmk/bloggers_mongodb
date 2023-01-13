@@ -65,6 +65,7 @@ export class SaController {
     )
     queryParams: GetAllBlogsQueryDto,
   ) {
-    return await this.blogsService.getAllBlogsSa(queryParams);
+    // return await this.blogsService.getAllBlogsSa(queryParams);
+    return await this.sa.getAllBlogsSa(queryParams);
   }
 }

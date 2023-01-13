@@ -1,14 +1,15 @@
 import { Transform, Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsInt } from 'class-validator';
-import { INCORRECT_TYPE_VALIDATION_ERROR } from '../consts/ad-validation-const';
-import { toNumber } from '../helpers/helper-transform-number';
+import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../consts/ad-validation-const';
+import { toNumber } from '../../helpers/helper-transform-number';
+import { PaginationQueryMain } from '../main_interfaces/pagination-query.interface';
 
 export enum SortDirection {
   desc,
   asc,
 }
 
-export class PaginationQueryDto {
+export class PaginationQueryDto implements PaginationQueryMain {
   @IsEnum(SortDirection, { message: INCORRECT_TYPE_VALIDATION_ERROR })
   @IsOptional()
   readonly sortDirection: keyof typeof SortDirection;
