@@ -9,7 +9,7 @@ import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
 import { Blog } from '../../schemas/blog.schema';
 import { Posts } from '../../schemas/posts.schema';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { LikesService } from '../likes/likes.service';
 import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';

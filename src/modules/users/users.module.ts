@@ -7,7 +7,7 @@ import { IfConfirmedUserDropErrorValidator } from '../../dto-validator/if-confir
 import { IfEpsentUserDropErrorValidator } from '../../dto-validator/if-epsent-user-drop-error';
 import { IfExistUserDropErrorValidator } from '../../dto-validator/if-exist-user-drop-error';
 import { IfNotFoundUserIdDropError } from '../../dto-validator/if-not-found-user-id-drop-error';
-import { User, UserSchema } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersController } from './users.controller';

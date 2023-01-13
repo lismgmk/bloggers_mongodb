@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
-import { User, UserSchema } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BlackListRepository } from '../auth/black-list.repository';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersRepository } from '../users/users.repository';

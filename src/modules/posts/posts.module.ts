@@ -8,7 +8,7 @@ import { Blog, BlogSchema } from '../../schemas/blog.schema';
 import { Comments, CommentsSchema } from '../../schemas/comments.schema';
 import { Like, LikeSchema } from '../../schemas/likes.schema';
 import { Posts, PostsSchema } from '../../schemas/posts.schema';
-import { User, UserSchema } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtStrategy } from '../../strategyes/jwt.strategy';
 import { BlogsService } from '../blogs/blogs.service';

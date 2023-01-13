@@ -6,7 +6,7 @@ import { Comments, CommentsSchema } from '../../schemas/comments.schema';
 import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
 import { Like, LikeSchema } from '../../schemas/likes.schema';
 import { Posts, PostsSchema } from '../../schemas/posts.schema';
-import { User, UserSchema } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users/users.schema';
 import { TestingController } from './testing.controller';
 import { TestingService } from './testing.service';
 

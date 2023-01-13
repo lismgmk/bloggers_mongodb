@@ -6,7 +6,7 @@ import request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
 import { BlackListRepository } from '../src/modules/auth/black-list.repository';
 import { UsersRepository } from '../src/modules/users/users.repository';
-import { User } from '../src/schemas/users.schema';
+import { User } from '../src/schemas/users/users.schema';
 import { JwtPassService } from '../src/modules/common-services/jwt-pass-custom/jwt-pass.service';
 import { fakerConnectDb } from '../src/test-params/fake-connect-db';
 import { newUser1, adminToken, newUser2 } from '../src/test-params/test-values';

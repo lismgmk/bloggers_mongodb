@@ -4,10 +4,11 @@ import {
   FIELD_EXIST_VALIDATION_ERROR,
   FIELD_LENGTH_VALIDATION_ERROR,
   FIELD_EMAIL_VALIDATION_ERROR,
-} from '../../../consts/ad-validation-const';
-import { ForExistsUserError } from '../../../dto-validator/if-exist-user-drop-error';
+} from '../../../../consts/ad-validation-const';
+import { ForExistsUserError } from '../../../../dto-validator/if-exist-user-drop-error';
+import { CreateUserMain } from '../main_instance/create-user.instance';
 
-export class CreateUserDto {
+export class CreateUserDto implements CreateUserMain {
   @ForExistsUserError({
     message: FIELD_EXIST_VALIDATION_ERROR,
   })

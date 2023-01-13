@@ -11,7 +11,7 @@ import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
 import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
-import { User, UserSchema } from '../../schemas/users.schema';
+import { User, UserSchema } from '../../schemas/users/users.schema';
 import { JwtStrategy } from '../../strategyes/jwt.strategy';
 import { LocalStrategy } from '../../strategyes/local.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';

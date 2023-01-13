@@ -24,7 +24,7 @@ import { LikeStatusDto } from '../../global-dto/like-status.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { GetAllCommentsDto } from '../comments/dto/get-all-comments.dto';

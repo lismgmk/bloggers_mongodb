@@ -1,10 +1,13 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   HttpCode,
+  Ip,
   NotFoundException,
   Param,
+  Post,
   Put,
   Query,
   UseFilters,
@@ -16,9 +19,12 @@ import { GetUser } from '../../decorators/get-user.decorator';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
-import { User } from '../../schemas/users.schema';
+import { CustomValidationPipe } from '../../pipes/validation.pipe';
+import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { GetAllBlogsQueryDto } from '../blogs/queries/impl/get-all-blogs-query.dto';
+import { CreateUserDto } from '../users/instance_dto/dto_validate/create-user.dto';
+import { UsersService } from '../users/users.service';
 import { SaService } from './sa.service';
 
 @Controller('sa')
@@ -26,6 +32,7 @@ export class SaController {
   constructor(
     private readonly sa: SaService,
     private readonly blogsService: BlogsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Put('/blogs/:blogId/bind-with-user/:userId')
@@ -65,7 +72,16 @@ export class SaController {
     )
     queryParams: GetAllBlogsQueryDto,
   ) {
-    // return await this.blogsService.getAllBlogsSa(queryParams);
     return await this.sa.getAllBlogsSa(queryParams);
+  }
+
+  @Post('/users')
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async createUser(
+    @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
+  ) {
+    return await this.usersService.createUser(createUserDto);
   }
 }

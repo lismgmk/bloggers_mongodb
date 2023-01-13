@@ -8,7 +8,7 @@ import { Model, ObjectId } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
 import { Comments } from '../../schemas/comments.schema';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 import { LikesService } from '../likes/likes.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { ICreateComment } from './dto/comments-interfaces';

@@ -7,7 +7,7 @@ import { Comments } from '../../schemas/comments.schema';
 import { IpUser } from '../../schemas/iPusers.schema';
 import { Like } from '../../schemas/likes.schema';
 import { Posts } from '../../schemas/posts.schema';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 
 @Injectable()
 export class TestingService {

@@ -26,7 +26,7 @@ import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';

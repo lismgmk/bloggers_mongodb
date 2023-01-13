@@ -1,7 +1,7 @@
 import { IsOptional, IsEnum } from 'class-validator';
 import { INCORRECT_TYPE_VALIDATION_ERROR } from '../../../../consts/ad-validation-const';
 import { PaginationQueryDto } from '../../../../global-dto/dto_validate/pagination-query.dto';
-import { GetAllBlogsQueryMain } from '../main_interfaces/get-all-blogs.interface';
+import { GetAllBlogsQueryMain } from '../main_instance/get-all-blogs.instance';
 
 export enum SortByField {
   name,

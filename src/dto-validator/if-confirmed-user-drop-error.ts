@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { isValid } from 'date-fns';
 import { Model } from 'mongoose';
-import { User } from '../schemas/users.schema';
+import { User } from '../schemas/users/users.schema';
 
 @Injectable()
 @ValidatorConstraint({ async: true })

@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { compareDesc } from 'date-fns';
 import { Model, Types } from 'mongoose';
-import { User } from '../../schemas/users.schema';
+import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { MailService } from '../common-services/mail/mail.service';
 import { UsersService } from '../users/users.service';

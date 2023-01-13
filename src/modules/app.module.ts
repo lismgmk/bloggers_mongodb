@@ -14,7 +14,7 @@ import { CheckIpStatusMiddleware } from '../middlewares/check-ip-status.middlewa
 import { IpUsersRepository } from '../repositotyes/ip-user.repository';
 import { BlackList, BlackListSchema } from '../schemas/black-list.schema';
 import { IpUser, IpUserSchema } from '../schemas/iPusers.schema';
-import { User, UserSchema } from '../schemas/users.schema';
+import { User, UserSchema } from '../schemas/users/users.schema';
 import { AuthModule } from './auth/auth.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CommentsModule } from './comments/comments.module';
