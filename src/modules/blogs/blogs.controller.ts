@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   NotFoundException,
@@ -28,6 +29,7 @@ import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users.schema';
 import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -39,6 +41,7 @@ export class BlogsController {
   @Get()
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
+  @UseGuards(JwtAuthGuard)
   async getAllBlogs(
     @Query(
       new ValidationPipe({
@@ -48,18 +51,25 @@ export class BlogsController {
       }),
     )
     queryParams: GetAllBlogsQueryDto,
+    @GetUser()
+    user: User,
   ) {
-    return await this.blogsService.getAllBlogs(queryParams);
+    return await this.blogsService.getAllBlogs(queryParams, user._id);
   }
 
   @Post()
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
-  async createUser(
+  async createBlog(
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
+    @GetUser()
+    user: User,
   ) {
-    return await this.blogsService.createBlog(createBlogDto);
+    return await this.blogsService.createBlog({
+      ...createBlogDto,
+      userId: user._id,
+    });
   }
 
   @Get(':id')
@@ -85,17 +95,22 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(204)
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
     @Param('id', ParamIdValidationPipe)
     blogId: string,
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
+    @GetUser()
+    user: User,
   ) {
     const blog = await this.blogsService.getBlogById(blogId);
     if (!blog) {
       throw new NotFoundException();
+    }
+    if (blog.userId !== user._id) {
+      throw new ForbiddenException();
     }
     return await this.blogsService.changeBlog({
       id: blogId,
@@ -105,16 +120,21 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
   async deleteBlog(
     @Param('id', ParamIdValidationPipe)
     blogId: string,
+    @GetUser()
+    user: User,
   ) {
     const blog = await this.blogsService.getBlogById(blogId);
     if (!blog) {
       throw new NotFoundException();
+    }
+    if (blog.userId !== user._id) {
+      throw new ForbiddenException();
     }
     return await this.blogsService.deleteBlogById(blogId);
   }
@@ -147,7 +167,7 @@ export class BlogsController {
 
   @Post(':blogId/posts')
   @HttpCode(201)
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPostsForBloggerId(
@@ -155,12 +175,45 @@ export class BlogsController {
     blogId: string,
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostDto,
+    @GetUser()
+    user: User,
   ) {
     const blog = await this.blogsService.getBlogById(blogId);
     if (!blog) {
       throw new NotFoundException();
     }
+    if (blog.userId !== user._id) {
+      throw new ForbiddenException();
+    }
     return await this.postsService.createPost({
+      ...createPostDto,
+      blogId,
+    });
+  }
+
+  @Put(':blogId/posts/:postId')
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async changePostsForBloggerId(
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @Body(new CustomValidationPipe())
+    createPostDto: CreatePostDto,
+    @GetUser()
+    user: User,
+  ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    if (blog.userId !== user._id) {
+      throw new ForbiddenException();
+    }
+    return await this.postsService.changePost(postId, {
       ...createPostDto,
       blogId,
     });

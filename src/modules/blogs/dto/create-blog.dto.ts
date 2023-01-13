@@ -1,6 +1,7 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, Length, Matches } from 'class-validator';
+import { Length, Matches } from 'class-validator';
 import { FIELD_LENGTH_VALIDATION_ERROR } from '../../../consts/ad-validation-const';
+import { IsMongoIdObject } from '../../../dto-validator/is-mongid-obj';
 
 const urlRegEx =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
@@ -18,4 +19,7 @@ export class CreateBlogDto {
   @Matches(urlRegEx)
   @Length(1, 100, { message: FIELD_LENGTH_VALIDATION_ERROR })
   readonly websiteUrl: string;
+
+  // @IsMongoIdObject()
+  // readonly userId: string;
 }

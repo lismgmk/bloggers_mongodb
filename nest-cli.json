@@ -5,5 +5,8 @@
   "compilerOptions": {
     "assets": ["modules/mail/templates/**/*"],
     "watchAssets": true
+  },
+  "generateOptions": {
+    "spec": false
   }
 }

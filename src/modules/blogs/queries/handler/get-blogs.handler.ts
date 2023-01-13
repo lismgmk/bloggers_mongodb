@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { IPaginationResponse } from '../../../../global-dto/common-interfaces';
 import {
   paramsDto,
@@ -11,15 +11,18 @@ import { IBlog } from '../../dto/blogs-intergaces';
 import { GetAllBlogsQueryDto } from '../impl/get-all-blogs-query.dto';
 
 @QueryHandler(GetAllBlogsQueryDto)
-export class GetBlogsHandler implements IQueryHandler<GetAllBlogsQueryDto> {
+export class GetBlogsHandler
+  implements IQueryHandler<GetAllBlogsQueryDto & { userId: string | ObjectId }>
+{
   constructor(@InjectModel(Blog.name) private blogsModel: Model<Blog>) {}
   async execute(
-    queryParams: GetAllBlogsQueryDto,
+    queryParams: GetAllBlogsQueryDto & { userId: string | ObjectId },
   ): Promise<IPaginationResponse<IBlog>> {
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
     const sortValue = queryParams.sortDirection || 'desc';
     const filter = {
       name: namePart,
+      userId: queryParams.userId,
     };
 
     const allBlogs: IBlog[] = (

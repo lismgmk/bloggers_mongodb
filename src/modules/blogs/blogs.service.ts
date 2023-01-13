@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QueryBus, CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { paginationBuilder, paramsDto } from '../../helpers/pagination-builder';
 import { Blog } from '../../schemas/blog.schema';
 import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { IBlog } from './dto/blogs-intergaces';
-import { CreateBlogDto } from './dto/create-blog.dto';
+import { ICreateBlog } from './dto/create-blog.interface';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 
 @Injectable()
@@ -21,28 +22,18 @@ export class BlogsService {
 
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,
+    userId: string | ObjectId,
   ): Promise<IPaginationResponse<IBlog>> {
-    // const count = (a, b) => {
-    //   return a + b;
-    // };
-
-    // const promisify = (a, b) => {
-    //   return new Promise((res, rej) => {
-    //     res(count(a, b));
-    //   });
-    // };
-
-    // const res = await promisify(2, 2).then((res: number) => res ** 2);
-
-    return await this.queryBus.execute(queryParams);
+    return await this.queryBus.execute({ ...queryParams, userId });
   }
 
-  async createBlog(dto: CreateBlogDto) {
+  async createBlog(dto: ICreateBlog) {
     const newBlog = new this.blogModel({
       name: dto.name,
       websiteUrl: dto.websiteUrl,
       description: dto.description,
       createdAt: new Date().toISOString(),
+      userId: dto.userId,
     });
     const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
     return {
@@ -66,12 +57,20 @@ export class BlogsService {
     return this.blogModel.findByIdAndDelete(id);
   }
 
-  async changeBlog(dto: CreateBlogDto & { id: string }) {
+  async changeBlog(dto: ICreateBlog & { id: string | ObjectId }) {
     const blog = (await this.blogModel.findById(dto.id)) as Blog;
     blog.name = dto.name;
     blog.description = dto.description;
     blog.websiteUrl = dto.websiteUrl;
     blog.save();
+    return;
+  }
+
+  async changeBlogsUser(id: string | ObjectId, userId: string | ObjectId) {
+    await this.blogModel.findByIdAndUpdate(id, {
+      userId,
+    });
+
     return;
   }
 
@@ -89,5 +88,51 @@ export class BlogsService {
       blogId,
       userId,
     );
+  }
+
+  async getAllBlogsSa(
+    queryParams: GetAllBlogsQueryDto,
+  ): Promise<IPaginationResponse<IBlog>> {
+    const namePart = new RegExp(queryParams.searchNameTerm, 'i');
+    const sortValue = queryParams.sortDirection || 'desc';
+    const filter = {
+      name: namePart,
+    };
+
+    const allBlogs: IBlog[] = (
+      await this.blogModel
+        .find(filter)
+        .sort({ [queryParams.sortBy]: sortValue })
+        .skip(
+          queryParams.pageNumber > 0
+            ? (queryParams.pageNumber - 1) * queryParams.pageSize
+            : 0,
+        )
+        .limit(queryParams.pageSize)
+        .lean()
+    ).map((i) => {
+      return {
+        id: i._id,
+        name: i.name,
+        createdAt: i.createdAt,
+        websiteUrl: i.websiteUrl,
+        description: i.description,
+        blogOwnerInfo: {
+          userId: i.userId,
+          userLogin: 'string',
+        },
+      };
+    });
+
+    const totalCount = await this.blogModel.find(filter).exec();
+    const paginationParams: paramsDto = {
+      totalCount: totalCount.length,
+      pageSize: queryParams.pageSize,
+      pageNumber: queryParams.pageNumber,
+    };
+    return {
+      ...paginationBuilder(paginationParams),
+      items: allBlogs,
+    };
   }
 }

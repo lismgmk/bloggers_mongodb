@@ -27,6 +27,7 @@ import { SecurityModule } from './security/security.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { UsersRepository } from './users/users.repository';
+import { SaModule } from './sa/sa.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { UsersRepository } from './users/users.repository';
     MailModule,
     LikesModule,
     JwtPassModule,
+    SaModule,
   ],
   controllers: [],
   providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
