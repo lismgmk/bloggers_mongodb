@@ -5,6 +5,7 @@ import { add } from 'date-fns';
 import { Model } from 'mongoose';
 import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
+import { BanUserMain } from './instance_dto/main_instance/ban-user.instance';
 import { CreateUserMain } from './instance_dto/main_instance/create-user.instance';
 import { IUserResponse } from './instance_dto/response_interfaces/all-users.response';
 
@@ -122,4 +123,12 @@ export class UsersService {
   //     return e;
   //   }
   // }
+  async changeStatus(id: string, banDto: BanUserMain) {
+    const filter = {
+      'banInfo.isBanned': banDto.isBanned,
+      'banInfo.banReason': banDto.banReason,
+      'banInfo.banDate': new Date().toISOString(),
+    };
+    return this.userModel.findByIdAndUpdate(id, filter);
+  }
 }

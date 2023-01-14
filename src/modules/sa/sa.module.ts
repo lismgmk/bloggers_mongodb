@@ -15,6 +15,7 @@ import { Posts, PostsSchema } from '../../schemas/posts.schema';
 import { IfNotFoundBlogIdDropError } from '../../dto-validator/if-not-found-blog-id-drop-error';
 import { LikesService } from '../likes/likes.service';
 import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
+import { UsersService } from '../users/users.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
     LikesService,
     IfNotFoundBlogIdDropError,
     BlogsQueryRepository,
+    UsersService,
   ],
 })
 export class SaModule {}

@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   HttpCode,
-  Ip,
   NotFoundException,
   Param,
   Post,
@@ -15,14 +14,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../../decorators/get-user.decorator';
+import { string } from 'joi';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
-import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { GetAllBlogsQueryDto } from '../blogs/queries/impl/get-all-blogs-query.dto';
+import { BanUserDto } from '../users/instance_dto/dto_validate/ban-user.dto';
 import { CreateUserDto } from '../users/instance_dto/dto_validate/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { SaService } from './sa.service';
@@ -36,7 +35,7 @@ export class SaController {
   ) {}
 
   @Put('/blogs/:blogId/bind-with-user/:userId')
-  @HttpCode(201)
+  @HttpCode(204)
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
@@ -83,5 +82,17 @@ export class SaController {
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
     return await this.usersService.createUser(createUserDto);
+  }
+
+  @Put('/users/:id/ban')
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async banUser(
+    @Param('id', ParamIdValidationPipe)
+    id: string,
+    @Body(new CustomValidationPipe()) banDto: BanUserDto,
+  ) {
+    return await this.sa.changeBanStatus(id, banDto);
   }
 }
