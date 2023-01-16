@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { Comments } from '../../schemas/comments/comments.schema';
 import { pageNumber } from '../../test-params/test-values';
@@ -16,59 +16,21 @@ export class CommentsQueryRepository {
     queryParams: GetAllCommentsDto,
     postId: string = null,
     userId: string,
+    bannedUsers: Types.ObjectId[],
   ) {
     const sortField = queryParams.sortBy;
-    const sortValue = queryParams.sortDirection === 'desc' ? 1 : -1;
-
-    // const db = mongoose.connection.createCollection('user');
-    const UserSchema = new mongoose.Schema(
-      {
-        userName: {
-          type: String,
-          required: true,
-        },
-        count: {
-          type: Number,
-          required: true,
-          default: 0,
-        },
-        log: [
-          {
-            description: { type: String, required: true },
-            duration: { type: Number, required: true },
-          },
-        ],
-      },
-      { collection: 'user' },
-    );
-    mongoose.model('user', UserSchema).aggregate([
-      {
-        $project: {
-          id: '$_id',
-          userName: '$userName',
-          count: '$count',
-          log: { $slice: ['$log', 2] },
-        },
-      },
-    ]);
-
+    let sortValue: string | 1 | -1 = -1;
+    if (queryParams.sortDirection === 'desc') {
+      sortValue = -1;
+    }
+    if (queryParams.sortDirection === 'asc') {
+      sortValue = 1;
+    }
     return (
       await this.commentModel
         .aggregate([
           {
             $match: { postId: new mongoose.Types.ObjectId(postId) },
-          },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'id',
-              foreignField: 'userId',
-              as: 'user',
-            },
-          },
-          { $match: { 'user.banInfo.isBanned': true } },
-          {
-            $unset: ['user'],
           },
           {
             $sort: {
@@ -104,7 +66,10 @@ export class CommentsQueryRepository {
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$status', 'Like'] }],
+                      $and: [
+                        { $eq: ['$status', 'Like'] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
                     },
                   },
                 },
@@ -128,7 +93,10 @@ export class CommentsQueryRepository {
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$userId', userId] }],
+                      $and: [
+                        { $eq: ['$userId', userId] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
                     },
                   },
                 },
@@ -157,7 +125,10 @@ export class CommentsQueryRepository {
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$status', 'Dislike'] }],
+                      $and: [
+                        { $eq: ['$status', 'Dislike'] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
                     },
                   },
                 },

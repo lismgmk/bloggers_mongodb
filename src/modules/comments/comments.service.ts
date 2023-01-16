@@ -10,6 +10,7 @@ import { LikeStatusEnum } from '../../global-dto/like-status.dto';
 import { Comments } from '../../schemas/comments/comments.schema';
 import { User } from '../../schemas/users/users.schema';
 import { LikesService } from '../likes/likes.service';
+import { UsersService } from '../users/users.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { ICreateComment } from './dto/comments-interfaces';
 import { GetAllCommentsDto } from './dto/get-all-comments.dto';
@@ -20,6 +21,7 @@ export class CommentsService {
     @InjectModel(Comments.name) private commentModel: Model<Comments>,
     private likesService: LikesService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
+    private usersService: UsersService,
   ) {}
 
   async createComment(dto: ICreateComment) {
@@ -61,11 +63,12 @@ export class CommentsService {
       //   userId,
       // );
       // console.log(f, 'dddd');
-
+      const bannedUsers = await this.usersService.getAllBannedUsers();
       return await this.commentsQueryRepository.queryAllCommentsPagination(
         queryParams,
         postId,
         userId,
+        bannedUsers,
       );
     } catch (e) {
       console.log(e);

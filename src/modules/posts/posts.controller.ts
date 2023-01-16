@@ -142,12 +142,11 @@ export class PostsController {
 
   @Post(':postId/comments')
   @HttpCode(201)
-  @SkipThrottle()
   @UseGuards(JwtAuthGuard)
   @UseFilters(new CommonErrorFilter())
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
-  async createPostsForBloggerId(
+  async createCommentForPostId(
     @Param('postId', ParamIdValidationPipe)
     postId: string,
     @Body(new CustomValidationPipe())
