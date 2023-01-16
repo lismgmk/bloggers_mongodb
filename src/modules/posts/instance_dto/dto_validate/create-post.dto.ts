@@ -1,7 +1,8 @@
 import { Transform, TransformFnParams } from 'class-transformer';
 import { Length } from 'class-validator';
+import { CreatePostMain } from '../main_instance/create-post.instance';
 
-export class CreatePostDto {
+export class CreatePostDto implements CreatePostMain {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @Length(1, 30)
   readonly title: string;

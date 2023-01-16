@@ -11,6 +11,7 @@ import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { UsersController } from './users.controller';
+import { UsersQueryRepository } from './users.query.repository';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
@@ -32,6 +33,7 @@ import { UsersService } from './users.service';
     IfConfirmedUserDropErrorValidator,
     UsersRepository,
     JwtPassService,
+    UsersQueryRepository,
   ],
 })
 export class UsersModule {}

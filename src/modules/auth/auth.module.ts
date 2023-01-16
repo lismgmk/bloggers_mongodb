@@ -16,6 +16,7 @@ import { JwtStrategy } from '../../strategyes/jwt.strategy';
 import { LocalStrategy } from '../../strategyes/local.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { SecurityService } from '../security/security.service';
+import { UsersQueryRepository } from '../users/users.query.repository';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
@@ -61,6 +62,7 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
     SendEmailHandler,
     LocalStrategy,
     IsExpired,
+    UsersQueryRepository,
     // {
     //   provide: APP_GUARD,
     //   useClass: ThrottlerGuard,

@@ -1,11 +1,8 @@
-import { likeStatusType } from '../../likes/dto/like-interfaces';
+import { likeStatusType } from '../../../likes/dto/like-interfaces';
+import { CreatePostWithBlogIdMain } from '../main_instance/create-post.interface';
 
-export interface IPostsRequest {
+export interface IPostsRequest extends CreatePostWithBlogIdMain {
   id: string;
-  title: string;
-  shortDescription: string;
-  content: string;
-  blogId: string;
   blogName: string;
   createdAt: Date;
   extendedLikesInfo: {

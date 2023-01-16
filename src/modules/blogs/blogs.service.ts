@@ -5,7 +5,7 @@ import { Model, ObjectId, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { paginationBuilder, paramsDto } from '../../helpers/pagination-builder';
 import { Blog } from '../../schemas/blog.schema';
-import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
+import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { IBlog } from './dto/blogs-intergaces';
 import { ICreateBlog } from './dto/create-blog.interface';
@@ -87,6 +87,7 @@ export class BlogsService {
       queryParams,
       blogId,
       userId,
+      [],
     );
   }
 

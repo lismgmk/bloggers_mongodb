@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
-import { Posts } from '../../schemas/posts.schema';
-import { IPostsRequest } from './dto/all-posts-response';
-import { GetAllPostsdDto } from './dto/get-all-posts.dto';
+import { Posts } from '../../schemas/posts/posts.schema';
+import { IPostsRequest } from './instance_dto/response_interfaces/all-posts-response';
+import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
 
 @Injectable()
 export class PostsQueryRepository {
   constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
+
   async queryAllPostsPagination(
     queryParams: GetAllPostsdDto,
     blogId: string = null,
     userId: string,
+    bannedUsers: Types.ObjectId[],
   ) {
     const sortField = queryParams.sortBy;
     let sortValue: string | 1 | -1 = -1;
@@ -26,9 +28,18 @@ export class PostsQueryRepository {
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
           match: { blogId: new mongoose.Types.ObjectId(blogId) },
-          unset: ['items.total', '_id'],
+          unset: ['items.total', '_id', 'items.userId'],
         }
-      : { match: {}, unset: ['items.total', '_id'] };
+      : { match: {}, unset: ['items.total', '_id', 'items.userId'] };
+
+    // const arr = [
+    //   new mongoose.Types.ObjectId('63c526ea1a3773deedebbeab'),
+    //   new mongoose.Types.ObjectId('63c532419e9e35ed53f59cbc'),
+    // ];
+    // const arr2 = [
+    //   new mongoose.Types.ObjectId('64c526ea1a3773deedebbeab'),
+    //   new mongoose.Types.ObjectId('64c532419e9e35ed53f59cbc'),
+    // ];
 
     return (
       await this.postModel
@@ -36,6 +47,51 @@ export class PostsQueryRepository {
           {
             $match: singleCondition.match,
           },
+          // {
+          //   $lookup: {
+          //     from: 'users',
+          //     localField: 'id',
+          //     foreignField: 'userId',
+          //     as: 'user',
+          //     pipeline: [
+          //       {
+          //         $match: {
+          //           $expr: {
+          //             $and: [
+          //               {
+          //                 $eq: ['$banInfo.isBanned', false],
+          //               },
+          //             ],
+          //           },
+          //         },
+          //       },
+          //       {
+          //         $project: {
+          //           _id: 0,
+          //           array: '$_id',
+          //         },
+          //       },
+          //     ],
+          //   },
+          // },
+          // {
+          //   $unwind: {
+          //     path: '$user',
+          //     preserveNullAndEmptyArrays: true,
+          //   },
+          // },
+          // { $match: { userId: { $in: '$user' } } },
+
+          // {
+          //   $unwind: {
+          //     path: '$user',
+          //     preserveNullAndEmptyArrays: true,
+          //   },
+          // },
+
+          // {
+          //   $unset: ['user'],
+          // },
           {
             $sort: {
               [sortField]: sortValue,
@@ -51,6 +107,15 @@ export class PostsQueryRepository {
           { $limit: queryParams.pageSize },
           {
             $project: {
+              // user: {
+              //   $first: {
+              //     $map: {
+              //       input: '$user.array',
+              //       as: 'decimalValue',
+              //       in: '$user.array',
+              //     },
+              //   },
+              // },
               _id: 0,
               total: '$totalCount',
               id: '$_id',
@@ -60,19 +125,63 @@ export class PostsQueryRepository {
               blogId: '$blogId',
               blogName: '$blogName',
               createdAt: '$createdAt',
+              userId: '$userId',
+            },
+          },
+          {
+            $match: {
+              userId: {
+                $in: bannedUsers,
+                // $in: arr,
+              },
             },
           },
           {
             $lookup: {
               from: 'likes',
-              localField: 'id',
-              foreignField: 'postId',
+              localField: 'postId',
+              foreignField: 'id',
               as: 'extendedLikesInfo.newestLikes',
               pipeline: [
+                // {
+                //   $lookup: {
+                //     from: 'users',
+                //     localField: '_id',
+                //     foreignField: 'userId',
+                //     as: 'extendedLikesInfo.newestLikes22',
+                //     let: {
+                //       // userLike: '$likesNew.userId',
+                //       likeStatus: 'likesNew.status',
+                //     },
+
+                //     pipeline: [
+                //       {
+                //         $match: {
+                //           $expr: {
+                //             $and: [
+                //               { $eq: ['$$likeStatus', 'Like'] },
+                //               { $eq: ['$banInfo.isBanned', false] },
+                //             ],
+                //           },
+                //         },
+                //       },
+                //       // {
+                //       //   $unwind: {
+                //       //     path: '$likesNew.status',
+                //       //     preserveNullAndEmptyArrays: true,
+                //       //   },
+                //       // },
+                //     ],
+                //   },
+                // },
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$status', 'Like'] }],
+                      $and: [
+                        { $eq: ['$status', 'Like'] },
+                        { $in: ['$userId', bannedUsers] },
+                        // { $in: ['$userId', arr] },
+                      ],
                     },
                   },
                 },
@@ -89,18 +198,22 @@ export class PostsQueryRepository {
               ],
             },
           },
-
           {
             $lookup: {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
+              let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
               as: 'extendedLikesInfo.likesCount',
               pipeline: [
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$status', 'Like'] }],
+                      $and: [
+                        { $eq: ['$status', 'Like'] },
+                        { $in: ['$userId', bannedUsers] },
+                        // { $in: ['$userId', arr] },
+                      ],
                     },
                   },
                 },
@@ -119,12 +232,17 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
+              let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
               as: 'extendedLikesInfo.dislikesCount',
               pipeline: [
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ['$status', 'Dislike'] }],
+                      $and: [
+                        { $eq: ['$status', 'Dislike'] },
+                        { $in: ['$userId', bannedUsers] },
+                        // { $in: ['$userId', arr] },
+                      ],
                     },
                   },
                 },
@@ -143,6 +261,7 @@ export class PostsQueryRepository {
               from: 'likes',
               localField: 'id',
               foreignField: 'postId',
+              let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
               as: 'extendedLikesInfo.myStatus',
               pipeline: [
                 {
@@ -167,7 +286,6 @@ export class PostsQueryRepository {
               },
             },
           },
-
           {
             $group: {
               _id: sortField,

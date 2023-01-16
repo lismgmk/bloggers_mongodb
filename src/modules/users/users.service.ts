@@ -2,18 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns';
 
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { BanUserMain } from './instance_dto/main_instance/ban-user.instance';
 import { CreateUserMain } from './instance_dto/main_instance/create-user.instance';
+import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.instance';
 import { IUserResponse } from './instance_dto/response_interfaces/all-users.response';
+import { UsersQueryRepository } from './users.query.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtPassService: JwtPassService,
+    private usersQueryRepository: UsersQueryRepository,
   ) {}
   async createUser(dto: CreateUserMain) {
     const hashPassword = await this.jwtPassService.createPassBcrypt(
@@ -66,6 +69,9 @@ export class UsersService {
     return this.userModel.findByIdAndDelete(id);
   }
 
+  async getAllUsersSa(queryParams: GetAllUsersMain) {
+    return this.usersQueryRepository.getAllUsersSaPagination(queryParams);
+  }
   // async getAllUsers(
   //   queryParams: GetAllUsersQueryDto,
   // ): Promise<IPaginationResponse<IUser>> {
@@ -130,5 +136,26 @@ export class UsersService {
       'banInfo.banDate': new Date().toISOString(),
     };
     return this.userModel.findByIdAndUpdate(id, filter);
+  }
+  async getAllBannedUsers() {
+    const result = await this.userModel.aggregate([
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: ['$banInfo.isBanned', false],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+        },
+      },
+    ]);
+    return result.map((el) => new Types.ObjectId(el._id));
   }
 }

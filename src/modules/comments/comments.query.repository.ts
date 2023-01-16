@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
-import { Comments } from '../../schemas/comments.schema';
+import { Comments } from '../../schemas/comments/comments.schema';
 import { pageNumber } from '../../test-params/test-values';
 import { ICommentsRequest } from './dto/all-comments-response';
 import { GetAllCommentsDto } from './dto/get-all-comments.dto';
@@ -57,6 +57,18 @@ export class CommentsQueryRepository {
         .aggregate([
           {
             $match: { postId: new mongoose.Types.ObjectId(postId) },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'id',
+              foreignField: 'userId',
+              as: 'user',
+            },
+          },
+          { $match: { 'user.banInfo.isBanned': true } },
+          {
+            $unset: ['user'],
           },
           {
             $sort: {

@@ -28,8 +28,8 @@ import { User } from '../../schemas/users/users.schema';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { GetAllCommentsDto } from '../comments/dto/get-all-comments.dto';
-import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
-import { GetAllPostsdDto } from './dto/get-all-posts.dto';
+import { CreatePostWithBlogIdDto } from './instance_dto/dto_validate/create-post-with-blog-id.dto';
+import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -55,14 +55,19 @@ export class PostsController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async createPost(
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostWithBlogIdDto,
+    @GetUser()
+    user: User,
   ) {
-    return await this.postsService.createPost(createPostDto);
+    return await this.postsService.createPost({
+      ...createPostDto,
+      userId: user._id,
+    });
   }
 
   @Put(':postId/like-status')
@@ -163,7 +168,7 @@ export class PostsController {
 
   @Put(':id')
   @HttpCode(204)
-  @UseGuards(AuthGuard('basic'))
+  @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
   async changeBlog(
@@ -171,12 +176,17 @@ export class PostsController {
     id: string,
     @Body(new CustomValidationPipe())
     createPostDto: CreatePostWithBlogIdDto,
+    @GetUser()
+    user: User,
   ) {
     const post = await this.postsService.getPostById(id);
     if (!post) {
       throw new NotFoundException();
     }
-    return await this.postsService.changePost(id, createPostDto);
+    return await this.postsService.changePost(id, {
+      ...createPostDto,
+      userId: user._id,
+    });
   }
 
   @Delete(':id')

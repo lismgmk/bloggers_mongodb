@@ -1,20 +1,20 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
 import { Blog } from '../../schemas/blog.schema';
-import { Posts } from '../../schemas/posts.schema';
+import { Posts } from '../../schemas/posts/posts.schema';
 import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { LikesService } from '../likes/likes.service';
-import { CreatePostWithBlogIdDto } from './dto/create-post-with-blog-id.dto';
-import { ICreatePostWithBlogId } from './dto/create-post.interface';
-import { GetAllPostsdDto } from './dto/get-all-posts.dto';
+import { UsersService } from '../users/users.service';
+import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
+import { CreatePostWithBlogIdMain } from './instance_dto/main_instance/create-post.interface';
 import { PostsQueryRepository } from './posts.query.repository';
 
 @Injectable()
@@ -24,12 +24,15 @@ export class PostsService {
     private blogsService: BlogsService,
     private likesService: LikesService,
     private postsQueryRepository: PostsQueryRepository,
+    private usersService: UsersService,
   ) {}
   async getAllPosts(queryParams: GetAllPostsdDto, userId: string) {
+    const bannedUsers = await this.usersService.getAllBannedUsers();
     return this.postsQueryRepository.queryAllPostsPagination(
       queryParams,
       null,
       userId,
+      bannedUsers,
     );
   }
   async getPostByIdWithLikes(id: string, userId: string) {
@@ -57,7 +60,7 @@ export class PostsService {
     });
   }
 
-  async createPost(dto: ICreatePostWithBlogId) {
+  async createPost(dto: CreatePostWithBlogIdMain) {
     const currentBlog = (await this.blogsService.getBlogById(
       dto.blogId,
     )) as Blog;
@@ -73,6 +76,7 @@ export class PostsService {
       blogId: dto.blogId,
       blogName: currentBlog.name,
       createdAt: new Date().toISOString(),
+      userId: dto.userId,
     });
     const createdPost = (await this.postModel.create(newPost)) as Posts;
 
@@ -93,7 +97,7 @@ export class PostsService {
       extendedLikesInfo,
     };
   }
-  async changePost(id: string, dto: ICreatePostWithBlogId) {
+  async changePost(id: string, dto: CreatePostWithBlogIdMain) {
     const post = (await this.getPostById(id)) as Posts;
     if (!post) {
       throw new NotFoundException();

@@ -39,6 +39,10 @@ export class SecurityService {
       .exec();
   }
 
+  async deleteAllforCurrentUser(userId: string) {
+    return this.devicesModel.deleteMany({ userId }).exec();
+  }
+
   async deleteCurrentDevice(deviceId: string, userId: string) {
     console.log(deviceId, userId, 'device & user');
 
@@ -46,9 +50,7 @@ export class SecurityService {
       .findById(deviceId)
       .exec()) as Devices;
     if (!device) {
-      throw new NotFoundException(
-        `${userId}---userId,  ${deviceId}----deviceId, ${device}-----deviceOb`,
-      );
+      throw new NotFoundException();
     }
     if (!device.userId.equals(userId)) {
       throw new ForbiddenException();

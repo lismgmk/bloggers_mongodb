@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   NotFoundException,
@@ -11,10 +12,10 @@ import {
   Query,
   UseFilters,
   UseGuards,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { string } from 'joi';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
@@ -23,6 +24,8 @@ import { BlogsService } from '../blogs/blogs.service';
 import { GetAllBlogsQueryDto } from '../blogs/queries/impl/get-all-blogs-query.dto';
 import { BanUserDto } from '../users/instance_dto/dto_validate/ban-user.dto';
 import { CreateUserDto } from '../users/instance_dto/dto_validate/create-user.dto';
+import { GetAllUsersQueryDto } from '../users/instance_dto/dto_validate/get-all-user-query.dto';
+import { IdParamDTO } from '../users/instance_dto/id-param.dto';
 import { UsersService } from '../users/users.service';
 import { SaService } from './sa.service';
 
@@ -94,5 +97,22 @@ export class SaController {
     @Body(new CustomValidationPipe()) banDto: BanUserDto,
   ) {
     return await this.sa.changeBanStatus(id, banDto);
+  }
+
+  @Get('users')
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new MongoExceptionFilter())
+  async getAllUsers(@Query() queryParams: GetAllUsersQueryDto) {
+    return await this.sa.getAllUsers(queryParams);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async deleteUser(@Param() id: IdParamDTO) {
+    return await this.usersService.deleteUserById(id.id);
   }
 }

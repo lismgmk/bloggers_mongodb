@@ -1,4 +1,4 @@
-import { CreatePostDto } from './../posts/dto/create-post.dto';
+import { CreatePostDto } from '../posts/instance_dto/dto_validate/create-post.dto';
 import {
   Body,
   Controller,
@@ -27,7 +27,7 @@ import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users/users.schema';
-import { GetAllPostsdDto } from '../posts/dto/get-all-posts.dto';
+import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
@@ -188,6 +188,7 @@ export class BlogsController {
     return await this.postsService.createPost({
       ...createPostDto,
       blogId,
+      userId: user._id,
     });
   }
 
@@ -216,6 +217,7 @@ export class BlogsController {
     return await this.postsService.changePost(postId, {
       ...createPostDto,
       blogId,
+      userId: user._id,
     });
   }
 }

@@ -18,7 +18,7 @@ import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { CreateUserDto } from './instance_dto/dto_validate/create-user.dto';
-import { GetAllUsersQueryDto } from './instance_dto/get-all-user-query.dto';
+import { GetAllUsersQueryDto } from './instance_dto/dto_validate/get-all-user-query.dto';
 import { IdParamDTO } from './instance_dto/id-param.dto';
 import { UsersService } from './users.service';
 

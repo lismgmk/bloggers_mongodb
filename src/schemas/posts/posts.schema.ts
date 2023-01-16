@@ -4,15 +4,24 @@ import {
   FIELD_LENGTH_VALIDATION_ERROR_LONG,
   FIELD_LENGTH_VALIDATION_ERROR_SHORT,
   FIELD_REQUIRED_VALIDATION_ERROR,
-} from '../consts/ad-validation-const';
+} from '../../consts/ad-validation-const';
+import { PostsMain } from './posts.instance';
 
-@Schema({ expires: 'comments' })
-export class Comments extends Document {
+@Schema({ expires: 'posts' })
+export class Posts extends Document implements PostsMain {
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   createdAt: string;
+
+  @Prop({
+    min: [1, FIELD_LENGTH_VALIDATION_ERROR_SHORT],
+    max: [100, FIELD_LENGTH_VALIDATION_ERROR_LONG],
+    type: String,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  shortDescription: string;
 
   @Prop({
     type: String,
@@ -23,10 +32,18 @@ export class Comments extends Document {
   content: string;
 
   @Prop({
+    min: [1, FIELD_LENGTH_VALIDATION_ERROR_SHORT],
+    max: [30, FIELD_LENGTH_VALIDATION_ERROR_LONG],
+    type: String,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  title: string;
+
+  @Prop({
     type: SchemaTypes.ObjectId,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
-  postId: Types.ObjectId;
+  blogId: Types.ObjectId;
 
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -38,7 +55,7 @@ export class Comments extends Document {
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
-  userLogin: string;
+  blogName: string;
 }
 
-export const CommentsSchema = SchemaFactory.createForClass(Comments);
+export const PostsSchema = SchemaFactory.createForClass(Posts);

@@ -7,6 +7,7 @@ import {
   Ip,
   Post,
   Res,
+  UnauthorizedException,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
@@ -101,6 +102,10 @@ export class AuthController {
     if (user.emailConfirmation.isConfirmed === false) {
       throw new BadRequestException('unConfirmed user');
     }
+    if (user.banInfo.isBanned === true) {
+      throw new UnauthorizedException('user is banned');
+    }
+
     const deviceId = new mongoose.Types.ObjectId();
     console.log(deviceId);
 

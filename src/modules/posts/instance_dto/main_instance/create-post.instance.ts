@@ -1,5 +1,4 @@
-export interface ICreatePostWithBlogId {
-  blogId: string;
+export class CreatePostMain {
   title: string;
   shortDescription: string;
   content: string;
