@@ -32,66 +32,13 @@ export class PostsQueryRepository {
         }
       : { match: {}, unset: ['items.total', '_id', 'items.userId'] };
 
-    // const arr = [
-    //   new mongoose.Types.ObjectId('63c526ea1a3773deedebbeab'),
-    //   new mongoose.Types.ObjectId('63c532419e9e35ed53f59cbc'),
-    // ];
-    // const arr2 = [
-    //   new mongoose.Types.ObjectId('64c526ea1a3773deedebbeab'),
-    //   new mongoose.Types.ObjectId('64c532419e9e35ed53f59cbc'),
-    // ];
-
     return (
       await this.postModel
         .aggregate([
           {
             $match: singleCondition.match,
           },
-          // {
-          //   $lookup: {
-          //     from: 'users',
-          //     localField: 'id',
-          //     foreignField: 'userId',
-          //     as: 'user',
-          //     pipeline: [
-          //       {
-          //         $match: {
-          //           $expr: {
-          //             $and: [
-          //               {
-          //                 $eq: ['$banInfo.isBanned', false],
-          //               },
-          //             ],
-          //           },
-          //         },
-          //       },
-          //       {
-          //         $project: {
-          //           _id: 0,
-          //           array: '$_id',
-          //         },
-          //       },
-          //     ],
-          //   },
-          // },
-          // {
-          //   $unwind: {
-          //     path: '$user',
-          //     preserveNullAndEmptyArrays: true,
-          //   },
-          // },
-          // { $match: { userId: { $in: '$user' } } },
 
-          // {
-          //   $unwind: {
-          //     path: '$user',
-          //     preserveNullAndEmptyArrays: true,
-          //   },
-          // },
-
-          // {
-          //   $unset: ['user'],
-          // },
           {
             $sort: {
               [sortField]: sortValue,
@@ -107,15 +54,6 @@ export class PostsQueryRepository {
           { $limit: queryParams.pageSize },
           {
             $project: {
-              // user: {
-              //   $first: {
-              //     $map: {
-              //       input: '$user.array',
-              //       as: 'decimalValue',
-              //       in: '$user.array',
-              //     },
-              //   },
-              // },
               _id: 0,
               total: '$totalCount',
               id: '$_id',
@@ -132,7 +70,6 @@ export class PostsQueryRepository {
             $match: {
               userId: {
                 $in: bannedUsers,
-                // $in: arr,
               },
             },
           },
@@ -143,44 +80,12 @@ export class PostsQueryRepository {
               foreignField: 'id',
               as: 'extendedLikesInfo.newestLikes',
               pipeline: [
-                // {
-                //   $lookup: {
-                //     from: 'users',
-                //     localField: '_id',
-                //     foreignField: 'userId',
-                //     as: 'extendedLikesInfo.newestLikes22',
-                //     let: {
-                //       // userLike: '$likesNew.userId',
-                //       likeStatus: 'likesNew.status',
-                //     },
-
-                //     pipeline: [
-                //       {
-                //         $match: {
-                //           $expr: {
-                //             $and: [
-                //               { $eq: ['$$likeStatus', 'Like'] },
-                //               { $eq: ['$banInfo.isBanned', false] },
-                //             ],
-                //           },
-                //         },
-                //       },
-                //       // {
-                //       //   $unwind: {
-                //       //     path: '$likesNew.status',
-                //       //     preserveNullAndEmptyArrays: true,
-                //       //   },
-                //       // },
-                //     ],
-                //   },
-                // },
                 {
                   $match: {
                     $expr: {
                       $and: [
                         { $eq: ['$status', 'Like'] },
                         { $in: ['$userId', bannedUsers] },
-                        // { $in: ['$userId', arr] },
                       ],
                     },
                   },
@@ -212,7 +117,6 @@ export class PostsQueryRepository {
                       $and: [
                         { $eq: ['$status', 'Like'] },
                         { $in: ['$userId', bannedUsers] },
-                        // { $in: ['$userId', arr] },
                       ],
                     },
                   },
@@ -241,7 +145,6 @@ export class PostsQueryRepository {
                       $and: [
                         { $eq: ['$status', 'Dislike'] },
                         { $in: ['$userId', bannedUsers] },
-                        // { $in: ['$userId', arr] },
                       ],
                     },
                   },
