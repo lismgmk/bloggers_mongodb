@@ -37,13 +37,15 @@ class EmailConfirmation extends Document {
 class BanInfo extends Document {
   @Prop({
     type: String,
-    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    default: null,
     // unique: true,
   })
   banDate: string;
   @Prop({
     type: String,
-    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    default: null,
   })
   banReason: string;
   @Prop({
