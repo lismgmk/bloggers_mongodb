@@ -48,8 +48,7 @@ export class UsersService {
 
     try {
       const createdUser = (await this.userModel.create(newUser)) as User;
-
-      return {
+      const user = {
         id: createdUser._id.toString(),
         login: createdUser.accountData.userName,
         email: createdUser.accountData.email,
@@ -60,6 +59,8 @@ export class UsersService {
           banReason: createdUser.banInfo.banReason,
         },
       } as IUserResponse;
+      console.log('!!!!!!!!!!create!!!!!!!!', user);
+      return user;
     } catch (e) {
       console.log(e);
     }

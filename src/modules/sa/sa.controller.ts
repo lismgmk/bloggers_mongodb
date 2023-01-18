@@ -84,6 +84,7 @@ export class SaController {
   async createUser(
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
+    console.log('!!!!dto users ctreate', createUserDto);
     return await this.usersService.createUser(createUserDto);
   }
 
@@ -106,7 +107,9 @@ export class SaController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseFilters(new MongoExceptionFilter())
   async getAllUsers(@Query() queryParams: GetAllUsersQueryDto) {
-    return await this.sa.getAllUsers(queryParams);
+    const allUsers = await this.sa.getAllUsers(queryParams);
+    console.log('!!!!allUsers', allUsers);
+    return allUsers;
   }
 
   @Delete(':id')
