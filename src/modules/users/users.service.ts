@@ -41,8 +41,8 @@ export class UsersService {
       },
       banInfo: {
         isBanned: true,
-        banDate: new Date().toISOString(),
-        banReason: 'first init',
+        banDate: null,
+        banReason: null,
       },
     });
 
