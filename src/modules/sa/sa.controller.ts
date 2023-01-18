@@ -87,6 +87,7 @@ export class SaController {
     return await this.usersService.createUser(createUserDto);
   }
 
+  @HttpCode(204)
   @Put('/users/:id/ban')
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
@@ -96,7 +97,8 @@ export class SaController {
     id: string,
     @Body(new CustomValidationPipe()) banDto: BanUserDto,
   ) {
-    return await this.sa.changeBanStatus(id, banDto);
+    await this.sa.changeBanStatus(id, banDto);
+    return;
   }
 
   @Get('users')

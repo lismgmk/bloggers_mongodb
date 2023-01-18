@@ -18,7 +18,7 @@ export class SaService {
   }
 
   async changeBanStatus(id: string, banDto: BanUserMain) {
-    if (banDto.isBanned === false) {
+    if (banDto.isBanned === true) {
       this.securityService.deleteAllforCurrentUser(id);
     }
     return this.usersService.changeStatus(id, banDto);

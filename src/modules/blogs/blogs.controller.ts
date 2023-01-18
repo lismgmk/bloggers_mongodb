@@ -54,7 +54,10 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    return await this.blogsService.getAllBlogs(queryParams, user._id);
+    return await this.blogsService.getAllBlogs(
+      queryParams,
+      user ? user._id : 'None',
+    );
   }
 
   @Post()

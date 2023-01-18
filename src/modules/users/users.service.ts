@@ -132,8 +132,9 @@ export class UsersService {
   async changeStatus(id: string, banDto: BanUserMain) {
     const filter = {
       'banInfo.isBanned': banDto.isBanned,
-      'banInfo.banReason': banDto.banReason,
-      'banInfo.banDate': new Date().toISOString(),
+      'banInfo.banReason': banDto.isBanned === true ? banDto.banReason : null,
+      'banInfo.banDate':
+        banDto.isBanned === true ? new Date().toISOString() : null,
     };
     return this.userModel.findByIdAndUpdate(id, filter);
   }

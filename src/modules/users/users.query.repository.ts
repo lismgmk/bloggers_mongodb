@@ -54,8 +54,7 @@ export class UsersQueryRepository {
           {
             $project: {
               _id: 0,
-              total: { $ifNull: ['s', 'ss'] },
-              // total: '$totalCount',
+              total: '$totalCount',
               id: '$_id',
               login: '$accountData.userName',
               email: '$accountData.email',
