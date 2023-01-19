@@ -16,7 +16,8 @@ export class UsersQueryRepository {
     const emailPart = new RegExp(queryParams.searchEmailTerm, 'i');
     const filterArr = [];
     const banFilter = {};
-    const sortField = queryParams.sortBy;
+    const sortField =
+      queryParams.sortBy === 'login' ? 'userName' : queryParams.sortBy;
     queryParams.banStatus === 'banned'
       ? (banFilter[`banInfo.isBanned`] = true)
       : (banFilter[`banInfo.isBanned`] = false);
