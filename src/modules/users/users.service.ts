@@ -5,6 +5,7 @@ import { add } from 'date-fns';
 import { Model, Types } from 'mongoose';
 import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
+import { CreateConfirmUser } from './instance_dto/dto_transfer/ create-confirm-user';
 import { BanUserMain } from './instance_dto/main_instance/ban-user.instance';
 import { CreateUserMain } from './instance_dto/main_instance/create-user.instance';
 import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.instance';
@@ -18,7 +19,7 @@ export class UsersService {
     private jwtPassService: JwtPassService,
     private usersQueryRepository: UsersQueryRepository,
   ) {}
-  async createUser(dto: CreateUserMain) {
+  async createUser(dto: CreateConfirmUser) {
     const hashPassword = await this.jwtPassService.createPassBcrypt(
       dto.password,
     );
@@ -36,7 +37,7 @@ export class UsersService {
           hours: 1,
           minutes: 10,
         }).toISOString(),
-        isConfirmed: false,
+        isConfirmed: dto.isConfirmed,
         attemptCount: 0,
       },
       banInfo: {

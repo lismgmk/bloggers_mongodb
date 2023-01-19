@@ -12,7 +12,14 @@ export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async getAllUsersSaPagination(queryParams: GetAllUsersMain) {
+    const loginPart = new RegExp(queryParams.searchLoginTerm, 'i');
+    const emailPart = new RegExp(queryParams.searchEmailTerm, 'i');
+    const filterArr = [];
+    const banFilter = {};
     const sortField = queryParams.sortBy;
+    queryParams.banStatus === 'banned'
+      ? (banFilter[`banInfo.isBanned`] = true)
+      : (banFilter[`banInfo.isBanned`] = false);
     let sortValue: string | 1 | -1 = -1;
     if (queryParams.sortDirection === 'desc') {
       sortValue = -1;
@@ -20,9 +27,9 @@ export class UsersQueryRepository {
     if (queryParams.sortDirection === 'asc') {
       sortValue = 1;
     }
-    const loginPart = new RegExp(queryParams.searchLoginTerm, 'i');
-    const emailPart = new RegExp(queryParams.searchEmailTerm, 'i');
-    const filterArr = [];
+    if (queryParams.banStatus !== 'all') {
+      filterArr.push(banFilter);
+    }
     queryParams.searchLoginTerm &&
       filterArr.push({
         'accountData.userName': loginPart,
@@ -38,7 +45,7 @@ export class UsersQueryRepository {
       await this.userModel
         .aggregate([
           {
-            $match: { $or: filterArr },
+            $match: { $and: filterArr },
           },
           {
             $sort: {

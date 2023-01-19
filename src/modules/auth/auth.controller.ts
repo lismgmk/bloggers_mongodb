@@ -99,11 +99,11 @@ export class AuthController {
     @UserIp() userIp: string,
     @DeviceName() deviceName: string,
   ) {
-    if (user.emailConfirmation.isConfirmed === false) {
-      throw new BadRequestException('unConfirmed user');
-    }
     if (user.banInfo.isBanned === true) {
       throw new UnauthorizedException('user is banned');
+    }
+    if (user.emailConfirmation.isConfirmed === false) {
+      throw new BadRequestException('unConfirmed user');
     }
 
     const deviceId = new mongoose.Types.ObjectId();

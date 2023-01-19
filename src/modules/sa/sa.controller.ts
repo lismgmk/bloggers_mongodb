@@ -84,8 +84,10 @@ export class SaController {
   async createUser(
     @Body(new CustomValidationPipe()) createUserDto: CreateUserDto,
   ) {
-    const user = await this.usersService.createUser(createUserDto);
-    console.log('----!!!!dto users ctreate', user);
+    const user = await this.usersService.createUser({
+      ...createUserDto,
+      isConfirmed: true,
+    });
     return user;
   }
 
