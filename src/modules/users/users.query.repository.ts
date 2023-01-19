@@ -9,6 +9,7 @@ import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.insta
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
   async getAllUsersSaPagination(queryParams: GetAllUsersMain) {
     const sortField = queryParams.sortBy;
     let sortValue: string | 1 | -1 = -1;
@@ -40,7 +41,7 @@ export class UsersQueryRepository {
           },
           {
             $sort: {
-              [sortField]: sortValue,
+              [`accountData.${sortField}`]: sortValue,
             },
           },
           { $setWindowFields: { output: { totalCount: { $count: {} } } } },
