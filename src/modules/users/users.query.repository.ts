@@ -30,17 +30,16 @@ export class UsersQueryRepository {
     if (queryParams.banStatus !== 'all') {
       filterArr.push(banFilter);
     }
+    const searchEmailLogin = { $or: [] };
     queryParams.searchLoginTerm &&
-      filterArr.push({
+      searchEmailLogin.$or.push({
         'accountData.userName': loginPart,
-      });
-    queryParams.searchEmailTerm &&
-      filterArr.push({
-        'accountData.email': emailPart,
-      });
-    !queryParams.searchEmailTerm &&
-      !queryParams.searchLoginTerm &&
-      filterArr.push({});
+      }),
+      queryParams.searchEmailTerm &&
+        searchEmailLogin.$or.push({
+          'accountData.email': emailPart,
+        }),
+      filterArr.push(searchEmailLogin);
     const result = (
       await this.userModel
         .aggregate([
