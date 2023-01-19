@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 import { UserMain } from '../../schemas/users/users.instance';
 import { User } from '../../schemas/users/users.schema';
 import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.instance';
@@ -33,7 +34,7 @@ export class UsersQueryRepository {
     !queryParams.searchEmailTerm &&
       !queryParams.searchLoginTerm &&
       filterArr.push({});
-    return (
+    const result = (
       await this.userModel
         .aggregate([
           {
@@ -88,6 +89,13 @@ export class UsersQueryRepository {
         ])
         .exec()
     )[0] as IPaginationResponse<UserMain[]>;
+    return (
+      result ||
+      paginationDefaultBuilder({
+        pageSize: queryParams.pageSize,
+        pageNumber: queryParams.pageNumber,
+      })
+    );
   }
 
   // async queryPostById(id: string, userId: string) {

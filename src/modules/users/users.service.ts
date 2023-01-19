@@ -59,7 +59,6 @@ export class UsersService {
           banReason: createdUser.banInfo.banReason,
         },
       } as IUserResponse;
-      console.log('!!!!!!!!!!create!!!!!!!!', user);
       return user;
     } catch (e) {
       console.log(e);
