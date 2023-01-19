@@ -31,20 +31,29 @@ export class UsersQueryRepository {
       filterArr.push(banFilter);
     }
     const searchEmailLogin = { $or: [] };
+
     queryParams.searchLoginTerm &&
       searchEmailLogin.$or.push({
         'accountData.userName': loginPart,
-      }),
-      queryParams.searchEmailTerm &&
-        searchEmailLogin.$or.push({
-          'accountData.email': emailPart,
-        }),
+      });
+    queryParams.searchEmailTerm &&
+      searchEmailLogin.$or.push({
+        'accountData.email': emailPart,
+      });
+
+    if (searchEmailLogin.$or.length !== 0) {
       filterArr.push(searchEmailLogin);
+    }
+
+    let resultFilter;
+    filterArr.length === 0
+      ? (resultFilter = {})
+      : (resultFilter = { $and: filterArr });
     const result = (
       await this.userModel
         .aggregate([
           {
-            $match: { $and: filterArr },
+            $match: resultFilter,
           },
           {
             $sort: {
