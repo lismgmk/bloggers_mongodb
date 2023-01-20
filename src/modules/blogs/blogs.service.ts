@@ -7,6 +7,8 @@ import { paginationBuilder, paramsDto } from '../../helpers/pagination-builder';
 import { Blog } from '../../schemas/blog.schema';
 import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
+import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { IBlog } from './dto/blogs-intergaces';
 import { ICreateBlog } from './dto/create-blog.interface';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
@@ -18,7 +20,18 @@ export class BlogsService {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly blogsQueryRepository: BlogsQueryRepository,
   ) {}
+
+  async getAllBlogsForUser(
+    queryParams: GetAllBlogsQueryDto,
+    userId: string | ObjectId,
+  ): Promise<IPaginationResponse<IAllBlogsSaResponse[]>> {
+    return this.blogsQueryRepository.queryAllBlogsForUserPagination(
+      queryParams,
+      userId,
+    );
+  }
 
   async getAllBlogs(
     queryParams: GetAllBlogsQueryDto,

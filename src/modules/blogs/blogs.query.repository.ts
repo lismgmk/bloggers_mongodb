@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 import { Blog } from '../../schemas/blog.schema';
 import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
+import { ICondition } from './instance_dto/dto_transfer/condition-interface';
 import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs.instance';
 
 @Injectable()
@@ -21,8 +23,45 @@ export class BlogsQueryRepository {
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
     const singleCondition = { name: namePart };
+    return this.agregateFindBlogs(
+      queryParams,
+      singleCondition,
+      sortField,
+      sortValue,
+    );
+  }
 
-    return (
+  async queryAllBlogsForUserPagination(
+    queryParams: GetAllBlogsQueryMain,
+    userId: string | ObjectId,
+  ) {
+    const sortField = queryParams.sortBy;
+    let sortValue: string | 1 | -1 = -1;
+    if (queryParams.sortDirection === 'desc') {
+      sortValue = -1;
+    }
+    if (queryParams.sortDirection === 'asc') {
+      sortValue = 1;
+    }
+    const namePart = new RegExp(queryParams.searchNameTerm, 'i');
+
+    const singleCondition = { name: namePart, userId };
+
+    return this.agregateFindBlogs(
+      queryParams,
+      singleCondition,
+      sortField,
+      sortValue,
+    );
+  }
+
+  async agregateFindBlogs(
+    queryParams: GetAllBlogsQueryMain,
+    singleCondition: ICondition,
+    sortField: string,
+    sortValue: 1 | -1,
+  ) {
+    const result = (
       await this.blogModel
         .aggregate([
           {
@@ -96,5 +135,12 @@ export class BlogsQueryRepository {
         ])
         .exec()
     )[0] as IPaginationResponse<IAllBlogsSaResponse[]>;
+    return (
+      result ||
+      paginationDefaultBuilder({
+        pageSize: queryParams.pageSize,
+        pageNumber: queryParams.pageNumber,
+      })
+    );
   }
 }

@@ -31,14 +31,14 @@ import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-post
 import { PostsService } from '../posts/posts.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
-@Controller('/blogger/blogs/')
+@Controller()
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
     private readonly postsService: PostsService,
   ) {}
 
-  @Get()
+  @Get('/blogger/blogs/')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
@@ -54,17 +54,14 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    return await this.blogsService.getAllBlogs(
-      queryParams,
-      user ? user._id : 'None',
-    );
+    return await this.blogsService.getAllBlogsForUser(queryParams, user._id);
   }
 
-  @Post()
+  @Post('/blogger/blogs/')
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())
-  async createBlog(
+  async createBloggerBlog(
     @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
     @GetUser()
     user: User,
@@ -74,6 +71,21 @@ export class BlogsController {
       userId: user._id,
     });
   }
+
+  // @Post()
+  // @UseGuards(JwtAuthGuard)
+  // @UseFilters(new MongoExceptionFilter())
+  // @UseFilters(new ValidationBodyExceptionFilter())
+  // async createBlog(
+  //   @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
+  //   @GetUser()
+  //   user: User,
+  // ) {
+  //   return await this.blogsService.createBlog({
+  //     ...createBlogDto,
+  //     userId: user._id,
+  //   });
+  // }
 
   @Get(':id')
   @HttpCode(200)
@@ -96,7 +108,7 @@ export class BlogsController {
     };
   }
 
-  @Put(':id')
+  @Put('/blogger/blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
@@ -121,7 +133,7 @@ export class BlogsController {
     });
   }
 
-  @Delete(':id')
+  @Delete('/blogger/blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
@@ -142,7 +154,7 @@ export class BlogsController {
     return await this.blogsService.deleteBlogById(blogId);
   }
 
-  @Get(':blogId/posts')
+  @Get('/blogger/blogs/:blogId/posts')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   async getPostsForBloggerId(
@@ -195,7 +207,7 @@ export class BlogsController {
     });
   }
 
-  @Put(':blogId/posts/:postId')
+  @Put('/blogger/blogs/:blogId/posts/:postId')
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())

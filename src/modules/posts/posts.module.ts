@@ -15,6 +15,7 @@ import { Posts, PostsSchema } from '../../schemas/posts/posts.schema';
 import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtStrategy } from '../../strategyes/jwt.strategy';
+import { BlogsQueryRepository } from '../blogs/blogs.query.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
@@ -55,6 +56,7 @@ import { PostsService } from './posts.service';
     JwtPassService,
     UsersQueryRepository,
     JwtService,
+    BlogsQueryRepository,
   ],
   controllers: [PostsController],
 })
