@@ -41,7 +41,7 @@ export class UsersService {
         attemptCount: 0,
       },
       banInfo: {
-        isBanned: true,
+        isBanned: false,
         banDate: null,
         banReason: null,
       },
