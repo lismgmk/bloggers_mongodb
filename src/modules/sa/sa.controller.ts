@@ -101,6 +101,8 @@ export class SaController {
     id: string,
     @Body(new CustomValidationPipe()) banDto: BanUserDto,
   ) {
+    console.log('++++!!!!!!!!!!!banDto', banDto);
+
     await this.sa.changeBanStatus(id, banDto);
     return;
   }
