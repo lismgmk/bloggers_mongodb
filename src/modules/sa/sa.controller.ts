@@ -101,7 +101,6 @@ export class SaController {
     id: string,
     @Body(new CustomValidationPipe()) banDto: BanUserDto,
   ) {
-    console.log('++++!!!!!!!!!!!banDto', banDto);
 
     await this.sa.changeBanStatus(id, banDto);
     return;
@@ -113,7 +112,6 @@ export class SaController {
   @UseFilters(new MongoExceptionFilter())
   async getAllUsers(@Query() queryParams: GetAllUsersQueryDto) {
     const allUsers = await this.sa.getAllUsers(queryParams);
-    console.log('+++!!!!allUsers', allUsers);
     return allUsers;
   }
 

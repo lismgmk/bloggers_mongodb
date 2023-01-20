@@ -14,7 +14,7 @@ export class SaService {
     private readonly securityService: SecurityService,
   ) {}
   async getAllBlogsSa(queryParams: GetAllBlogsQueryMain) {
-    return this.blogsQueryRepository.queryAllBlogsPagination(queryParams);
+    return this.blogsQueryRepository.queryAllBlogsPagination(queryParams, true);
   }
 
   async changeBanStatus(id: string, banDto: BanUserMain) {

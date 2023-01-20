@@ -5,25 +5,33 @@ import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { Posts } from '../../schemas/posts/posts.schema';
 import { IPostsRequest } from './instance_dto/response_interfaces/all-posts-response';
 import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
+import { UsersService } from '../users/users.service';
+import { getSortDirection } from '../../helpers/get-sort-direction';
+import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 
 @Injectable()
 export class PostsQueryRepository {
-  constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
+  constructor(
+    @InjectModel(Posts.name) private postModel: Model<Posts>,
+    private usersService: UsersService,
+  ) {}
 
   async queryAllPostsPagination(
     queryParams: GetAllPostsdDto,
     blogId: string = null,
     userId: string,
-    bannedUsers: Types.ObjectId[],
+    // bannedUsers: Types.ObjectId[],
   ) {
+    const bannedUsers = await this.usersService.getAllBannedUsers();
+
     const sortField = queryParams.sortBy;
-    let sortValue: string | 1 | -1 = -1;
-    if (queryParams.sortDirection === 'desc') {
-      sortValue = -1;
-    }
-    if (queryParams.sortDirection === 'asc') {
-      sortValue = 1;
-    }
+    const sortValue = getSortDirection(queryParams.sortDirection);
+    // if (queryParams.sortDirection === 'desc') {
+    //   sortValue = -1;
+    // }
+    // if (queryParams.sortDirection === 'asc') {
+    //   sortValue = 1;
+    // }
 
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
@@ -32,7 +40,12 @@ export class PostsQueryRepository {
         }
       : { match: {}, unset: ['items.total', '_id', 'items.userId'] };
 
-    return (
+    const skipParam =
+      queryParams.pageNumber > 0
+        ? (queryParams.pageNumber - 1) * queryParams.pageSize
+        : 0;
+
+    const result = (
       await this.postModel
         .aggregate([
           {
@@ -46,10 +59,7 @@ export class PostsQueryRepository {
           },
           { $setWindowFields: { output: { totalCount: { $count: {} } } } },
           {
-            $skip:
-              queryParams.pageNumber > 0
-                ? (queryParams.pageNumber - 1) * queryParams.pageSize
-                : 0,
+            $skip: skipParam,
           },
           { $limit: queryParams.pageSize },
           {
@@ -209,6 +219,13 @@ export class PostsQueryRepository {
         ])
         .exec()
     )[0] as IPaginationResponse<IPostsRequest[]>;
+    return (
+      result ||
+      paginationDefaultBuilder({
+        pageSize: queryParams.pageSize,
+        pageNumber: queryParams.pageNumber,
+      })
+    );
   }
 
   async queryPostById(id: string, userId: string) {

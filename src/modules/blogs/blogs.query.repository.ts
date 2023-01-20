@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { getSortDirection } from '../../helpers/get-sort-direction';
 import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 import { Blog } from '../../schemas/blog.schema';
 import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
@@ -11,23 +12,30 @@ import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs
 @Injectable()
 export class BlogsQueryRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
-  async queryAllBlogsPagination(queryParams: GetAllBlogsQueryMain) {
+  async queryAllBlogsPagination(
+    queryParams: GetAllBlogsQueryMain,
+    sa?: boolean,
+  ) {
     const sortField = queryParams.sortBy;
-    let sortValue: string | 1 | -1 = -1;
-    if (queryParams.sortDirection === 'desc') {
-      sortValue = -1;
-    }
-    if (queryParams.sortDirection === 'asc') {
-      sortValue = 1;
-    }
+    // let sortValue: string | 1 | -1 = -1;
+    // if (queryParams.sortDirection === 'desc') {
+    //   sortValue = -1;
+    // }
+    // if (queryParams.sortDirection === 'asc') {
+    //   sortValue = 1;
+    // }
+    const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
     const singleCondition = { name: namePart };
-    return this.agregateFindBlogs(
+    return this._agregateFindBlogs(
       queryParams,
       singleCondition,
       sortField,
       sortValue,
+      sa
+        ? ['_id', 'items.total']
+        : ['_id', 'items.total', 'items.blogOwnerInfo'],
     );
   }
 
@@ -36,30 +44,33 @@ export class BlogsQueryRepository {
     userId: string | ObjectId,
   ) {
     const sortField = queryParams.sortBy;
-    let sortValue: string | 1 | -1 = -1;
-    if (queryParams.sortDirection === 'desc') {
-      sortValue = -1;
-    }
-    if (queryParams.sortDirection === 'asc') {
-      sortValue = 1;
-    }
+    // let sortValue: string | 1 | -1 = -1;
+    // if (queryParams.sortDirection === 'desc') {
+    //   sortValue = -1;
+    // }
+    // if (queryParams.sortDirection === 'asc') {
+    //   sortValue = 1;
+    // }
+    const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
     const singleCondition = { name: namePart, userId };
 
-    return this.agregateFindBlogs(
+    return this._agregateFindBlogs(
       queryParams,
       singleCondition,
       sortField,
       sortValue,
+      ['_id', 'items.total', 'items.blogOwnerInfo'],
     );
   }
 
-  async agregateFindBlogs(
+  async _agregateFindBlogs(
     queryParams: GetAllBlogsQueryMain,
     singleCondition: ICondition,
     sortField: string,
     sortValue: 1 | -1,
+    unset: string[],
   ) {
     const result = (
       await this.blogModel
@@ -91,6 +102,21 @@ export class BlogsQueryRepository {
               createdAt: '$createdAt',
             },
           },
+          // {
+          //   $cond: { if: { $gte: ['$qty', 250] }, then: 30, else: 20 },
+          // },
+
+          // {
+          //   sa: {
+          //     $ifNull: [
+          //       {
+          //         $first: '$extendedLikesInfo.myStatus.status',
+          //       },
+          //       '',
+          //     ],
+          //   },
+          // },
+
           {
             $lookup: {
               from: 'users',
@@ -130,7 +156,7 @@ export class BlogsQueryRepository {
             },
           },
           {
-            $unset: ['_id', 'items.total'],
+            $unset: unset,
           },
         ])
         .exec()

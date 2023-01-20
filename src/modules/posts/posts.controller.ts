@@ -193,7 +193,7 @@ export class PostsController {
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deleteBlog(
+  async deletePost(
     @Param('id', ParamIdValidationPipe)
     id: string,
   ) {

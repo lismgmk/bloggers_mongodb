@@ -30,6 +30,7 @@ import { User } from '../../schemas/users/users.schema';
 import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ObjectId } from 'mongoose';
 
 @Controller()
 export class BlogsController {
@@ -38,11 +39,65 @@ export class BlogsController {
     private readonly postsService: PostsService,
   ) {}
 
+  @Get('/blogs/')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  async getAllBlogs(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    queryParams: GetAllBlogsQueryDto,
+  ) {
+    return await this.blogsService.getBlogs(queryParams);
+  }
+
+  @Get('/blogs/:blogId/posts')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  async getPostsForBloggerId(
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    )
+    queryParams: GetAllPostsdDto,
+  ) {
+    return await this.blogsService.getPostsForBlogId(queryParams, blogId, null);
+  }
+
+  @Get(':id')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getBloggerById(
+    @Param('id', ParamIdValidationPipe)
+    blogId: string,
+  ) {
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    return {
+      id: blog._id,
+      name: blog.name,
+      websiteUrl: blog.websiteUrl,
+      description: blog.description,
+      createdAt: blog.createdAt,
+    };
+  }
+
   @Get('/blogger/blogs/')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   @UseGuards(JwtAuthGuard)
-  async getAllBlogs(
+  async getAllBlogsForUser(
     @Query(
       new ValidationPipe({
         transform: true,
@@ -87,27 +142,6 @@ export class BlogsController {
   //   });
   // }
 
-  @Get(':id')
-  @HttpCode(200)
-  @UseFilters(new MongoExceptionFilter())
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async getBloggerById(
-    @Param('id', ParamIdValidationPipe)
-    blogId: string,
-  ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    return {
-      id: blog._id,
-      name: blog.name,
-      websiteUrl: blog.websiteUrl,
-      description: blog.description,
-      createdAt: blog.createdAt,
-    };
-  }
-
   @Put('/blogger/blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
@@ -120,13 +154,14 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    if (blog.userId !== user._id) {
-      throw new ForbiddenException();
-    }
+    // const blog = await this.blogsService.getBlogById(blogId);
+    // if (!blog) {
+    //   throw new NotFoundException();
+    // }
+    // if (!blog.userId.equals(user._id)) {
+    //   throw new ForbiddenException();
+    // }
+    await this._checkBlogUser(blogId, user._id);
     return await this.blogsService.changeBlog({
       id: blogId,
       ...createBlogDto,
@@ -144,43 +179,18 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    if (blog.userId !== user._id) {
-      throw new ForbiddenException();
-    }
+    // const blog = await this.blogsService.getBlogById(blogId);
+    // if (!blog) {
+    //   throw new NotFoundException();
+    // }
+    // if (!blog.userId.equals(user._id)) {
+    //   throw new ForbiddenException();
+    // }
+    await this._checkBlogUser(blogId, user._id);
     return await this.blogsService.deleteBlogById(blogId);
   }
 
-  @Get('/blogger/blogs/:blogId/posts')
-  @HttpCode(200)
-  @UseFilters(new MongoExceptionFilter())
-  async getPostsForBloggerId(
-    @Param('blogId', ParamIdValidationPipe)
-    blogId: string,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    )
-    queryParams: GetAllPostsdDto,
-    @GetUser() user: User,
-  ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    return await this.blogsService.getPostsForBlogId(
-      queryParams,
-      blogId,
-      user ? user._id : null,
-    );
-  }
-
-  @Post(':blogId/posts')
+  @Post('/blogger/blogs/:blogId/posts')
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
@@ -193,13 +203,14 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    if (blog.userId !== user._id) {
-      throw new ForbiddenException();
-    }
+    // const blog = await this.blogsService.getBlogById(blogId);
+    // if (!blog) {
+    //   throw new NotFoundException();
+    // }
+    // if (!blog.userId.equals(user._id)) {
+    //   throw new ForbiddenException();
+    // }
+    await this._checkBlogUser(blogId, user._id);
     return await this.postsService.createPost({
       ...createPostDto,
       blogId,
@@ -222,17 +233,62 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    const blog = await this.blogsService.getBlogById(blogId);
-    if (!blog) {
-      throw new NotFoundException();
-    }
-    if (blog.userId !== user._id) {
-      throw new ForbiddenException();
-    }
+    // const blog = await this.blogsService.getBlogById(blogId);
+    // if (!blog) {
+    //   throw new NotFoundException();
+    // }
+    // if (!blog.userId.equals(user._id)) {
+    //   throw new ForbiddenException();
+    // }
+    await this._checkBlogUser(blogId, user._id);
     return await this.postsService.changePost(postId, {
       ...createPostDto,
       blogId,
       userId: user._id,
     });
+  }
+
+  @Delete('/blogger/blogs/:blogId/posts/:postId')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new MongoExceptionFilter())
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async deletePost(
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
+    @Param('postId', ParamIdValidationPipe)
+    postId: string,
+    @GetUser()
+    user: User,
+  ) {
+    // const post = await this.postsService.getPostById(postId);
+    // if (!post) {
+    //   throw new NotFoundException();
+    // }
+    // const blog = await this.blogsService.getBlogById(blogId);
+    // if (!blog) {
+    //   throw new NotFoundException();
+    // }
+    // if (!blog.userId.equals(user._id)) {
+    //   throw new ForbiddenException();
+    // }
+    await this._checkBlogUser(blogId, user._id, postId);
+    return await this.postsService.deletePostById(postId);
+  }
+
+  async _checkBlogUser(blogId: string, userId: string, postId?: string) {
+    if (postId) {
+      const post = await this.postsService.getPostById(postId);
+      if (!post) {
+        throw new NotFoundException();
+      }
+    }
+    const blog = await this.blogsService.getBlogById(blogId);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    if (!blog.userId.equals(userId)) {
+      throw new ForbiddenException();
+    }
   }
 }

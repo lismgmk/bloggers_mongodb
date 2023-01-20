@@ -24,15 +24,14 @@ export class PostsService {
     private blogsService: BlogsService,
     private likesService: LikesService,
     private postsQueryRepository: PostsQueryRepository,
-    private usersService: UsersService,
   ) {}
   async getAllPosts(queryParams: GetAllPostsdDto, userId: string) {
-    const bannedUsers = await this.usersService.getAllBannedUsers();
+    // const bannedUsers = await this.usersService.getAllBannedUsers();
     return this.postsQueryRepository.queryAllPostsPagination(
       queryParams,
       null,
       userId,
-      bannedUsers,
+      // bannedUsers,
     );
   }
   async getPostByIdWithLikes(id: string, userId: string) {

@@ -23,6 +23,12 @@ export class BlogsService {
     private readonly blogsQueryRepository: BlogsQueryRepository,
   ) {}
 
+  async getBlogs(
+    queryParams: GetAllBlogsQueryDto,
+  ): Promise<IPaginationResponse<IAllBlogsSaResponse[]>> {
+    return this.blogsQueryRepository.queryAllBlogsPagination(queryParams);
+  }
+
   async getAllBlogsForUser(
     queryParams: GetAllBlogsQueryDto,
     userId: string | ObjectId,
@@ -100,7 +106,6 @@ export class BlogsService {
       queryParams,
       blogId,
       userId,
-      [],
     );
   }
 
