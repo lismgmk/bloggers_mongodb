@@ -31,7 +31,7 @@ import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-post
 import { PostsService } from '../posts/posts.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
-@Controller('blogs')
+@Controller('/blogger/blogs/')
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
