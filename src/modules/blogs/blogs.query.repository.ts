@@ -17,13 +17,7 @@ export class BlogsQueryRepository {
     sa?: boolean,
   ) {
     const sortField = queryParams.sortBy;
-    // let sortValue: string | 1 | -1 = -1;
-    // if (queryParams.sortDirection === 'desc') {
-    //   sortValue = -1;
-    // }
-    // if (queryParams.sortDirection === 'asc') {
-    //   sortValue = 1;
-    // }
+
     const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
@@ -34,8 +28,8 @@ export class BlogsQueryRepository {
       sortField,
       sortValue,
       sa
-        ? ['_id', 'items.total']
-        : ['_id', 'items.total', 'items.blogOwnerInfo'],
+        ? ['_id', 'items.total', 'items.userId']
+        : ['_id', 'items.total', 'items.blogOwnerInfo', 'items.userId'],
     );
   }
 
@@ -44,13 +38,6 @@ export class BlogsQueryRepository {
     userId: string | ObjectId,
   ) {
     const sortField = queryParams.sortBy;
-    // let sortValue: string | 1 | -1 = -1;
-    // if (queryParams.sortDirection === 'desc') {
-    //   sortValue = -1;
-    // }
-    // if (queryParams.sortDirection === 'asc') {
-    //   sortValue = 1;
-    // }
     const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
@@ -61,7 +48,7 @@ export class BlogsQueryRepository {
       singleCondition,
       sortField,
       sortValue,
-      ['_id', 'items.total', 'items.blogOwnerInfo'],
+      ['_id', 'items.total', 'items.blogOwnerInfo', 'items.userId'],
     );
   }
 
@@ -100,6 +87,7 @@ export class BlogsQueryRepository {
               websiteUrl: '$websiteUrl',
               description: '$description',
               createdAt: '$createdAt',
+              userId: '$userId',
             },
           },
           // {
@@ -121,7 +109,7 @@ export class BlogsQueryRepository {
             $lookup: {
               from: 'users',
               localField: 'userId',
-              foreignField: 'id',
+              foreignField: '_id',
               as: 'blogOwnerInfo',
               pipeline: [
                 {

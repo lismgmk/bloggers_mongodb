@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
+import { CommentsMain } from '../../schemas/comments/comments.instance';
 import { Comments } from '../../schemas/comments/comments.schema';
 import { User } from '../../schemas/users/users.schema';
 import { LikesService } from '../likes/likes.service';
@@ -74,8 +75,8 @@ export class CommentsService {
       console.log(e);
     }
   }
-  async getCommentById(id: string | ObjectId) {
-    return await this.commentModel.findById(id).exec();
+  async getCommentById(id: string | ObjectId): Promise<Comments> {
+    return this.commentModel.findById(id).exec();
   }
   async addLikeStatuseComment(
     user: User,
@@ -120,6 +121,7 @@ export class CommentsService {
 
   async getCommentByIdWithLikes(id: string, userId: string) {
     const comment = await this.getCommentById(id);
+    await this.usersService.chechUserBan(comment.userId.toString());
     if (!comment) {
       throw new NotFoundException();
     }

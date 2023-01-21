@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns';
 
-import { Model, Types } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { CreateConfirmUser } from './instance_dto/dto_transfer/ create-confirm-user';
@@ -130,6 +130,17 @@ export class UsersService {
   //     return e;
   //   }
   // }
+
+  async chechUserBan(userId: ObjectId | string) {
+    const user = await this.userModel.findById(userId).exec();
+    if (user.banInfo.isBanned === true) {
+      throw new NotFoundException('this user is banned');
+    }
+  }
+
+  async getUserById(id: string) {
+    return this.userModel.findById(id).exec();
+  }
   async changeStatus(id: string, banDto: BanUserMain) {
     const filter = {
       'banInfo.isBanned': banDto.isBanned,

@@ -82,7 +82,6 @@ export class CommentsController {
 
   @Get(':id')
   @HttpCode(200)
-  @SkipThrottle()
   @UseFilters(new MongoExceptionFilter())
   async getPostById(
     @Param('id', ParamIdValidationPipe)

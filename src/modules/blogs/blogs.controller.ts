@@ -72,7 +72,7 @@ export class BlogsController {
     return await this.blogsService.getPostsForBlogId(queryParams, blogId, null);
   }
 
-  @Get(':id')
+  @Get('/blogs/:id')
   @HttpCode(200)
   @UseFilters(new MongoExceptionFilter())
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -219,7 +219,7 @@ export class BlogsController {
   }
 
   @Put('/blogger/blogs/:blogId/posts/:postId')
-  @HttpCode(201)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
   @UseFilters(new ValidationBodyExceptionFilter())

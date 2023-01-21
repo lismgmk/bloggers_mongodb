@@ -28,6 +28,7 @@ import { User } from '../../schemas/users/users.schema';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { GetAllCommentsDto } from '../comments/dto/get-all-comments.dto';
+import { UsersService } from '../users/users.service';
 import { CreatePostWithBlogIdDto } from './instance_dto/dto_validate/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from './posts.service';
@@ -37,6 +38,7 @@ export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly commentsService: CommentsService,
+    private usersService: UsersService,
   ) {}
 
   @Get()
@@ -115,6 +117,7 @@ export class PostsController {
     if (!post) {
       throw new NotFoundException();
     }
+    await this.usersService.chechUserBan(postId);
     return this.commentsService.getCommentsForPostId(
       queryParams,
       postId,

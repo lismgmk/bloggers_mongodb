@@ -99,7 +99,7 @@ class AccountData extends Document {
   // userIp: string;
 }
 
-@Schema({ expires: 'users' })
+@Schema({ expires: 'user' })
 export class User extends Document implements UserMain {
   @Prop({ type: AccountData, required: true })
   accountData: AccountData;
