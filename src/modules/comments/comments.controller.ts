@@ -86,11 +86,7 @@ export class CommentsController {
   async getPostById(
     @Param('id', ParamIdValidationPipe)
     id: string,
-    @GetUser() user: User,
   ) {
-    return this.commentsService.getCommentByIdWithLikes(
-      id,
-      user ? user._id : null,
-    );
+    return this.commentsService.getCommentByIdWithLikes(id, null);
   }
 }

@@ -38,7 +38,7 @@ export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly commentsService: CommentsService,
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Get()
@@ -131,16 +131,14 @@ export class PostsController {
   async getPostById(
     @Param('postId', ParamIdValidationPipe)
     postId: string,
-    @GetUser() user: User,
+    // @GetUser() user: User,
   ) {
     const post = await this.postsService.getPostById(postId);
     if (!post) {
       throw new NotFoundException();
     }
-    return this.postsService.getPostByIdWithLikes(
-      postId,
-      user ? user._id : null,
-    );
+    await this.usersService.chechUserBan(post.userId.toString());
+    return this.postsService.getPostByIdWithLikes(postId, null);
   }
 
   @Post(':postId/comments')
@@ -160,6 +158,7 @@ export class PostsController {
     if (!post) {
       throw new NotFoundException();
     }
+
     return await this.commentsService.createComment({
       postId,
       ...content,
