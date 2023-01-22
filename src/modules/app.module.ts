@@ -28,6 +28,7 @@ import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { UsersRepository } from './users/users.repository';
 import { SaModule } from './sa/sa.module';
+import { AppContoller } from './app.controller';
 
 @Module({
   imports: [
@@ -54,7 +55,7 @@ import { SaModule } from './sa/sa.module';
     JwtPassModule,
     SaModule,
   ],
-  controllers: [],
+  controllers: [AppContoller],
   providers: [IpUsersRepository, JwtPassService, UsersRepository, JwtService],
 })
 export class AppModule implements NestModule {
