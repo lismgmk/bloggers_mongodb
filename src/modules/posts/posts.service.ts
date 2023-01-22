@@ -35,7 +35,7 @@ export class PostsService {
     );
   }
   async getPostByIdWithLikes(id: string) {
-    return await this.postsQueryRepository.queryPostById(id);
+    return this.postsQueryRepository.queryPostById(id);
   }
   async getPostById(id: string | ObjectId) {
     return await this.postModel.findById(id).exec();

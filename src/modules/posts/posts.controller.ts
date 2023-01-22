@@ -138,7 +138,7 @@ export class PostsController {
       throw new NotFoundException();
     }
     await this.usersService.chechUserBan(post.userId.toString());
-    return await this.postsService.getPostByIdWithLikes(postId);
+    return this.postsService.getPostByIdWithLikes(postId);
   }
 
   @Post(':postId/comments')

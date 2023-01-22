@@ -232,126 +232,128 @@ export class PostsQueryRepository {
     const bannedUsers = await this.usersService.getAllBannedUsers();
 
     const postId = new mongoose.Types.ObjectId(id);
-    const result = (await this.postModel
-      .aggregate([
-        {
-          $match: { _id: postId },
-        },
 
-        {
-          $project: {
-            _id: 0,
-            id: '$_id',
-            title: '$title',
-            shortDescription: '$shortDescription',
-            content: '$content',
-            blogId: '$blogId',
-            blogName: '$blogName',
-            createdAt: '$createdAt',
-            userId: '$userId',
+    const result = (
+      await this.postModel
+        .aggregate([
+          {
+            $match: { _id: postId },
           },
-        },
-        {
-          $match: {
-            userId: {
-              $in: bannedUsers,
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: 'likes',
-            localField: 'postId',
-            foreignField: 'id',
-            as: 'extendedLikesInfo.newestLikes',
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$status', 'Like'] },
-                      { $in: ['$userId', bannedUsers] },
-                    ],
-                  },
-                },
-              },
-              { $sort: { createdAt: -1 } },
-              { $limit: 3 },
-              {
-                $project: {
-                  _id: 0,
-                  addedAt: '$createdAt',
-                  userId: '$userId',
-                  login: '$login',
-                },
-              },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: 'likes',
-            localField: 'id',
-            foreignField: 'postId',
-            let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
-            as: 'extendedLikesInfo.likesCount',
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$status', 'Like'] },
-                      { $in: ['$userId', bannedUsers] },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          $set: {
-            'extendedLikesInfo.likesCount': {
-              $size: '$extendedLikesInfo.likesCount',
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: 'likes',
-            localField: 'id',
-            foreignField: 'postId',
-            let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
-            as: 'extendedLikesInfo.dislikesCount',
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$status', 'Dislike'] },
-                      { $in: ['$userId', bannedUsers] },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          $set: {
-            'extendedLikesInfo.dislikesCount': {
-              $size: '$extendedLikesInfo.dislikesCount',
-            },
-          },
-        },
 
-        {
-          $set: {
-            'extendedLikesInfo.myStatus': 'None',
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              title: '$title',
+              shortDescription: '$shortDescription',
+              content: '$content',
+              blogId: '$blogId',
+              blogName: '$blogName',
+              createdAt: '$createdAt',
+              userId: '$userId',
+            },
           },
-        },
-      ])
-      .exec()[0]) as IPostsRequest;
+          {
+            $match: {
+              userId: {
+                $in: bannedUsers,
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              as: 'extendedLikesInfo.newestLikes',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$status', 'Like'] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
+                    },
+                  },
+                },
+                { $sort: { createdAt: -1 } },
+                { $limit: 3 },
+                {
+                  $project: {
+                    _id: 0,
+                    addedAt: '$createdAt',
+                    userId: '$userId',
+                    login: '$login',
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
+              as: 'extendedLikesInfo.likesCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$status', 'Like'] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'extendedLikesInfo.likesCount': {
+                $size: '$extendedLikesInfo.likesCount',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: 'id',
+              foreignField: 'postId',
+              let: { user: '$user._id', userStatus: 'user.banInfo.isBanned' },
+              as: 'extendedLikesInfo.dislikesCount',
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$status', 'Dislike'] },
+                        { $in: ['$userId', bannedUsers] },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $set: {
+              'extendedLikesInfo.myStatus': 'None',
+              'extendedLikesInfo.dislikesCount': {
+                $size: '$extendedLikesInfo.dislikesCount',
+              },
+            },
+          },
+
+          {
+            $unset: ['userId'],
+          },
+        ])
+        .exec()
+    )[0] as IPostsRequest;
     return result;
     // return (
     //   await this.postModel
@@ -370,6 +372,14 @@ export class PostsQueryRepository {
     //           blogId: '$blogId',
     //           blogName: '$blogName',
     //           createdAt: '$createdAt',
+    //           userId: '$userId',
+    //         },
+    //       },
+    //       {
+    //         $match: {
+    //           userId: {
+    //             $in: bannedUsers,
+    //           },
     //         },
     //       },
     //       {
@@ -382,7 +392,10 @@ export class PostsQueryRepository {
     //             {
     //               $match: {
     //                 $expr: {
-    //                   $and: [{ $eq: ['$status', 'Like'] }],
+    //                   $and: [
+    //                     { $eq: ['$status', 'Like'] },
+    //                     { $in: ['$userId', bannedUsers] },
+    //                   ],
     //                 },
     //               },
     //             },
@@ -410,7 +423,10 @@ export class PostsQueryRepository {
     //             {
     //               $match: {
     //                 $expr: {
-    //                   $and: [{ $eq: ['$status', 'Like'] }],
+    //                   $and: [
+    //                     { $eq: ['$status', 'Like'] },
+    //                     { $in: ['$userId', bannedUsers] },
+    //                   ],
     //                 },
     //               },
     //             },
@@ -434,7 +450,10 @@ export class PostsQueryRepository {
     //             {
     //               $match: {
     //                 $expr: {
-    //                   $and: [{ $eq: ['$status', 'Dislike'] }],
+    //                   $and: [
+    //                     { $eq: ['$status', 'Dislike'] },
+    //                     { $in: ['$userId', bannedUsers] },
+    //                   ],
     //                 },
     //               },
     //             },
@@ -448,23 +467,7 @@ export class PostsQueryRepository {
     //           },
     //         },
     //       },
-    //       {
-    //         $lookup: {
-    //           from: 'likes',
-    //           localField: 'id',
-    //           foreignField: 'postId',
-    //           as: 'extendedLikesInfo.myStatus',
-    //           pipeline: [
-    //             {
-    //               $match: {
-    //                 $expr: {
-    //                   $and: [{ $eq: ['$userId', userId] }],
-    //                 },
-    //               },
-    //             },
-    //           ],
-    //         },
-    //       },
+
     //       {
     //         $set: {
     //           'extendedLikesInfo.myStatus': {
