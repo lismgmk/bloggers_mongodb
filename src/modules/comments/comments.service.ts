@@ -121,7 +121,7 @@ export class CommentsService {
 
   async getCommentByIdWithLikes(id: string) {
     const comment = await this.getCommentById(id);
-    // await this.usersService.chechUserBan(comment.userId.toString());
+    await this.usersService.chechUserBan(comment.userId.toString());
     if (!comment) {
       throw new NotFoundException();
     }
