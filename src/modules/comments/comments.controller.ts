@@ -87,6 +87,6 @@ export class CommentsController {
     @Param('id', ParamIdValidationPipe)
     id: string,
   ) {
-    return this.commentsService.getCommentByIdWithLikes(id, null);
+    return this.commentsService.getCommentByIdWithLikes(id);
   }
 }

@@ -34,8 +34,8 @@ export class PostsService {
       // bannedUsers,
     );
   }
-  async getPostByIdWithLikes(id: string, userId: string) {
-    return this.postsQueryRepository.queryPostById(id, userId);
+  async getPostByIdWithLikes(id: string) {
+    return await this.postsQueryRepository.queryPostById(id);
   }
   async getPostById(id: string | ObjectId) {
     return await this.postModel.findById(id).exec();

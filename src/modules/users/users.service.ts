@@ -133,8 +133,8 @@ export class UsersService {
 
   async chechUserBan(userId: ObjectId | string) {
     const user = await this.userModel.findById(userId).exec();
-    if (user.banInfo.isBanned === true) {
-      throw new NotFoundException('this user is banned');
+    if (!user || user.banInfo.isBanned === true) {
+      throw new NotFoundException('this user is banned or unexist');
     }
   }
 

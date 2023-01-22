@@ -6,7 +6,7 @@ import { getSortDirection } from '../../helpers/get-sort-direction';
 import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 import { Blog } from '../../schemas/blog.schema';
 import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
-import { ICondition } from './instance_dto/dto_transfer/condition-interface';
+import { ICondition } from '../../global-dto/condition-interface';
 import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs.instance';
 
 @Injectable()

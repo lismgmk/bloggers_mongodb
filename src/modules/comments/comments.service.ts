@@ -14,7 +14,7 @@ import { LikesService } from '../likes/likes.service';
 import { UsersService } from '../users/users.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { ICreateComment } from './dto/comments-interfaces';
-import { GetAllCommentsDto } from './dto/get-all-comments.dto';
+import { GetAllCommentsDto } from './instance_dto/dto_validate/get-all-comments.dto';
 
 @Injectable()
 export class CommentsService {
@@ -119,12 +119,13 @@ export class CommentsService {
     return this.commentModel.findByIdAndDelete(id);
   }
 
-  async getCommentByIdWithLikes(id: string, userId: string) {
+  async getCommentByIdWithLikes(id: string) {
     const comment = await this.getCommentById(id);
-    await this.usersService.chechUserBan(comment.userId.toString());
+    // await this.usersService.chechUserBan(comment.userId.toString());
     if (!comment) {
       throw new NotFoundException();
     }
-    return this.commentsQueryRepository.queryCommentById(id, userId);
+    const bannedUsers = await this.usersService.getAllBannedUsers();
+    return this.commentsQueryRepository.queryCommentById(id, bannedUsers);
   }
 }

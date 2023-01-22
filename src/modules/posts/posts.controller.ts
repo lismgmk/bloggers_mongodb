@@ -27,7 +27,7 @@ import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users/users.schema';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
-import { GetAllCommentsDto } from '../comments/dto/get-all-comments.dto';
+import { GetAllCommentsDto } from '../comments/instance_dto/dto_validate/get-all-comments.dto';
 import { UsersService } from '../users/users.service';
 import { CreatePostWithBlogIdDto } from './instance_dto/dto_validate/create-post-with-blog-id.dto';
 import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
@@ -117,7 +117,7 @@ export class PostsController {
     if (!post) {
       throw new NotFoundException();
     }
-    await this.usersService.chechUserBan(postId);
+    await this.usersService.chechUserBan(post.userId.toString());
     return this.commentsService.getCommentsForPostId(
       queryParams,
       postId,
@@ -137,8 +137,8 @@ export class PostsController {
     if (!post) {
       throw new NotFoundException();
     }
-    await this.usersService.chechUserBan(post.userId.toString());
-    return this.postsService.getPostByIdWithLikes(postId, null);
+    // await this.usersService.chechUserBan(post.userId.toString());
+    return await this.postsService.getPostByIdWithLikes(postId);
   }
 
   @Post(':postId/comments')
