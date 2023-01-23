@@ -5,5 +5,6 @@ export class CommentsMain {
   content: string;
   postId: Types.ObjectId;
   userId: Types.ObjectId;
+  blogId: Types.ObjectId;
   userLogin: string;
 }

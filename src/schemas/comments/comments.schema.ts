@@ -36,6 +36,12 @@ export class Comments extends Document implements CommentsMain {
   userId: Types.ObjectId;
 
   @Prop({
+    type: SchemaTypes.ObjectId,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  blogId: Types.ObjectId;
+
+  @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })

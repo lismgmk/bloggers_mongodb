@@ -46,6 +46,10 @@ export class BlogsService {
     return await this.queryBus.execute({ ...queryParams, userId });
   }
 
+  async getAllUsersBlogsArr(userId: string | ObjectId) {
+    return await this.blogsQueryRepository.getAllUsersBlogsArr(userId);
+  }
+
   async createBlog(dto: ICreateBlog) {
     const newBlog = new this.blogModel({
       name: dto.name,

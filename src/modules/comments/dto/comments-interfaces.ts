@@ -4,4 +4,5 @@ export interface ICreateComment {
   userId: ObjectId | string;
   content: string;
   userLogin: string;
+  blogId: ObjectId | string;
 }

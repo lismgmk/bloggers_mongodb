@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { getSortDirection } from '../../helpers/get-sort-direction';
 import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
@@ -31,6 +31,18 @@ export class BlogsQueryRepository {
         ? ['_id', 'items.total', 'items.userId']
         : ['_id', 'items.total', 'items.blogOwnerInfo', 'items.userId'],
     );
+  }
+
+  async getAllUsersBlogsArr(userId: string | ObjectId) {
+    const result = await this.blogModel.aggregate([
+      { $match: { userId } },
+      {
+        $project: {
+          _id: 1,
+        },
+      },
+    ]);
+    return result.map((el) => new Types.ObjectId(el._id));
   }
 
   async queryAllBlogsForUserPagination(
@@ -90,20 +102,6 @@ export class BlogsQueryRepository {
               userId: '$userId',
             },
           },
-          // {
-          //   $cond: { if: { $gte: ['$qty', 250] }, then: 30, else: 20 },
-          // },
-
-          // {
-          //   sa: {
-          //     $ifNull: [
-          //       {
-          //         $first: '$extendedLikesInfo.myStatus.status',
-          //       },
-          //       '',
-          //     ],
-          //   },
-          // },
 
           {
             $lookup: {

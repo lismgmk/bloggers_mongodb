@@ -164,6 +164,7 @@ export class PostsController {
       ...content,
       userId: user ? user._id : null,
       userLogin: user.accountData.userName,
+      blogId: post.blogId.toString(),
     });
   }
 

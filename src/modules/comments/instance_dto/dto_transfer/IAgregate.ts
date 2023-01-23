@@ -10,6 +10,6 @@ export interface IAgregateComments extends IAgregateCommentById {
 }
 
 export interface IAgregateCommentById {
-  singleCondition: { [key: string]: string | RegExp | Types.ObjectId };
+  singleCondition: { [key: string]: string | RegExp | Types.ObjectId | any };
   bannedUsers: Types.ObjectId[];
 }

@@ -101,7 +101,6 @@ export class SaController {
     id: string,
     @Body(new CustomValidationPipe()) banDto: BanUserDto,
   ) {
-
     await this.sa.changeBanStatus(id, banDto);
     return;
   }

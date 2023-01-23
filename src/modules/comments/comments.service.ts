@@ -1,13 +1,13 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
-  ForbiddenException,
+  Type,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
-import { CommentsMain } from '../../schemas/comments/comments.instance';
 import { Comments } from '../../schemas/comments/comments.schema';
 import { User } from '../../schemas/users/users.schema';
 import { LikesService } from '../likes/likes.service';
@@ -15,6 +15,7 @@ import { UsersService } from '../users/users.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { ICreateComment } from './dto/comments-interfaces';
 import { GetAllCommentsDto } from './instance_dto/dto_validate/get-all-comments.dto';
+import { GetAllCommentsMain } from './instance_dto/main_instance/get-all-comments.instance';
 
 @Injectable()
 export class CommentsService {
@@ -32,6 +33,7 @@ export class CommentsService {
       content: dto.content,
       userLogin: dto.userLogin,
       createdAt: new Date().toISOString(),
+      blogId: dto.blogId,
     });
     const createdComment = (await this.commentModel.create(
       newComment,
@@ -58,12 +60,6 @@ export class CommentsService {
     userId: string,
   ) {
     try {
-      // const f = await this.commentsQueryRepository.queryAllCommentsPagination(
-      //   queryParams,
-      //   postId,
-      //   userId,
-      // );
-      // console.log(f, 'dddd');
       const bannedUsers = await this.usersService.getAllBannedUsers();
       return await this.commentsQueryRepository.queryAllCommentsPagination(
         queryParams,
@@ -75,9 +71,11 @@ export class CommentsService {
       console.log(e);
     }
   }
+
   async getCommentById(id: string | ObjectId): Promise<Comments> {
     return this.commentModel.findById(id).exec();
   }
+
   async addLikeStatuseComment(
     user: User,
     likeStatus: keyof typeof LikeStatusEnum,
@@ -127,5 +125,17 @@ export class CommentsService {
     }
     const bannedUsers = await this.usersService.getAllBannedUsers();
     return this.commentsQueryRepository.queryCommentById(id, bannedUsers);
+  }
+
+  async getAllCommentsForAllPostsForAllUsersBlog(
+    queryParams: GetAllCommentsMain,
+    userId: string,
+    blogs: Types.ObjectId[],
+  ) {
+    return this.commentsQueryRepository.getAllCommentsForAllPostsForAllUsersBlog(
+      queryParams,
+      userId,
+      blogs,
+    );
   }
 }

@@ -1,4 +1,3 @@
-import { CreatePostDto } from '../posts/instance_dto/dto_validate/create-post.dto';
 import {
   Body,
   Controller,
@@ -16,27 +15,29 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { CreatePostDto } from '../posts/instance_dto/dto_validate/create-post.dto';
 
-import { BlogsService } from './blogs.service';
-import { CreateBlogDto } from './dto/create-blog.dto';
-import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 import { GetUser } from '../../decorators/get-user.decorator';
 import { MongoExceptionFilter } from '../../exceptions/mongoose-exception-filter';
 import { ValidationBodyExceptionFilter } from '../../exceptions/validation-body-exception-filter';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users/users.schema';
 import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { ObjectId } from 'mongoose';
+import { BlogsService } from './blogs.service';
+import { CreateBlogDto } from './dto/create-blog.dto';
+import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
+import { GetAllCommentsDto } from '../comments/instance_dto/dto_validate/get-all-comments.dto';
+import { CommentsService } from '../comments/comments.service';
 
 @Controller()
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
     private readonly postsService: PostsService,
+    private readonly commentsService: CommentsService,
   ) {}
 
   @Get('/blogs/')
@@ -112,6 +113,30 @@ export class BlogsController {
     return await this.blogsService.getAllBlogsForUser(queryParams, user._id);
   }
 
+  @Get('/blogger/blogs/comments')
+  @HttpCode(200)
+  @UseFilters(new MongoExceptionFilter())
+  @UseGuards(JwtAuthGuard)
+  async getAllCommentsForAllPostsForAllUsersBlog(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    queryParams: GetAllCommentsDto,
+    @GetUser()
+    user: User,
+  ) {
+    const usersBlogs = await this.blogsService.getAllUsersBlogsArr(user._id);
+    return await this.commentsService.getAllCommentsForAllPostsForAllUsersBlog(
+      queryParams,
+      user._id,
+      usersBlogs,
+    );
+  }
+
   @Post('/blogger/blogs/')
   @UseGuards(JwtAuthGuard)
   @UseFilters(new MongoExceptionFilter())
@@ -127,21 +152,6 @@ export class BlogsController {
     });
   }
 
-  // @Post()
-  // @UseGuards(JwtAuthGuard)
-  // @UseFilters(new MongoExceptionFilter())
-  // @UseFilters(new ValidationBodyExceptionFilter())
-  // async createBlog(
-  //   @Body(new CustomValidationPipe()) createBlogDto: CreateBlogDto,
-  //   @GetUser()
-  //   user: User,
-  // ) {
-  //   return await this.blogsService.createBlog({
-  //     ...createBlogDto,
-  //     userId: user._id,
-  //   });
-  // }
-
   @Put('/blogger/blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
@@ -154,13 +164,6 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    // const blog = await this.blogsService.getBlogById(blogId);
-    // if (!blog) {
-    //   throw new NotFoundException();
-    // }
-    // if (!blog.userId.equals(user._id)) {
-    //   throw new ForbiddenException();
-    // }
     await this._checkBlogUser(blogId, user._id);
     return await this.blogsService.changeBlog({
       id: blogId,
@@ -179,13 +182,6 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    // const blog = await this.blogsService.getBlogById(blogId);
-    // if (!blog) {
-    //   throw new NotFoundException();
-    // }
-    // if (!blog.userId.equals(user._id)) {
-    //   throw new ForbiddenException();
-    // }
     await this._checkBlogUser(blogId, user._id);
     return await this.blogsService.deleteBlogById(blogId);
   }
@@ -203,13 +199,6 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    // const blog = await this.blogsService.getBlogById(blogId);
-    // if (!blog) {
-    //   throw new NotFoundException();
-    // }
-    // if (!blog.userId.equals(user._id)) {
-    //   throw new ForbiddenException();
-    // }
     await this._checkBlogUser(blogId, user._id);
     return await this.postsService.createPost({
       ...createPostDto,
@@ -233,13 +222,6 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    // const blog = await this.blogsService.getBlogById(blogId);
-    // if (!blog) {
-    //   throw new NotFoundException();
-    // }
-    // if (!blog.userId.equals(user._id)) {
-    //   throw new ForbiddenException();
-    // }
     await this._checkBlogUser(blogId, user._id);
     return await this.postsService.changePost(postId, {
       ...createPostDto,
@@ -261,17 +243,6 @@ export class BlogsController {
     @GetUser()
     user: User,
   ) {
-    // const post = await this.postsService.getPostById(postId);
-    // if (!post) {
-    //   throw new NotFoundException();
-    // }
-    // const blog = await this.blogsService.getBlogById(blogId);
-    // if (!blog) {
-    //   throw new NotFoundException();
-    // }
-    // if (!blog.userId.equals(user._id)) {
-    //   throw new ForbiddenException();
-    // }
     await this._checkBlogUser(blogId, user._id, postId);
     return await this.postsService.deletePostById(postId);
   }
