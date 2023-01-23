@@ -20,18 +20,11 @@ export class PostsQueryRepository {
     queryParams: GetAllPostsdDto,
     blogId: string = null,
     userId: string,
-    // bannedUsers: Types.ObjectId[],
   ) {
     const bannedUsers = await this.usersService.getAllBannedUsers();
 
     const sortField = queryParams.sortBy;
     const sortValue = getSortDirection(queryParams.sortDirection);
-    // if (queryParams.sortDirection === 'desc') {
-    //   sortValue = -1;
-    // }
-    // if (queryParams.sortDirection === 'asc') {
-    //   sortValue = 1;
-    // }
 
     const singleCondition: { match: any; unset: string[] } = blogId
       ? {
@@ -355,133 +348,5 @@ export class PostsQueryRepository {
         .exec()
     )[0] as IPostsRequest;
     return result;
-    // return (
-    //   await this.postModel
-    //     .aggregate([
-    //       {
-    //         $match: { _id: postId },
-    //       },
-    //       {
-    //         $project: {
-    //           _id: 0,
-    //           total: '$totalCount',
-    //           id: '$_id',
-    //           title: '$title',
-    //           shortDescription: '$shortDescription',
-    //           content: '$content',
-    //           blogId: '$blogId',
-    //           blogName: '$blogName',
-    //           createdAt: '$createdAt',
-    //           userId: '$userId',
-    //         },
-    //       },
-    //       {
-    //         $match: {
-    //           userId: {
-    //             $in: bannedUsers,
-    //           },
-    //         },
-    //       },
-    //       {
-    //         $lookup: {
-    //           from: 'likes',
-    //           localField: 'id',
-    //           foreignField: 'postId',
-    //           as: 'extendedLikesInfo.newestLikes',
-    //           pipeline: [
-    //             {
-    //               $match: {
-    //                 $expr: {
-    //                   $and: [
-    //                     { $eq: ['$status', 'Like'] },
-    //                     { $in: ['$userId', bannedUsers] },
-    //                   ],
-    //                 },
-    //               },
-    //             },
-    //             { $sort: { createdAt: -1 } },
-    //             { $limit: 3 },
-    //             {
-    //               $project: {
-    //                 _id: 0,
-    //                 addedAt: '$createdAt',
-    //                 userId: '$userId',
-    //                 login: '$login',
-    //               },
-    //             },
-    //           ],
-    //         },
-    //       },
-
-    //       {
-    //         $lookup: {
-    //           from: 'likes',
-    //           localField: 'id',
-    //           foreignField: 'postId',
-    //           as: 'extendedLikesInfo.likesCount',
-    //           pipeline: [
-    //             {
-    //               $match: {
-    //                 $expr: {
-    //                   $and: [
-    //                     { $eq: ['$status', 'Like'] },
-    //                     { $in: ['$userId', bannedUsers] },
-    //                   ],
-    //                 },
-    //               },
-    //             },
-    //           ],
-    //         },
-    //       },
-    //       {
-    //         $set: {
-    //           'extendedLikesInfo.likesCount': {
-    //             $size: '$extendedLikesInfo.likesCount',
-    //           },
-    //         },
-    //       },
-    //       {
-    //         $lookup: {
-    //           from: 'likes',
-    //           localField: 'id',
-    //           foreignField: 'postId',
-    //           as: 'extendedLikesInfo.dislikesCount',
-    //           pipeline: [
-    //             {
-    //               $match: {
-    //                 $expr: {
-    //                   $and: [
-    //                     { $eq: ['$status', 'Dislike'] },
-    //                     { $in: ['$userId', bannedUsers] },
-    //                   ],
-    //                 },
-    //               },
-    //             },
-    //           ],
-    //         },
-    //       },
-    //       {
-    //         $set: {
-    //           'extendedLikesInfo.dislikesCount': {
-    //             $size: '$extendedLikesInfo.dislikesCount',
-    //           },
-    //         },
-    //       },
-
-    //       {
-    //         $set: {
-    //           'extendedLikesInfo.myStatus': {
-    //             $ifNull: [
-    //               {
-    //                 $first: '$extendedLikesInfo.myStatus.status',
-    //               },
-    //               'None',
-    //             ],
-    //           },
-    //         },
-    //       },
-    //     ])
-    //     .exec()
-    // )[0] as IPostsRequest;
   }
 }

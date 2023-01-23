@@ -12,7 +12,6 @@ import { Posts } from '../../schemas/posts/posts.schema';
 import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
 import { LikesService } from '../likes/likes.service';
-import { UsersService } from '../users/users.service';
 import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
 import { CreatePostWithBlogIdMain } from './instance_dto/main_instance/create-post.interface';
 import { PostsQueryRepository } from './posts.query.repository';
@@ -26,12 +25,10 @@ export class PostsService {
     private postsQueryRepository: PostsQueryRepository,
   ) {}
   async getAllPosts(queryParams: GetAllPostsdDto, userId: string) {
-    // const bannedUsers = await this.usersService.getAllBannedUsers();
     return this.postsQueryRepository.queryAllPostsPagination(
       queryParams,
       null,
       userId,
-      // bannedUsers,
     );
   }
   async getPostByIdWithLikes(id: string) {
