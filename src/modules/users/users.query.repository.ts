@@ -19,8 +19,8 @@ export class UsersQueryRepository {
     const sortField =
       queryParams.sortBy === 'login' ? 'userName' : queryParams.sortBy;
     queryParams.banStatus === 'banned'
-      ? (banFilter[`banInfo.isBanned`] = true)
-      : (banFilter[`banInfo.isBanned`] = false);
+      ? (banFilter[`banInfoSa.isBanned`] = true)
+      : (banFilter[`banInfoSa.isBanned`] = false);
     let sortValue: string | 1 | -1 = -1;
     if (queryParams.sortDirection === 'desc') {
       sortValue = -1;
@@ -78,9 +78,9 @@ export class UsersQueryRepository {
               email: '$accountData.email',
               createdAt: '$accountData.createdAt',
               banInfo: {
-                isBanned: '$banInfo.isBanned',
-                banDate: '$banInfo.banDate',
-                banReason: '$banInfo.banReason',
+                isBanned: '$banInfoSa.isBanned',
+                banDate: '$banInfoSa.banDate',
+                banReason: '$banInfoSa.banReason',
               },
             },
           },
@@ -100,7 +100,7 @@ export class UsersQueryRepository {
             },
           },
           {
-            $unset: ['items.total', '_id'],
+            $unset: ['items.total', '_id', 'items.banInfoBloggers'],
           },
         ])
         .exec()

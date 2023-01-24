@@ -1,11 +1,13 @@
-class EmailConfirmationMain {
+import { Types } from 'mongoose';
+
+export class EmailConfirmationMain {
   confirmationCode: string;
   expirationDate: string;
   isConfirmed: boolean;
   attemptCount: number;
 }
 
-class AccountDataMain {
+export class AccountDataMain {
   userName: string;
   email: string;
   passwordHash: string;
@@ -19,8 +21,13 @@ export class BanInfoMain {
   banReason: string;
 }
 
+export class BanInfoBloggerMain extends BanInfoMain {
+  blogId: Types.ObjectId;
+}
+
 export class UserMain {
   accountData: AccountDataMain;
   emailConfirmation: EmailConfirmationMain;
-  banInfo: BanInfoMain;
+  banInfoSa: BanInfoMain;
+  banInfoBlogger: BanInfoBloggerMain[];
 }

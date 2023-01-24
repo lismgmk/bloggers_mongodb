@@ -1,7 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer';
 import { Length, Matches } from 'class-validator';
 import { FIELD_LENGTH_VALIDATION_ERROR } from '../../../consts/ad-validation-const';
-import { IsMongoIdObject } from '../../../dto-validator/is-mongid-obj';
 
 const urlRegEx =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;

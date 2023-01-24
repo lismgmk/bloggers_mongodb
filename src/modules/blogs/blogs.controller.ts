@@ -24,13 +24,15 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ParamIdValidationPipe } from '../../pipes/param-id-validation.pipe';
 import { CustomValidationPipe } from '../../pipes/validation.pipe';
 import { User } from '../../schemas/users/users.schema';
+import { CommentsService } from '../comments/comments.service';
+import { GetAllCommentsDto } from '../comments/instance_dto/dto_validate/get-all-comments.dto';
 import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsService } from '../posts/posts.service';
+import { BanBlogDto } from '../users/instance_dto/dto_validate/ban-user.dto';
+import { UsersService } from '../users/users.service';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
-import { GetAllCommentsDto } from '../comments/instance_dto/dto_validate/get-all-comments.dto';
-import { CommentsService } from '../comments/comments.service';
 
 @Controller()
 export class BlogsController {
@@ -38,7 +40,22 @@ export class BlogsController {
     private readonly blogsService: BlogsService,
     private readonly postsService: PostsService,
     private readonly commentsService: CommentsService,
+    private usersService: UsersService,
   ) {}
+
+  @HttpCode(204)
+  @Put('/blogger/users/:userId/ban')
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async banUserBlogger(
+    @Param('userId', ParamIdValidationPipe)
+    userId: string,
+    @Body(new CustomValidationPipe()) banDto: BanBlogDto,
+  ) {
+    await this.usersService.changeBlogBanStatus(userId, banDto);
+    return;
+  }
 
   @Get('/blogs/')
   @HttpCode(200)

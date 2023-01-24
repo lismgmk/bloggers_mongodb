@@ -99,9 +99,7 @@ export class AuthController {
     @UserIp() userIp: string,
     @DeviceName() deviceName: string,
   ) {
-    console.log('+++++loginUser', user);
-
-    if (user.banInfo.isBanned === true) {
+    if (user.banInfoSa.isBanned === true) {
       throw new UnauthorizedException('user is banned');
     }
     if (user.emailConfirmation.isConfirmed === false) {

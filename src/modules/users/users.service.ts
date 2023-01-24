@@ -7,7 +7,6 @@ import { User } from '../../schemas/users/users.schema';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { CreateConfirmUser } from './instance_dto/dto_transfer/ create-confirm-user';
 import { BanUserMain } from './instance_dto/main_instance/ban-user.instance';
-import { CreateUserMain } from './instance_dto/main_instance/create-user.instance';
 import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.instance';
 import { IUserResponse } from './instance_dto/response_interfaces/all-users.response';
 import { UsersQueryRepository } from './users.query.repository';
@@ -40,11 +39,12 @@ export class UsersService {
         isConfirmed: dto.isConfirmed,
         attemptCount: 0,
       },
-      banInfo: {
+      banInfoSa: {
         isBanned: false,
         banDate: null,
         banReason: null,
       },
+      banInfoBlogger: [],
     });
 
     try {
@@ -55,9 +55,9 @@ export class UsersService {
         email: createdUser.accountData.email,
         createdAt: createdUser.accountData.createdAt,
         banInfo: {
-          isBanned: createdUser.banInfo.isBanned,
-          banDate: createdUser.banInfo.banDate,
-          banReason: createdUser.banInfo.banReason,
+          isBanned: createdUser.banInfoSa.isBanned,
+          banDate: createdUser.banInfoSa.banDate,
+          banReason: createdUser.banInfoSa.banReason,
         },
       } as IUserResponse;
       return user;
@@ -73,67 +73,10 @@ export class UsersService {
   async getAllUsersSa(queryParams: GetAllUsersMain) {
     return this.usersQueryRepository.getAllUsersSaPagination(queryParams);
   }
-  // async getAllUsers(
-  //   queryParams: GetAllUsersQueryDto,
-  // ): Promise<IPaginationResponse<IUser>> {
-  //   const loginPart = new RegExp(queryParams.searchLoginTerm, 'i');
-  //   const emailPart = new RegExp(queryParams.searchEmailTerm, 'i');
-  //   const sortValue = queryParams.sortDirection || 'desc';
-  //   const filterArr = [];
-  //   queryParams.searchLoginTerm &&
-  //     filterArr.push({
-  //       'accountData.userName': loginPart,
-  //     });
-  //   queryParams.searchEmailTerm &&
-  //     filterArr.push({
-  //       'accountData.email': emailPart,
-  //     });
-  //   !queryParams.searchEmailTerm &&
-  //     !queryParams.searchLoginTerm &&
-  //     filterArr.push({});
-  //   try {
-  //     const allUsers: IUser[] = (
-  //       await this.userModel
-  //         .find({ $or: filterArr })
-  //         .sort({
-  //           [`accountData.${
-  //             queryParams.sortBy === 'login' ? 'userName' : queryParams.sortBy
-  //           }`]: sortValue,
-  //         })
-  //         .skip(
-  //           queryParams.pageNumber > 0
-  //             ? (queryParams.pageNumber - 1) * queryParams.pageSize
-  //             : 0,
-  //         )
-  //         .limit(queryParams.pageSize)
-  //         .lean()
-  //     ).map((i) => {
-  //       return {
-  //         id: i._id,
-  //         login: i.accountData.userName,
-  //         createdAt: i.accountData.createdAt,
-  //         email: i.accountData.email,
-  //       };
-  //     });
-
-  //     const totalCount = await this.userModel.find({ $or: filterArr }).exec();
-  //     const paginationParams: paramsDto = {
-  //       totalCount: totalCount.length,
-  //       pageSize: queryParams.pageSize,
-  //       pageNumber: queryParams.pageNumber,
-  //     };
-  //     return {
-  //       ...paginationBuilder(paginationParams),
-  //       items: allUsers,
-  //     };
-  //   } catch (e) {
-  //     return e;
-  //   }
-  // }
 
   async chechUserBan(userId: ObjectId | string) {
     const user = await this.userModel.findById(userId).exec();
-    if (!user || user.banInfo.isBanned === true) {
+    if (!user || user.banInfoSa.isBanned === true) {
       throw new NotFoundException('this user is banned or unexist');
     }
   }
@@ -141,11 +84,20 @@ export class UsersService {
   async getUserById(id: string) {
     return this.userModel.findById(id).exec();
   }
+  async changeBlogBanStatus(id: string, banDto: BanUserMain) {
+    const filter = {
+      'banInfoSa.isBanned': banDto.isBanned,
+      'banInfoSa.banReason': banDto.isBanned === true ? banDto.banReason : null,
+      'banInfoSa.banDate':
+        banDto.isBanned === true ? new Date().toISOString() : null,
+    };
+    return this.userModel.findByIdAndUpdate(id, filter);
+  }
   async changeStatus(id: string, banDto: BanUserMain) {
     const filter = {
-      'banInfo.isBanned': banDto.isBanned,
-      'banInfo.banReason': banDto.isBanned === true ? banDto.banReason : null,
-      'banInfo.banDate':
+      'banInfoSa.isBanned': banDto.isBanned,
+      'banInfoSa.banReason': banDto.isBanned === true ? banDto.banReason : null,
+      'banInfoSa.banDate':
         banDto.isBanned === true ? new Date().toISOString() : null,
     };
     return this.userModel.findByIdAndUpdate(id, filter);
@@ -157,7 +109,7 @@ export class UsersService {
           $expr: {
             $and: [
               {
-                $eq: ['$banInfo.isBanned', false],
+                $eq: ['$banInfoSa.isBanned', false],
               },
             ],
           },

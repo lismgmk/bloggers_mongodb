@@ -1,15 +1,21 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 import {
   FIELD_REQUIRED_VALIDATION_ERROR,
   FIELD_LENGTH_VALIDATION_ERROR_SHORT,
   FIELD_LENGTH_VALIDATION_ERROR_LONG,
   FIELD_EMAIL_VALIDATION_ERROR,
 } from '../../consts/ad-validation-const';
-import { UserMain } from './users.instance';
+import {
+  AccountDataMain,
+  BanInfoBloggerMain,
+  BanInfoMain,
+  EmailConfirmationMain,
+  UserMain,
+} from './users.instance';
 
 @Schema({ _id: false })
-class EmailConfirmation extends Document {
+class EmailConfirmation extends Document implements EmailConfirmationMain {
   @Prop({
     type: String,
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
@@ -34,17 +40,37 @@ class EmailConfirmation extends Document {
 }
 
 @Schema({ _id: false })
-class BanInfo extends Document {
+class BanInfoBlogger extends Document implements BanInfoBloggerMain {
   @Prop({
     type: String,
-    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
     default: null,
-    // unique: true,
   })
   banDate: string;
   @Prop({
     type: String,
-    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    default: null,
+  })
+  banReason: string;
+  @Prop({
+    type: Boolean,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  isBanned: boolean;
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  blogId: Types.ObjectId;
+}
+@Schema({ _id: false })
+class BanInfoSa extends Document implements BanInfoMain {
+  @Prop({
+    type: String,
+    default: null,
+  })
+  banDate: string;
+  @Prop({
+    type: String,
     default: null,
   })
   banReason: string;
@@ -56,10 +82,9 @@ class BanInfo extends Document {
 }
 
 @Schema({ _id: false })
-class AccountData extends Document {
+class AccountData extends Document implements AccountDataMain {
   @Prop({
     type: String,
-    // unique: true,
     required: true,
     min: [3, FIELD_LENGTH_VALIDATION_ERROR_SHORT],
     max: [10, FIELD_LENGTH_VALIDATION_ERROR_LONG],
@@ -92,11 +117,6 @@ class AccountData extends Document {
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   createdAt: string;
-  // @Prop({
-  //   type: String,
-  //   required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
-  // })
-  // userIp: string;
 }
 
 @Schema({ expires: 'user' })
@@ -105,8 +125,10 @@ export class User extends Document implements UserMain {
   accountData: AccountData;
   @Prop({ type: EmailConfirmation, required: true })
   emailConfirmation: EmailConfirmation;
-  @Prop({ type: BanInfo, required: true })
-  banInfo: BanInfo;
+  @Prop({ type: BanInfoSa, required: true })
+  banInfoSa: BanInfoSa;
+  @Prop({ type: BanInfoBlogger, required: true })
+  banInfoBlogger: BanInfoBlogger[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
