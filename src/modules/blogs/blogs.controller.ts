@@ -116,6 +116,13 @@ export class BlogsController {
     )
     queryParams: GetAllPostsdDto,
   ) {
+    const checkBlogBanStatus = await this.blogsService.getBlogById(blogId);
+    if (!checkBlogBanStatus) {
+      throw new NotFoundException();
+    }
+    if (checkBlogBanStatus.banInfo.isBanned === true) {
+      throw new ForbiddenException('blog is banned  ');
+    }
     return await this.blogsService.getPostsForBlogId(queryParams, blogId, null);
   }
 

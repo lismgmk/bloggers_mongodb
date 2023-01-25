@@ -77,6 +77,20 @@ export class SaController {
     return await this.sa.getAllBlogsSa(queryParams);
   }
 
+  @HttpCode(204)
+  @Put('/blogs/:blogId/ban')
+  @UseGuards(AuthGuard('basic'))
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async banBlog(
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
+    @Body(new CustomValidationPipe()) banDto: Omit<BanUserDto, 'banReason'>,
+  ) {
+    await this.sa.changeBanStatusBlog(blogId, banDto.isBanned);
+    return;
+  }
+
   @Post('/users')
   @UseGuards(AuthGuard('basic'))
   @UseFilters(new MongoExceptionFilter())

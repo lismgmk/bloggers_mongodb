@@ -8,7 +8,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Model } from 'mongoose';
-import { Blog } from '../schemas/blog.schema';
+import { Blog } from '../schemas/blog/blog.schema';
 
 @Injectable()
 @ValidatorConstraint({ async: true })

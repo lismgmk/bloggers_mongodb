@@ -13,6 +13,7 @@ import {
   Delete,
   Query,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -157,6 +158,13 @@ export class PostsController {
     const post = await this.postsService.getPostById(postId);
     if (!post) {
       throw new NotFoundException();
+    }
+    const checkBannedStatusForBlog = await this.usersService.getBannedUser(
+      user._id,
+      post.blogId.toString(),
+    );
+    if (checkBannedStatusForBlog) {
+      throw new ForbiddenException('you are banned by blog owner');
     }
 
     return await this.commentsService.createComment({

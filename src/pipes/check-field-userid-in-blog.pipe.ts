@@ -7,7 +7,7 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BlogsService } from '../modules/blogs/blogs.service';
-import { Blog } from '../schemas/blog.schema';
+import { Blog } from '../schemas/blog/blog.schema';
 
 @Injectable()
 export class CheckFieldInUserIdInBlogPipe implements PipeTransform<any> {

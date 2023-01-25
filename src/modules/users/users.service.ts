@@ -105,6 +105,11 @@ export class UsersService {
       },
     );
   }
+
+  async getBannedUser(userId: string, blogId: string) {
+    return this.banInfoBloggerModel.findOne({ userId, blogId }).exec();
+  }
+
   async getAllBlogsBannedUsersForBlog(
     queryParams: GetAllBlogsQueryMain,
     blogId: string,

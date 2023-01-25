@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
-import { Blog } from '../../schemas/blog.schema';
+import { Blog } from '../../schemas/blog/blog.schema';
 import { Posts } from '../../schemas/posts/posts.schema';
 import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';

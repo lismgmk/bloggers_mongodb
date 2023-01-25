@@ -13,6 +13,11 @@ export class SaService {
     private readonly usersService: UsersService,
     private readonly securityService: SecurityService,
   ) {}
+
+  async changeBanStatusBlog(blogId: string, isBanned: boolean) {
+    await this.blogsQueryRepository.changeBanStatusBlog(blogId, isBanned);
+  }
+
   async getAllBlogsSa(queryParams: GetAllBlogsQueryMain) {
     return this.blogsQueryRepository.queryAllBlogsPagination(queryParams, true);
   }

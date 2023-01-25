@@ -6,7 +6,7 @@ import {
   paramsDto,
   paginationBuilder,
 } from '../../../../helpers/pagination-builder';
-import { Blog } from '../../../../schemas/blog.schema';
+import { Blog } from '../../../../schemas/blog/blog.schema';
 import { IBlog } from '../../dto/blogs-intergaces';
 import { GetAllBlogsQueryDto } from '../impl/get-all-blogs-query.dto';
 

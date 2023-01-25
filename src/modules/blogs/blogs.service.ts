@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { paginationBuilder, paramsDto } from '../../helpers/pagination-builder';
-import { Blog } from '../../schemas/blog.schema';
+import { Blog } from '../../schemas/blog/blog.schema';
 import { GetAllPostsdDto } from '../posts/instance_dto/dto_validate/get-all-posts.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
@@ -57,6 +57,7 @@ export class BlogsService {
       description: dto.description,
       createdAt: new Date().toISOString(),
       userId: dto.userId,
+      banInfo: { isBanned: false, banDate: null },
     });
     const createdBlog = (await this.blogModel.create(newBlog)) as Blog;
     return {

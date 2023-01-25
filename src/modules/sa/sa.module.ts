@@ -9,7 +9,7 @@ import { PostsService } from '../posts/posts.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from '../../schemas/blog.schema';
+import { Blog, BlogSchema } from '../../schemas/blog/blog.schema';
 import { Like, LikeSchema } from '../../schemas/likes.schema';
 import { Posts, PostsSchema } from '../../schemas/posts/posts.schema';
 import { IfNotFoundBlogIdDropError } from '../../dto-validator/if-not-found-blog-id-drop-error';

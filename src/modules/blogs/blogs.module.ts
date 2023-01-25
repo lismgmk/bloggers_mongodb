@@ -8,7 +8,7 @@ import {
   BanInfoBlogger,
   BanInfoBloggerSchema,
 } from '../../schemas/banBlogger/ban-blogger.schema';
-import { Blog, BlogSchema } from '../../schemas/blog.schema';
+import { Blog, BlogSchema } from '../../schemas/blog/blog.schema';
 import {
   Comments,
   CommentsSchema,

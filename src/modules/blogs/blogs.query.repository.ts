@@ -4,7 +4,7 @@ import { Model, ObjectId, Types } from 'mongoose';
 import { IPaginationResponse } from '../../global-dto/common-interfaces';
 import { getSortDirection } from '../../helpers/get-sort-direction';
 import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
-import { Blog } from '../../schemas/blog.schema';
+import { Blog } from '../../schemas/blog/blog.schema';
 import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
 import { ICondition } from '../../global-dto/condition-interface';
 import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs.instance';
@@ -31,6 +31,12 @@ export class BlogsQueryRepository {
         ? ['_id', 'items.total', 'items.userId']
         : ['_id', 'items.total', 'items.blogOwnerInfo', 'items.userId'],
     );
+  }
+
+  async changeBanStatusBlog(blogId: string, isBanned: boolean) {
+    const banDate = isBanned ? new Date().toISOString : null;
+    const filter = { 'banInfo.isBanned': isBanned, 'banInfo.banDate': banDate };
+    await this.blogModel.findByIdAndUpdate(blogId, filter);
   }
 
   async getAllUsersBlogsArr(userId: string | ObjectId) {
@@ -100,6 +106,10 @@ export class BlogsQueryRepository {
               description: '$description',
               createdAt: '$createdAt',
               userId: '$userId',
+              banInfo: {
+                isBanned: '$banInfo.isBanned',
+                banDate: '$banInfo.banDate',
+              },
             },
           },
 

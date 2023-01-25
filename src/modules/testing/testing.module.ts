@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
-import { Blog, BlogSchema } from '../../schemas/blog.schema';
+import { Blog, BlogSchema } from '../../schemas/blog/blog.schema';
 import { Comments, CommentsSchema } from '../../schemas/comments/comments.schema';
 import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
 import { Like, LikeSchema } from '../../schemas/likes.schema';

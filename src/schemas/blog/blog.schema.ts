@@ -1,9 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes, Types } from 'mongoose';
-import { FIELD_REQUIRED_VALIDATION_ERROR } from '../consts/ad-validation-const';
+import { FIELD_REQUIRED_VALIDATION_ERROR } from '../../consts/ad-validation-const';
+import { IBanInfo, IBlog } from './blog.schema.interface';
+
+@Schema({ _id: false })
+class BanInfo extends Document implements IBanInfo {
+  @Prop({
+    type: String,
+    default: null,
+  })
+  banDate: string;
+
+  @Prop({
+    type: Boolean,
+    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+  })
+  isBanned: boolean;
+}
 
 @Schema({ expires: 'blog' })
-export class Blog extends Document {
+export class Blog extends Document implements IBlog {
   @Prop({ required: [true, FIELD_REQUIRED_VALIDATION_ERROR], type: String })
   name: string;
 
@@ -35,6 +51,9 @@ export class Blog extends Document {
     required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   createdAt: string;
+
+  @Prop({ type: BanInfo, required: true })
+  banInfo: BanInfo;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
