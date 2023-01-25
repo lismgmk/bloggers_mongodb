@@ -13,6 +13,9 @@ export class GetAllBlogsQueryDto extends PaginationQueryDto {
   @IsOptional()
   readonly searchNameTerm: string;
 
+  @IsOptional()
+  readonly searchLoginTerm: string;
+
   @IsEnum(SortByField, { message: INCORRECT_TYPE_VALIDATION_ERROR })
   @IsOptional()
   readonly sortBy: keyof typeof SortByField = 'createdAt';

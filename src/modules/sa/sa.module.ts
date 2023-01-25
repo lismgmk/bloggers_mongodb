@@ -22,6 +22,10 @@ import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.serv
 import { UsersQueryRepository } from '../users/users.query.repository';
 import { SecurityService } from '../security/security.service';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
+import {
+  BanInfoBlogger,
+  BanInfoBloggerSchema,
+} from '../../schemas/banBlogger/ban-blogger.schema';
 
 @Module({
   imports: [
@@ -32,6 +36,7 @@ import { Devices, DevicesSchema } from '../../schemas/device.schema';
       { name: Like.name, schema: LikeSchema },
       { name: User.name, schema: UserSchema },
       { name: Devices.name, schema: DevicesSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
     ]),
     CqrsModule,
   ],

@@ -16,6 +16,5 @@ export class BanUserDto implements BanUserMain {
 }
 export class BanBlogDto extends BanUserDto {
   @IsMongoIdObject()
-  @ForUnExistsIdUserError()
-  blogId: string;
+  readonly blogId: string;
 }

@@ -5,6 +5,11 @@ import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { IfNotFoundBlogIdDropError } from '../../dto-validator/if-not-found-blog-id-drop-error';
+import { isMongoObjIdValidator } from '../../dto-validator/is-mongid-obj';
+import {
+  BanInfoBlogger,
+  BanInfoBloggerSchema,
+} from '../../schemas/banBlogger/ban-blogger.schema';
 import { Blog, BlogSchema } from '../../schemas/blog.schema';
 import {
   Comments,
@@ -39,6 +44,7 @@ import { PostsService } from './posts.service';
       { name: Like.name, schema: LikeSchema },
       { name: Comments.name, schema: CommentsSchema },
       { name: User.name, schema: UserSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
     ]),
   ],
   providers: [
@@ -57,6 +63,7 @@ import { PostsService } from './posts.service';
     UsersQueryRepository,
     JwtService,
     BlogsQueryRepository,
+    isMongoObjIdValidator,
   ],
   controllers: [PostsController],
 })

@@ -8,6 +8,10 @@ import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { IsExpired } from '../../dto-validator/check-expiration-code';
 import { IpUsersRepository } from '../../repositotyes/ip-user.repository';
+import {
+  BanInfoBlogger,
+  BanInfoBloggerSchema,
+} from '../../schemas/banBlogger/ban-blogger.schema';
 import { BlackList, BlackListSchema } from '../../schemas/black-list.schema';
 import { Devices, DevicesSchema } from '../../schemas/device.schema';
 import { IpUser, IpUserSchema } from '../../schemas/iPusers.schema';
@@ -45,6 +49,7 @@ import { SendEmailHandler } from './events/handlers/send-email.handler';
       { name: IpUser.name, schema: IpUserSchema },
       { name: BlackList.name, schema: BlackListSchema },
       { name: Devices.name, schema: DevicesSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
     ]),
     ConfigModule,
   ],

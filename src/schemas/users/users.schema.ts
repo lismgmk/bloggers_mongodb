@@ -53,12 +53,12 @@ class BanInfoBlogger extends Document implements BanInfoBloggerMain {
   banReason: string;
   @Prop({
     type: Boolean,
-    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   isBanned: boolean;
   @Prop({
     type: SchemaTypes.ObjectId,
-    required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
+    // required: [true, FIELD_REQUIRED_VALIDATION_ERROR],
   })
   blogId: Types.ObjectId;
 }
@@ -127,8 +127,8 @@ export class User extends Document implements UserMain {
   emailConfirmation: EmailConfirmation;
   @Prop({ type: BanInfoSa, required: true })
   banInfoSa: BanInfoSa;
-  @Prop({ type: BanInfoBlogger, required: true })
-  banInfoBlogger: BanInfoBlogger[];
+  // @Prop({ type: [BanInfoBlogger] })
+  // banInfoBlogger: BanInfoBlogger[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

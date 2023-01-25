@@ -7,6 +7,10 @@ import { IfConfirmedUserDropErrorValidator } from '../../dto-validator/if-confir
 import { IfEpsentUserDropErrorValidator } from '../../dto-validator/if-epsent-user-drop-error';
 import { IfExistUserDropErrorValidator } from '../../dto-validator/if-exist-user-drop-error';
 import { IfNotFoundUserIdDropError } from '../../dto-validator/if-not-found-user-id-drop-error';
+import {
+  BanInfoBlogger,
+  BanInfoBloggerSchema,
+} from '../../schemas/banBlogger/ban-blogger.schema';
 import { User, UserSchema } from '../../schemas/users/users.schema';
 import { BasicStrategy } from '../../strategyes/auth-basic.strategy';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
@@ -19,7 +23,10 @@ import { UsersService } from './users.service';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PassportModule,
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
+    ]),
   ],
   controllers: [UsersController],
 

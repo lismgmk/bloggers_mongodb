@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { BanInfoBlogger, BanInfoBloggerSchema } from '../../schemas/banBlogger/ban-blogger.schema';
 import {
   Comments,
   CommentsSchema,
@@ -25,6 +26,7 @@ import { CommentsService } from './comments.service';
       { name: Like.name, schema: LikeSchema },
       { name: Comments.name, schema: CommentsSchema },
       { name: User.name, schema: UserSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
     ]),
   ],
   providers: [

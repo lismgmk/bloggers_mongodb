@@ -5,6 +5,6 @@ import { CreatePostDto } from './create-post.dto';
 
 export class CreatePostWithBlogIdDto extends CreatePostDto {
   @ForUnExistsIdBlogError({ message: FIELD_EPSENT_VALIDATION_ERROR })
-  @IsMongoIdObject()
+  @IsMongoIdObject({ message: FIELD_EPSENT_VALIDATION_ERROR })
   readonly blogId: string;
 }

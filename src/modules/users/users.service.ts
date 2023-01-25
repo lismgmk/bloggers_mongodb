@@ -3,10 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { add } from 'date-fns';
 
 import { Model, ObjectId, Types } from 'mongoose';
+import { PaginationQueryDto } from '../../global-dto/dto_validate/pagination-query.dto';
+import { BanInfoBlogger } from '../../schemas/banBlogger/ban-blogger.schema';
 import { User } from '../../schemas/users/users.schema';
+import { GetAllBlogsQueryMain } from '../blogs/instance_dto/main_instance/get-all-blogs.instance';
 import { JwtPassService } from '../common-services/jwt-pass-custom/jwt-pass.service';
 import { CreateConfirmUser } from './instance_dto/dto_transfer/ create-confirm-user';
-import { BanUserMain } from './instance_dto/main_instance/ban-user.instance';
+import {
+  BanBlogMain,
+  BanUserMain,
+} from './instance_dto/main_instance/ban-user.instance';
 import { GetAllUsersMain } from './instance_dto/main_instance/get-all-user.instance';
 import { IUserResponse } from './instance_dto/response_interfaces/all-users.response';
 import { UsersQueryRepository } from './users.query.repository';
@@ -15,6 +21,8 @@ import { UsersQueryRepository } from './users.query.repository';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(BanInfoBlogger.name)
+    private banInfoBloggerModel: Model<BanInfoBlogger>,
     private jwtPassService: JwtPassService,
     private usersQueryRepository: UsersQueryRepository,
   ) {}
@@ -81,17 +89,32 @@ export class UsersService {
     }
   }
 
-  async getUserById(id: string) {
-    return this.userModel.findById(id).exec();
+  async changeBlogBanStatus(id: string, banDto: BanBlogMain) {
+    const currentUser = await this.getUserById(id);
+    await this.banInfoBloggerModel.findOneAndUpdate(
+      { userId: id },
+      {
+        ...banDto,
+        userId: id,
+        banDate: new Date().toISOString(),
+        login: currentUser.accountData.userName,
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
   }
-  async changeBlogBanStatus(id: string, banDto: BanUserMain) {
-    const filter = {
-      'banInfoSa.isBanned': banDto.isBanned,
-      'banInfoSa.banReason': banDto.isBanned === true ? banDto.banReason : null,
-      'banInfoSa.banDate':
-        banDto.isBanned === true ? new Date().toISOString() : null,
-    };
-    return this.userModel.findByIdAndUpdate(id, filter);
+  async getAllBlogsBannedUsersForBlog(
+    queryParams: GetAllBlogsQueryMain,
+    blogId: string,
+  ) {
+    return this.usersQueryRepository.getBannedUsersForBlog(queryParams, blogId);
+  }
+
+  async getUserById(id: string) {
+    const user = await this.userModel.findById(id).exec();
+    return user;
   }
   async changeStatus(id: string, banDto: BanUserMain) {
     const filter = {

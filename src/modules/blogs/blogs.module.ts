@@ -4,6 +4,10 @@ import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { IfNotFoundBlogIdDropError } from '../../dto-validator/if-not-found-blog-id-drop-error';
+import {
+  BanInfoBlogger,
+  BanInfoBloggerSchema,
+} from '../../schemas/banBlogger/ban-blogger.schema';
 import { Blog, BlogSchema } from '../../schemas/blog.schema';
 import {
   Comments,
@@ -35,6 +39,7 @@ import { GetBlogsHandler } from './queries/handler/get-blogs.handler';
       { name: Like.name, schema: LikeSchema },
       { name: User.name, schema: UserSchema },
       { name: Comments.name, schema: CommentsSchema },
+      { name: BanInfoBlogger.name, schema: BanInfoBloggerSchema },
     ]),
     CqrsModule,
   ],

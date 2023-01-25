@@ -52,9 +52,38 @@ export class BlogsController {
     @Param('userId', ParamIdValidationPipe)
     userId: string,
     @Body(new CustomValidationPipe()) banDto: BanBlogDto,
+    @GetUser()
+    user: User,
   ) {
+    await this._checkBlogUser(banDto.blogId, user._id);
     await this.usersService.changeBlogBanStatus(userId, banDto);
     return;
+  }
+
+  @Get('/blogger/users/blog/:blogId')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new MongoExceptionFilter())
+  @UseFilters(new ValidationBodyExceptionFilter())
+  async getAllBannedUsersForBlog(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    queryParams: GetAllBlogsQueryDto,
+    @Param('blogId', ParamIdValidationPipe)
+    blogId: string,
+    @GetUser()
+    user: User,
+  ) {
+    await this._checkBlogUser(blogId, user._id);
+    return await this.usersService.getAllBlogsBannedUsersForBlog(
+      queryParams,
+      blogId,
+    );
   }
 
   @Get('/blogs/')

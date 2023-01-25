@@ -29,5 +29,5 @@ export class UserMain {
   accountData: AccountDataMain;
   emailConfirmation: EmailConfirmationMain;
   banInfoSa: BanInfoMain;
-  banInfoBlogger: BanInfoBloggerMain[];
+  // banInfoBlogger: BanInfoBloggerMain[] | [] = [];
 }

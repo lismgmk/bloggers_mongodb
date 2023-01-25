@@ -72,6 +72,10 @@ export class BlogsService {
     return await this.blogModel.findById(id).exec();
   }
 
+  async getBlogByUserId(id: string | ObjectId) {
+    return await this.blogModel.findOne({ userId: id }).exec();
+  }
+
   async deleteBlogById(id: string | ObjectId) {
     const blog = this.getBlogById(id);
     if (!blog) {
