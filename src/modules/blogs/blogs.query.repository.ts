@@ -69,6 +69,80 @@ export class BlogsQueryRepository {
       ['_id', 'items.total', 'items.blogOwnerInfo', 'items.userId'],
     );
   }
+  async _agregateFindBlogs2(
+    queryParams,
+    singleCondition,
+    sortField,
+    sortValue,
+    unset,
+  ) {
+    // Define the pipeline stages
+    const pipeline = [
+      { $match: singleCondition }, // filter by single condition
+      { $sort: { [sortField]: sortValue } }, // sort by the provided field and value
+      { $count: 'total' }, // count the total number of documents
+      { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize }, // skip documents for pagination
+      { $limit: queryParams.pageSize }, // limit the number of documents for pagination
+      {
+        $project: {
+          _id: 0,
+          name: 1,
+          websiteUrl: 1,
+          description: 1,
+          createdAt: 1,
+          userId: 1,
+          banInfo: {
+            isBanned: '$banInfo.isBanned',
+            banDate: '$banInfo.banDate',
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'blogOwnerInfo',
+          pipeline: [
+            {
+              $project: {
+                _id: 0,
+                userId: 1,
+                userLogin: '$accountData.userName',
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: '$blogOwnerInfo',
+      },
+      {
+        $group: {
+          _id: sortField,
+          totalCount: { $first: '$total' },
+          pagesCount: {
+            $first: { $ceil: { $divide: ['$total', queryParams.pageSize] } },
+          },
+          items: {
+            $push: '$$ROOT',
+          },
+        },
+      },
+    ];
+
+    // Execute the pipeline
+    const result = await this.blogModel.aggregate(pipeline).exec();
+
+    // Return the result or a default pagination object if no result is found
+    return (
+      result[0] ||
+      paginationDefaultBuilder({
+        pageSize: queryParams.pageSize,
+        pageNumber: queryParams.pageNumber,
+      })
+    );
+  }
 
   async _agregateFindBlogs(
     queryParams: GetAllBlogsQueryMain,
