@@ -19,14 +19,11 @@ export class BlogsQueryRepository {
     const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
-    const singleCondition = queryParams.isBanned
-      ? {
-          name: namePart,
-          'banInfo.isBanned': queryParams.isBanned,
-        }
-      : {
-          name: namePart,
-        };
+    const singleCondition = {
+      name: namePart,
+      'banInfo.isBanned': queryParams.isBanned,
+    };
+
     return this._agregateFindBlogs2(
       queryParams,
       singleCondition,

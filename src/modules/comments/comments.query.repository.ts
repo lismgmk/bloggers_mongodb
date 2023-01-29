@@ -249,7 +249,7 @@ export class CommentsQueryRepository {
               id: '$_id',
               content: '$content',
               createdAt: '$createdAt',
-              comentatorInfo: {
+              commentatorInfo: {
                 userId: '$userId',
                 userLogin: '$userLogin',
               },
