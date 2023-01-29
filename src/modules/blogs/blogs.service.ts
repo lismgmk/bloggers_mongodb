@@ -11,6 +11,7 @@ import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blo
 import { BlogsQueryRepository } from './blogs.query.repository';
 import { IBlog } from './dto/blogs-intergaces';
 import { ICreateBlog } from './dto/create-blog.interface';
+import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs.instance';
 import { GetAllBlogsQueryDto } from './queries/impl/get-all-blogs-query.dto';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class BlogsService {
   ) {}
 
   async getBlogs(
-    queryParams: GetAllBlogsQueryDto,
+    queryParams: GetAllBlogsQueryMain,
   ): Promise<IPaginationResponse<IAllBlogsSaResponse[]>> {
     return this.blogsQueryRepository.queryAllBlogsPagination(queryParams);
   }
@@ -70,7 +71,9 @@ export class BlogsService {
   }
 
   async getBlogById(id: string | ObjectId) {
-    return await this.blogModel.findById(id).exec();
+    return await this.blogModel
+      .findOne({ _id: id, 'banInfo.isBanned': false })
+      .exec();
   }
 
   async getBlogByUserId(id: string | ObjectId) {

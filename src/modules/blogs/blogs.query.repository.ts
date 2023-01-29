@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Types } from 'mongoose';
-import { IPaginationResponse } from '../../global-dto/common-interfaces';
+import { ICondition } from '../../global-dto/condition-interface';
 import { getSortDirection } from '../../helpers/get-sort-direction';
 import { paginationDefaultBuilder } from '../../helpers/pagination-default-builder';
 import { Blog } from '../../schemas/blog/blog.schema';
-import { IAllBlogsSaResponse } from '../sa/types_dto/response_interfaces/all-blogs-sa.response';
-import { ICondition } from '../../global-dto/condition-interface';
 import { GetAllBlogsQueryMain } from './instance_dto/main_instance/get-all-blogs.instance';
 
 @Injectable()
@@ -21,8 +19,15 @@ export class BlogsQueryRepository {
     const sortValue = getSortDirection(queryParams.sortDirection);
     const namePart = new RegExp(queryParams.searchNameTerm, 'i');
 
-    const singleCondition = { name: namePart };
-    return this._agregateFindBlogs(
+    const singleCondition = queryParams.isBanned
+      ? {
+          name: namePart,
+          'banInfo.isBanned': queryParams.isBanned,
+        }
+      : {
+          name: namePart,
+        };
+    return this._agregateFindBlogs2(
       queryParams,
       singleCondition,
       sortField,
@@ -34,7 +39,7 @@ export class BlogsQueryRepository {
   }
 
   async changeBanStatusBlog(blogId: string, isBanned: boolean) {
-    const banDate = isBanned ? new Date().toISOString : null;
+    const banDate = isBanned ? new Date().toISOString() : null;
     const filter = { 'banInfo.isBanned': isBanned, 'banInfo.banDate': banDate };
     await this.blogModel.findByIdAndUpdate(blogId, filter);
   }
@@ -61,7 +66,7 @@ export class BlogsQueryRepository {
 
     const singleCondition = { name: namePart, userId };
 
-    return this._agregateFindBlogs(
+    return this._agregateFindBlogs2(
       queryParams,
       singleCondition,
       sortField,
@@ -70,23 +75,25 @@ export class BlogsQueryRepository {
     );
   }
   async _agregateFindBlogs2(
-    queryParams,
-    singleCondition,
-    sortField,
-    sortValue,
-    unset,
+    queryParams: GetAllBlogsQueryMain,
+    singleCondition: ICondition,
+    sortField: string,
+    sortValue: 1 | -1,
+    unset: string[],
   ) {
     // Define the pipeline stages
     const pipeline = [
       { $match: singleCondition }, // filter by single condition
       { $sort: { [sortField]: sortValue } }, // sort by the provided field and value
-      { $count: 'total' }, // count the total number of documents
+      { $setWindowFields: { output: { total: { $count: {} } } } },
       { $skip: (queryParams.pageNumber - 1) * queryParams.pageSize }, // skip documents for pagination
       { $limit: queryParams.pageSize }, // limit the number of documents for pagination
       {
         $project: {
           _id: 0,
+          id: '$_id',
           name: 1,
+          total: 1,
           websiteUrl: 1,
           description: 1,
           createdAt: 1,
@@ -120,14 +127,21 @@ export class BlogsQueryRepository {
       {
         $group: {
           _id: sortField,
+          page: { $first: queryParams.pageNumber },
+          pageSize: { $first: queryParams.pageSize },
           totalCount: { $first: '$total' },
           pagesCount: {
-            $first: { $ceil: { $divide: ['$total', queryParams.pageSize] } },
+            $first: {
+              $ceil: { $divide: ['$total', queryParams.pageSize] },
+            },
           },
           items: {
             $push: '$$ROOT',
           },
         },
+      },
+      {
+        $unset: unset,
       },
     ];
 
@@ -144,99 +158,99 @@ export class BlogsQueryRepository {
     );
   }
 
-  async _agregateFindBlogs(
-    queryParams: GetAllBlogsQueryMain,
-    singleCondition: ICondition,
-    sortField: string,
-    sortValue: 1 | -1,
-    unset: string[],
-  ) {
-    const result = (
-      await this.blogModel
-        .aggregate([
-          {
-            $match: singleCondition,
-          },
-          {
-            $sort: {
-              [sortField]: sortValue,
-            },
-          },
-          { $setWindowFields: { output: { totalCount: { $count: {} } } } },
-          {
-            $skip:
-              queryParams.pageNumber > 0
-                ? (queryParams.pageNumber - 1) * queryParams.pageSize
-                : 0,
-          },
-          { $limit: queryParams.pageSize },
-          {
-            $project: {
-              _id: 0,
-              total: '$totalCount',
-              id: '$_id',
-              name: '$name',
-              websiteUrl: '$websiteUrl',
-              description: '$description',
-              createdAt: '$createdAt',
-              userId: '$userId',
-              banInfo: {
-                isBanned: '$banInfo.isBanned',
-                banDate: '$banInfo.banDate',
-              },
-            },
-          },
+  // async _agregateFindBlogs(
+  //   queryParams: GetAllBlogsQueryMain,
+  //   singleCondition: ICondition,
+  //   sortField: string,
+  //   sortValue: 1 | -1,
+  //   unset: string[],
+  // ) {
+  //   const result = (
+  //     await this.blogModel
+  //       .aggregate([
+  //         {
+  //           $match: singleCondition,
+  //         },
+  //         {
+  //           $sort: {
+  //             [sortField]: sortValue,
+  //           },
+  //         },
+  //         { $setWindowFields: { output: { totalCount: { $count: {} } } } },
+  //         {
+  //           $skip:
+  //             queryParams.pageNumber > 0
+  //               ? (queryParams.pageNumber - 1) * queryParams.pageSize
+  //               : 0,
+  //         },
+  //         { $limit: queryParams.pageSize },
+  //         {
+  //           $project: {
+  //             _id: 0,
+  //             total: '$totalCount',
+  //             id: '$_id',
+  //             name: '$name',
+  //             websiteUrl: '$websiteUrl',
+  //             description: '$description',
+  //             createdAt: '$createdAt',
+  //             userId: '$userId',
+  //             banInfo: {
+  //               isBanned: '$banInfo.isBanned',
+  //               banDate: '$banInfo.banDate',
+  //             },
+  //           },
+  //         },
 
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'userId',
-              foreignField: '_id',
-              as: 'blogOwnerInfo',
-              pipeline: [
-                {
-                  $project: {
-                    _id: 0,
-                    userId: '$_id',
-                    userLogin: '$accountData.userName',
-                  },
-                },
-              ],
-            },
-          },
-          {
-            $set: {
-              blogOwnerInfo: {
-                $first: '$blogOwnerInfo',
-              },
-            },
-          },
-          {
-            $group: {
-              _id: sortField,
-              page: { $first: queryParams.pageNumber },
-              pageSize: { $first: queryParams.pageSize },
-              totalCount: { $first: '$$ROOT.total' },
-              pagesCount: {
-                $first: {
-                  $ceil: [{ $divide: ['$$ROOT.total', queryParams.pageSize] }],
-                },
-              },
-              items: { $push: '$$ROOT' },
-            },
-          },
-          {
-            $unset: unset,
-          },
-        ])
-        .exec()
-    )[0] as IPaginationResponse<IAllBlogsSaResponse[]>;
-    return (
-      result ||
-      paginationDefaultBuilder({
-        pageSize: queryParams.pageSize,
-        pageNumber: queryParams.pageNumber,
-      })
-    );
-  }
+  //         {
+  //           $lookup: {
+  //             from: 'users',
+  //             localField: 'userId',
+  //             foreignField: '_id',
+  //             as: 'blogOwnerInfo',
+  //             pipeline: [
+  //               {
+  //                 $project: {
+  //                   _id: 0,
+  //                   userId: '$_id',
+  //                   userLogin: '$accountData.userName',
+  //                 },
+  //               },
+  //             ],
+  //           },
+  //         },
+  //         {
+  //           $set: {
+  //             blogOwnerInfo: {
+  //               $first: '$blogOwnerInfo',
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $group: {
+  //             _id: sortField,
+  //             page: { $first: queryParams.pageNumber },
+  //             pageSize: { $first: queryParams.pageSize },
+  //             totalCount: { $first: '$$ROOT.total' },
+  //             pagesCount: {
+  //               $first: {
+  //                 $ceil: [{ $divide: ['$$ROOT.total', queryParams.pageSize] }],
+  //               },
+  //             },
+  //             items: { $push: '$$ROOT' },
+  //           },
+  //         },
+  //         {
+  //           $unset: unset,
+  //         },
+  //       ])
+  //       .exec()
+  //   )[0] as IPaginationResponse<IAllBlogsSaResponse[]>;
+  //   return (
+  //     result ||
+  //     paginationDefaultBuilder({
+  //       pageSize: queryParams.pageSize,
+  //       pageNumber: queryParams.pageNumber,
+  //     })
+  //   );
+  // }
 }

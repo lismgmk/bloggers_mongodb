@@ -23,8 +23,6 @@ export class PostsQueryRepository {
   ) {
     const bannedUsers = await this.usersService.getAllBannedUsers();
 
-
-
     const sortField = queryParams.sortBy;
     const sortValue = getSortDirection(queryParams.sortDirection);
 

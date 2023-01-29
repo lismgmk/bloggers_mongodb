@@ -9,5 +9,6 @@ export enum SortByField {
 export class GetAllBlogsQueryMain extends PaginationQueryDto {
   searchNameTerm?: string;
   searchLoginTerm?: string;
+  isBanned?: boolean;
   sortBy: keyof typeof SortByField = 'createdAt';
 }

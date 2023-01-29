@@ -288,6 +288,11 @@ export class CommentsQueryRepository {
             },
           },
           {
+            $set: {
+              postInfo: { $first: '$postInfo' },
+            },
+          },
+          {
             $lookup: {
               from: 'likes',
               localField: 'id',

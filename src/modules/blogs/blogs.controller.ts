@@ -99,7 +99,10 @@ export class BlogsController {
     )
     queryParams: GetAllBlogsQueryDto,
   ) {
-    return await this.blogsService.getBlogs(queryParams);
+    return await this.blogsService.getBlogs({
+      ...queryParams,
+      isBanned: false,
+    });
   }
 
   @Get('/blogs/:blogId/posts')
@@ -311,8 +314,8 @@ export class BlogsController {
     if (!blog) {
       throw new NotFoundException();
     }
-    if (!blog.userId.equals(userId)) {
-      throw new ForbiddenException();
-    }
+    // if (!blog.userId.equals(userId)) {
+    //   throw new ForbiddenException('user is not owner of blog');
+    // }
   }
 }

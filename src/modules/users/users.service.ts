@@ -91,6 +91,9 @@ export class UsersService {
 
   async changeBlogBanStatus(id: string, banDto: BanBlogMain) {
     const currentUser = await this.getUserById(id);
+    if (!currentUser) {
+      throw new NotFoundException('user is not found');
+    }
     await this.banInfoBloggerModel.findOneAndUpdate(
       { userId: id },
       {
