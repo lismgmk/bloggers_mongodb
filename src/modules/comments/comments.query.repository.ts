@@ -73,6 +73,13 @@ export class CommentsQueryRepository {
   }
 
   async _agregateFindComments(dto: IAgregateComments) {
+    const skipParam =
+      dto.queryParams.pageNumber > 0
+        ? (dto.queryParams.pageNumber - 1) * dto.queryParams.pageSize
+        : 0;
+
+    console.log('!!!!skip param', skipParam);
+
     const result = (
       await this.commentModel
         .aggregate([
@@ -86,10 +93,7 @@ export class CommentsQueryRepository {
           },
           { $setWindowFields: { output: { totalCount: { $count: {} } } } },
           {
-            $skip:
-              dto.queryParams.pageNumber > 0
-                ? (dto.queryParams.pageNumber - 1) * dto.queryParams.pageSize
-                : 0,
+            $skip: skipParam,
           },
           { $limit: dto.queryParams.pageSize },
           {
@@ -194,7 +198,7 @@ export class CommentsQueryRepository {
           {
             $group: {
               _id: dto.sortField,
-              page: { $first: pageNumber },
+              page: { $first: dto.queryParams.pageNumber },
               pageSize: { $first: dto.queryParams.pageSize },
               totalCount: { $first: '$$ROOT.total' },
               pagesCount: {

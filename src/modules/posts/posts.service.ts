@@ -8,10 +8,13 @@ import mongoose, { Model, ObjectId } from 'mongoose';
 import { LikeInfoRequest } from '../../global-dto/like-info.request';
 import { LikeStatusEnum } from '../../global-dto/like-status.dto';
 import { Blog } from '../../schemas/blog/blog.schema';
+import { PostsMain } from '../../schemas/posts/posts.instance';
 import { Posts } from '../../schemas/posts/posts.schema';
 import { User } from '../../schemas/users/users.schema';
 import { BlogsService } from '../blogs/blogs.service';
+import { IBlog } from '../blogs/dto/blogs-intergaces';
 import { LikesService } from '../likes/likes.service';
+import { UsersService } from '../users/users.service';
 import { GetAllPostsdDto } from './instance_dto/dto_validate/get-all-posts.dto';
 import { CreatePostWithBlogIdMain } from './instance_dto/main_instance/create-post.interface';
 import { PostsQueryRepository } from './posts.query.repository';
@@ -23,6 +26,7 @@ export class PostsService {
     private blogsService: BlogsService,
     private likesService: LikesService,
     private postsQueryRepository: PostsQueryRepository,
+    private usersService: UsersService,
   ) {}
   async getAllPosts(queryParams: GetAllPostsdDto, userId: string) {
     return this.postsQueryRepository.queryAllPostsPagination(
@@ -32,8 +36,21 @@ export class PostsService {
     );
   }
   async getPostByIdWithLikes(id: string) {
+    this._checkBannedBlog(id);
     return this.postsQueryRepository.queryPostById(id);
   }
+
+  async _checkBannedBlog(id: string) {
+    const post = (await this.postModel.findById(id)) as PostsMain;
+    const blog = await this.usersService.getBannedUser(
+      post.userId.toString(),
+      post.blogId.toString(),
+    );
+    if (blog.isBanned === true) {
+      throw new NotFoundException();
+    }
+  }
+
   async getPostById(id: string | ObjectId) {
     return await this.postModel.findById(id).exec();
   }

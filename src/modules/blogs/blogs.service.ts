@@ -76,6 +76,10 @@ export class BlogsService {
       .exec();
   }
 
+  // async getBlogByIdClear(id: string | ObjectId) {
+  //   return await this.blogModel.findById(id).exec();
+  // }
+
   async getBlogByUserId(id: string | ObjectId) {
     return await this.blogModel.findOne({ userId: id }).exec();
   }

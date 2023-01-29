@@ -21,8 +21,10 @@ export class BlogsQueryRepository {
 
     const singleCondition = {
       name: namePart,
-      'banInfo.isBanned': queryParams.isBanned,
     };
+    if (queryParams.hasOwnProperty('isBanned')) {
+      singleCondition['banInfo.isBanned'] = queryParams.isBanned;
+    }
 
     return this._agregateFindBlogs2(
       queryParams,
