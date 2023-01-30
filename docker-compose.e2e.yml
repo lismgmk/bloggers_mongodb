@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  nest:
+    build: .
+    restart: always
+    ports:
+      - '5000:5000'
+      - '9229:9229'
+    depends_on:
+      - mongo
+    volumes:
+      - /app/node_modules
+      - ./:/app
+    environment:
+      NODE_ENV: 'dev'
+      DB_CONNECT_MONGOOSE: 'mongodb://root:example@mongo:27017/bloggers_posts?authSource=admin'
+      IS_TS_NODE: 'true'
+    command: yarn test:e2e
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: bloggers_posts
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+   

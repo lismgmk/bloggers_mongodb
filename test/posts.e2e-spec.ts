@@ -1,18 +1,16 @@
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
 import { disconnect } from 'mongoose';
 import request from 'supertest';
 import { AppModule } from '../src/modules/app.module';
-import { BlackListRepository } from '../src/modules/auth/black-list.repository';
-import { UsersRepository } from '../src/modules/users/users.repository';
-import { User } from '../src/schemas/users/users.schema';
-import { JwtPassService } from '../src/modules/common-services/jwt-pass-custom/jwt-pass.service';
-import { fakerConnectDb } from '../src/test-params/fake-connect-db';
-import { newUser1, adminToken, newUser2 } from '../src/test-params/test-values';
+import { adminToken, newUser1, newUser2 } from '../src/test-params/test-values';
+import { newUser3 } from './test-static-params/test-auth-param';
 
-describe('test user-router "/auth"', () => {
-  // let userRepo: UsersRepository;
+describe('PostController (e2e)', () => {
+  let app: INestApplication;
+
   // let jwtPassService: JwtPassService;
   // let app;
   // let blackListRepository: BlackListRepository;
@@ -26,51 +24,79 @@ describe('test user-router "/auth"', () => {
   // beforeAll(async () => {
   //   await fakerConnectDb.connect();
   // });
-  // afterEach(async () => {
-  //   await fakerConnectDb.clearDatabase();
-  // });
+
   // afterAll(async () => {
   //   await fakerConnectDb.closeDatabase();
   // });
-  // beforeEach(async () => {
-  //   const moduleFixture: TestingModule = await Test.createTestingModule({
-  //     imports: [AppModule],
-  //   }).compile();
-  //   userRepo = moduleFixture.get<UsersRepository>(UsersRepository);
-  //   jwtPassService = moduleFixture.get<JwtPassService>(JwtPassService);
-  //   blackListRepository =
-  //     moduleFixture.get<BlackListRepository>(BlackListRepository);
-  //   app = moduleFixture.createNestApplication();
-  //   app.use(cookieParser());
-  //   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  //   await app.init();
-  //   const agent = request(app.getHttpServer());
-  //   await agent
-  //     .post('/users')
-  //     .set('Authorization', `Basic ${adminToken.correct}`)
-  //     .send(bodyParams);
-  //   newUser = (await userRepo.getUserByEmail(newUser1.email)) as User;
-  //   token = await jwtPassService.createJwtAccess(
-  //     newUser._id,
-  //     process.env.EXPIRED_REFRESH,
-  //   );
-  // });
-  // afterAll(() => {
-  //   disconnect();
-  // });
-  // describe('test post  "/registration" endpoint', () => {
-  //   it('should add new user', () => {
-  //     const bodyParams2 = {
-  //       login: newUser2.login,
-  //       password: newUser2.password,
-  //       email: newUser2.email,
-  //     };
-  //     return request(app.getHttpServer())
-  //       .post('/auth/registration')
-  //       .send(bodyParams2);
-  //     // .expect(204);
-  //   });
-  // });
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+    // userRepo = moduleFixture.get<UsersRepository>(UsersRepository);
+    // jwtPassService = moduleFixture.get<JwtPassService>(JwtPassService);
+    // blackListRepository =
+    // moduleFixture.get<BlackListRepository>(BlackListRepository);
+    app = moduleFixture.createNestApplication();
+    app.enableCors();
+    app.use(cookieParser());
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
+    await app.init();
+    const agent = request(app.getHttpServer());
+    await agent.delete('/testing/all-data').expect(204);
+    await agent
+      .post('/sa/users')
+      .set('Authorization', `Basic ${adminToken.correct}`)
+      .send(newUser1);
+    await agent
+      .post('/sa/users')
+      .set('Authorization', `Basic ${adminToken.correct}`)
+      .send(newUser2);
+    await agent
+      .post('/sa/users')
+      .set('Authorization', `Basic ${adminToken.correct}`)
+      .send(newUser3);
+    await agent
+      .get(`/sa/users`)
+      .expect(200)
+      .then(async (res) => {
+        expect(res.body.items).toHaveLength(3);
+      });
+  });
+  afterAll(() => {
+    disconnect();
+  });
+
+  const headers = { ip: 'someIp', 'user-agent': 'chrome' };
+  describe('GET -> "/posts/:id": Shouldn\'t return banned blog post.\
+  Should return unbanned blog post;\
+  status 404; used additional methods:\
+  PUT => /sa/blogs/:id/ban,\
+  POST => /auth/login,\
+  POST => /blogger/blogs,\
+  POST => /blogger/blogs/:blogId/posts,\
+  GET => /posts/:id;', () => {
+    it('should add new user', async () => {
+      const agent = request(app.getHttpServer());
+      const bodyParams = {
+        loginOrEmail: newUser1.login,
+        password: newUser1.password,
+      };
+      await agent
+        .post(`/auth/login`)
+        .set(headers)
+        .send(bodyParams)
+        .expect(200)
+        .then(async (res) => {
+          expect(typeof res.body.accessToken).toBe('string');
+          expect(typeof res.headers['set-cookie'][0]).toBe('string');
+        });
+
+      // await agent
+      //   .put('/sa/blogs/:id/ban')
+      //   .set('Authorization', `Basic ${adminToken.correct}`)
+      //   .send(newUser1);
+    });
+  });
   // describe('test post  "/refresh-token" endpoint', () => {
   //   it('should return new refresh token in headers and access token in body', async () => {
   //     const cookie = `refreshToken=${token}; Path=/; Secure; HttpOnly;`;
